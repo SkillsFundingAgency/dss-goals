@@ -11,8 +11,9 @@ namespace NCS.DSS.Goal.GetGoalByIdHttpTrigger
 {
     public static class GetGoalByIdHttpTrigger
     {
+        [Disable]
         [FunctionName("GetById")]
-        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Customers/{customerId:guid}/Interactions/{interactionId:guid}/ActionPlans/{actionplanId:guid}/Goals/{goalId:guid}")]HttpRequestMessage req, TraceWriter log, string goalId)
+        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Customers/{customerId}/Interactions/{interactionId}/ActionPlans/{actionplanId}/Goals/{goalId}")]HttpRequestMessage req, TraceWriter log, string goalId)
         {
             log.Info("Get Goal By Id C# HTTP trigger function  processed a request.");
 
