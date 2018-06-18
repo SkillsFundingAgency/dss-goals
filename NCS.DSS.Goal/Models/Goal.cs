@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using NCS.DSS.Goal.ReferenceData;
 
 namespace NCS.DSS.Goal.Models
 {
@@ -33,10 +34,10 @@ namespace NCS.DSS.Goal.Models
         public string GoalSummary { get; set; }
 
         [Display(Description = " GoalType reference data")]
-        public int GoalTypeId { get; set; }
+        public GoalType GoalType { get; set; }
 
         [Display(Description = "Goal status reference data")]
-        public int GoalStatusId { get ; set; }
+        public GoalStatus GoalStatus { get ; set; }
 
         [DataType(DataType.DateTime)]
         [Display(Description = "Date and time of the last modification to the record.")]

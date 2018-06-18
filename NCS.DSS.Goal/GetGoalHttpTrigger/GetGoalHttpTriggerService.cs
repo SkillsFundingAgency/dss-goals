@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using NCS.DSS.Goal.ReferenceData;
 
 namespace NCS.DSS.Goal.GetGoalHttpTrigger
 {
@@ -25,8 +26,8 @@ namespace NCS.DSS.Goal.GetGoalHttpTrigger
                     DateGoalShouldBeCompletedBy = DateTime.Today.AddDays(10),
                     DateGoalAchieved = DateTime.Today.AddDays(12),
                     GoalSummary = "This is a fake summary",
-                    GoalTypeId = 1,
-                    GoalStatusId = 1,
+                    GoalType = GoalType.Learning,
+                    GoalStatus = GoalStatus.Achieved,
                     LastModifiedDate = DateTime.Today.AddYears(1),
                     LastModifiedBy = Guid.NewGuid()
                 },
@@ -39,8 +40,8 @@ namespace NCS.DSS.Goal.GetGoalHttpTrigger
                     DateGoalShouldBeCompletedBy = DateTime.Today.AddDays(5),
                     DateGoalAchieved = DateTime.Today.AddDays(5),
                     GoalSummary = "This is a fake summary v2",
-                    GoalTypeId = 2,
-                    GoalStatusId = 2,
+                    GoalType = GoalType.Other,
+                    GoalStatus = GoalStatus.InProgress,
                     LastModifiedDate = DateTime.Today.AddYears(1),
                     LastModifiedBy = Guid.NewGuid()
                 },
@@ -53,8 +54,8 @@ namespace NCS.DSS.Goal.GetGoalHttpTrigger
                     DateGoalShouldBeCompletedBy = DateTime.Today.AddDays(2),
                     DateGoalAchieved = DateTime.Today.AddDays(1),
                     GoalSummary = "This is a fake summary v3",
-                    GoalTypeId = 3,
-                    GoalStatusId = 3,
+                    GoalType = GoalType.Skills,
+                    GoalStatus = GoalStatus.NoLongerRelevant,
                     LastModifiedDate = DateTime.Today,
                     LastModifiedBy = Guid.NewGuid()
                 }
