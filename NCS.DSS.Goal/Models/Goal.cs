@@ -30,6 +30,7 @@ namespace NCS.DSS.Goal.Models
         [Display(Description = "Date the customer actually achieved their goal")]
         public DateTime DateGoalAchieved { get; set; }
 
+        [StringLength(2000)]
         [Display(Description = "Details of the customer goal.")]
         public string GoalSummary { get; set; }
 

@@ -6,13 +6,15 @@ using Newtonsoft.Json;
 using System.Net.Http;
 using System.Net;
 using System.Threading.Tasks;
+using NCS.DSS.Goal.Annotations;
 
 namespace NCS.DSS.Goal.GetGoalByIdHttpTrigger
 {
     public static class GetGoalByIdHttpTrigger
     {
-        [Disable]
         [FunctionName("GetById")]
+        [GoalResponse(HttpStatusCode = (int)HttpStatusCode.OK, Description = "Goal found", ShowSchema = true)]
+        [GoalResponse(HttpStatusCode = (int)HttpStatusCode.NotFound, Description = "Supplied Goal Id does not exist", ShowSchema = false)]
         public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Customers/{customerId}/Interactions/{interactionId}/ActionPlans/{actionplanId}/Goals/{goalId}")]HttpRequestMessage req, TraceWriter log, string goalId)
         {
             log.Info("Get Goal By Id C# HTTP trigger function  processed a request.");

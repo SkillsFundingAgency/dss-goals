@@ -5,13 +5,14 @@ using Newtonsoft.Json;
 using System.Net.Http;
 using System.Net;
 using System.Threading.Tasks;
+using NCS.DSS.Goal.Annotations;
 
 namespace NCS.DSS.Goal.GetGoalHttpTrigger
 {
     public static class GetGoalHttpTrigger
     {
-        [Disable]
         [FunctionName("Get")]
+        [GoalResponse(HttpStatusCode = (int)HttpStatusCode.OK, Description = "Goals found", ShowSchema = true)]
         public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Customers/{customerId}/Interactions/{interactionId}/ActionPlans/{actionplanId}/Goals/")]HttpRequestMessage req, TraceWriter log)
         {
             log.Info("Get Goals C# HTTP trigger function processed a request.");
