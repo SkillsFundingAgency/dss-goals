@@ -15,7 +15,7 @@ namespace NCS.DSS.Goal.GetGoalByIdHttpTrigger
         [FunctionName("GetById")]
         [GoalResponse(HttpStatusCode = (int)HttpStatusCode.OK, Description = "Goal found", ShowSchema = true)]
         [GoalResponse(HttpStatusCode = (int)HttpStatusCode.NotFound, Description = "Supplied Goal Id does not exist", ShowSchema = false)]
-        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Customers/{customerId}/Interactions/{interactionId}/ActionPlans/{actionplanId}/Goals/{goalId}")]HttpRequestMessage req, TraceWriter log, string goalId)
+        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Customers/{customerId}/Interactions/{interactionId}/ActionPlans/{actionplanId}/Goals/{goalId}")]HttpRequestMessage req, TraceWriter log, string customerId, string interactionId, string actionplanId, string goalId)
         {
             log.Info("Get Goal By Id C# HTTP trigger function  processed a request.");
 
