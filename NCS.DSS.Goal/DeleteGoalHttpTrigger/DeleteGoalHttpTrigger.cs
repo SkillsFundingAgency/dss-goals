@@ -13,8 +13,11 @@ namespace NCS.DSS.Goal.DeleteGoalHttpTrigger
     public static class DeleteGoalHttpTrigger
     {
         [FunctionName("Delete")]
-        [GoalResponse(HttpStatusCode = (int)HttpStatusCode.OK, Description = "Goal Deleted", ShowSchema = true)]
-        [GoalResponse(HttpStatusCode = (int)HttpStatusCode.NotFound, Description = "Supplied Goal Id does not exist", ShowSchema = false)]
+        [Response(HttpStatusCode = (int)HttpStatusCode.OK, Description = "Goal Deleted", ShowSchema = true)]
+        [Response(HttpStatusCode = (int)HttpStatusCode.NoContent, Description = "Goal does not exist", ShowSchema = false)]
+        [Response(HttpStatusCode = (int)HttpStatusCode.BadRequest, Description = "Request was malformed", ShowSchema = false)]
+        [Response(HttpStatusCode = (int)HttpStatusCode.Unauthorized, Description = "API key is unknown or invalid", ShowSchema = false)]
+        [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
         [Display(Name = "Delete", Description = "Ability to delete a goal record.")]
         public static HttpResponseMessage Run([HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "Customers/{customerId}/Interactions/{interactionId}/ActionPlans/{actionplanId}/Goals/{goalId}")]HttpRequestMessage req, TraceWriter log, string customerId, string interactionId, string actionplanId, string goalId)
         {

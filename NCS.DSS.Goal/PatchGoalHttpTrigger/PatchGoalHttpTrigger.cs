@@ -15,8 +15,12 @@ namespace NCS.DSS.Goal.PatchGoalHttpTrigger
     {
         [FunctionName("Patch")]
         [ResponseType(typeof(Models.Goal))]
-        [GoalResponse(HttpStatusCode = (int)HttpStatusCode.OK, Description = "Goal Updated", ShowSchema = true)]
-        [GoalResponse(HttpStatusCode = (int)HttpStatusCode.NotFound, Description = "Supplied Goal Id does not exist", ShowSchema = false)]
+        [Response(HttpStatusCode = (int)HttpStatusCode.OK, Description = "Goal Updated", ShowSchema = true)]
+        [Response(HttpStatusCode = (int)HttpStatusCode.NoContent, Description = "Goal does not exist", ShowSchema = false)]
+        [Response(HttpStatusCode = (int)HttpStatusCode.BadRequest, Description = "Request was malformed", ShowSchema = false)]
+        [Response(HttpStatusCode = (int)HttpStatusCode.Unauthorized, Description = "API key is unknown or invalid", ShowSchema = false)]
+        [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
+        [Response(HttpStatusCode = 422, Description = "Goal validation error(s)", ShowSchema = false)]
         [Display(Name = "Patch", Description = "Ability to update an existing goal record")]
         public static HttpResponseMessage Run([HttpTrigger(AuthorizationLevel.Anonymous, "patch", Route = "Customers/{customerId}/Interactions/{interactionId}/ActionPlans/{actionplanId}/Goals/{goalId}")]HttpRequestMessage req, TraceWriter log, string customerId, string interactionId, string actionplanId, string goalId)
         {

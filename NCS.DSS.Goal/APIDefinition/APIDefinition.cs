@@ -245,11 +245,11 @@ namespace NCS.DSS.Goal.APIDefinition
             }
 
             // automatically get data(http code, description and show schema) from the new custom response class
-            var responseCodes = methodInfo.GetCustomAttributes(typeof(GoalResponse), false);
+            var responseCodes = methodInfo.GetCustomAttributes(typeof(Response), false);
 
             foreach (var response in responseCodes)
             {
-                var goalResponse = (GoalResponse)response;
+                var goalResponse = (Response)response;
 
                 if (!goalResponse.ShowSchema)
                     responseDef = new ExpandoObject();

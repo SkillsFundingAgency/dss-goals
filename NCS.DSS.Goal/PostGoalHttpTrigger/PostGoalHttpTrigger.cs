@@ -14,9 +14,12 @@ namespace NCS.DSS.Goal.PostGoalHttpTrigger
     {
         [FunctionName("Post")]
         [ResponseType(typeof(Models.Goal))]
-        [GoalResponse(HttpStatusCode = (int)HttpStatusCode.Created, Description = "Goal Created", ShowSchema = true)]
-        [GoalResponse(HttpStatusCode = (int)HttpStatusCode.BadRequest, Description = "Unable to create Goal", ShowSchema = false)]
-        [GoalResponse(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Forbidden", ShowSchema = false)]
+        [Response(HttpStatusCode = (int)HttpStatusCode.Created, Description = "Goal Created", ShowSchema = true)]
+        [Response(HttpStatusCode = (int)HttpStatusCode.NoContent, Description = "Goal does not exist", ShowSchema = false)]
+        [Response(HttpStatusCode = (int)HttpStatusCode.BadRequest, Description = "Request was malformed", ShowSchema = false)]
+        [Response(HttpStatusCode = (int)HttpStatusCode.Unauthorized, Description = "API key is unknown or invalid", ShowSchema = false)]
+        [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
+        [Response(HttpStatusCode = 422, Description = "Goal validation error(s)", ShowSchema = false)]
         [Display(Name = "Post", Description = "Ability to create a goal for a given action plan.")]
         public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "Customers/{customerId}/Interactions/{interactionId}/ActionPlans/{actionplanId}/Goals/")]HttpRequestMessage req, TraceWriter log, string customerId, string interactionId, string actionplanId)
         {
