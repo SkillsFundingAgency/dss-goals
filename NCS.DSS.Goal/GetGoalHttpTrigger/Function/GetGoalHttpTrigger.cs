@@ -10,7 +10,6 @@ using NCS.DSS.Goal.Cosmos.Helper;
 using NCS.DSS.Goal.GetGoalHttpTrigger.Service;
 using NCS.DSS.Goal.Helpers;
 using NCS.DSS.Goal.Ioc;
-using Newtonsoft.Json;
 
 namespace NCS.DSS.Goal.GetGoalHttpTrigger.Function
 {

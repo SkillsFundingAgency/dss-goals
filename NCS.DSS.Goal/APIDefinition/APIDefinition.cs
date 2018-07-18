@@ -16,6 +16,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs.Host;
 using NCS.DSS.Goal.Annotations;
+using NCS.DSS.Goal.Ioc;
 
 namespace NCS.DSS.Goal.APIDefinition
 {
@@ -269,9 +270,9 @@ namespace NCS.DSS.Goal.APIDefinition
                 if (parameter.ParameterType == typeof(HttpRequestMessage)) continue;
                 if (parameter.ParameterType == typeof(TraceWriter)) continue;
                 if (parameter.ParameterType == typeof(Microsoft.Extensions.Logging.ILogger)) continue;
+                if (parameter.GetCustomAttributes().Any(attr => attr is InjectAttribute)) continue;
 
                 bool hasUriAttribute = parameter.GetCustomAttributes().Any(attr => attr is FromUriAttribute);
-
 
                 if (route.Contains('{' + parameter.Name))
                 {

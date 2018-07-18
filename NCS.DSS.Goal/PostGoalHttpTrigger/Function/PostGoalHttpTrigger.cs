@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Web.Http.Description;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.Azure.WebJobs.Host;
+using Microsoft.Extensions.Logging;
 using NCS.DSS.Goal.Annotations;
 using NCS.DSS.Goal.Cosmos.Helper;
 using NCS.DSS.Goal.Helpers;
@@ -29,13 +29,13 @@ namespace NCS.DSS.Goal.PostGoalHttpTrigger.Function
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
         [Response(HttpStatusCode = 422, Description = "Goal validation error(s)", ShowSchema = false)]
         [Display(Name = "Post", Description = "Ability to create a goal for a given goal plan.")]
-        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "Customers/{customerId}/Interactions/{interactionId}/ActionPlans/{actionPlanId}/Goals/")]HttpRequestMessage req, TraceWriter log, string customerId, string interactionId, string actionPlanId,
+        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "Customers/{customerId}/Interactions/{interactionId}/ActionPlans/{actionPlanId}/Goals/")]HttpRequestMessage req, ILogger log, string customerId, string interactionId, string actionPlanId,
             [Inject]IResourceHelper resourceHelper,
             [Inject]IHttpRequestMessageHelper httpRequestMessageHelper,
             [Inject]IValidate validate,
             [Inject]IPostGoalHttpTriggerService goalPostService)
         {
-            log.Info("Post Goal C# HTTP trigger function processed a request.");
+            log.LogInformation("Post Goal C# HTTP trigger function processed a request.");
 
             if (!Guid.TryParse(customerId, out var customerGuid))
                 return HttpResponseMessageHelper.BadRequest(customerGuid);

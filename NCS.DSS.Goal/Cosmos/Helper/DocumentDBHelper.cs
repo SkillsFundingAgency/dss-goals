@@ -16,13 +16,13 @@ namespace NCS.DSS.Goal.Cosmos.Helper
         private readonly string _customerDatabaseId = ConfigurationManager.AppSettings["CustomerDatabaseId"];
         private readonly string _customerCollectionId = ConfigurationManager.AppSettings["CustomerCollectionId"];
 
-        private Uri _intergoalDocumentCollectionUri;
-        private readonly string _intergoalDatabaseId = ConfigurationManager.AppSettings["IntergoalDatabaseId"];
-        private readonly string _intergoalCollectionId = ConfigurationManager.AppSettings["IntergoalCollectionId"];
+        private Uri _interactionDocumentCollectionUri;
+        private readonly string _interactionDatabaseId = ConfigurationManager.AppSettings["InteractionDatabaseId"];
+        private readonly string _interactionCollectionId = ConfigurationManager.AppSettings["InteractionCollectionId"];
 
-        private Uri _goalPlanDocumentCollectionUri;
-        private readonly string _goalPlanDatabaseId = ConfigurationManager.AppSettings["ActionPlanDatabaseId"];
-        private readonly string _goalPlanCollectionId = ConfigurationManager.AppSettings["ActionPlanCollectionId"];
+        private Uri _actionPlanDocumentCollectionUri;
+        private readonly string _actionPlanDatabaseId = ConfigurationManager.AppSettings["ActionPlanDatabaseId"];
+        private readonly string _actionPlanCollectionId = ConfigurationManager.AppSettings["ActionPlanCollectionId"];
 
         public Uri CreateDocumentCollectionUri()
         {
@@ -62,17 +62,17 @@ namespace NCS.DSS.Goal.Cosmos.Helper
 
         #endregion
 
-        #region IntergoalDB
+        #region InteractionDB
 
-        public Uri CreateIntergoalDocumentCollectionUri()
+        public Uri CreateInteractionDocumentCollectionUri()
         {
-            if (_intergoalDocumentCollectionUri != null)
-                return _intergoalDocumentCollectionUri;
+            if (_interactionDocumentCollectionUri != null)
+                return _interactionDocumentCollectionUri;
 
-            _intergoalDocumentCollectionUri = UriFactory.CreateDocumentCollectionUri(
-                _intergoalDatabaseId, _intergoalCollectionId);
+            _interactionDocumentCollectionUri = UriFactory.CreateDocumentCollectionUri(
+                _interactionDatabaseId, _interactionCollectionId);
 
-            return _intergoalDocumentCollectionUri;
+            return _interactionDocumentCollectionUri;
         }
 
         #endregion
@@ -81,13 +81,13 @@ namespace NCS.DSS.Goal.Cosmos.Helper
 
         public Uri CreateActionPlanDocumentCollectionUri()
         {
-            if (_goalPlanDocumentCollectionUri != null)
-                return _goalPlanDocumentCollectionUri;
+            if (_actionPlanDocumentCollectionUri != null)
+                return _actionPlanDocumentCollectionUri;
 
-            _goalPlanDocumentCollectionUri = UriFactory.CreateDocumentCollectionUri(
-                _goalPlanDatabaseId, _goalPlanCollectionId);
+            _actionPlanDocumentCollectionUri = UriFactory.CreateDocumentCollectionUri(
+                _actionPlanDatabaseId, _actionPlanCollectionId);
 
-            return _goalPlanDocumentCollectionUri;
+            return _actionPlanDocumentCollectionUri;
         }
 
         #endregion   

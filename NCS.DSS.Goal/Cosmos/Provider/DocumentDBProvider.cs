@@ -36,7 +36,7 @@ namespace NCS.DSS.Goal.Cosmos.Provider
 
         public bool DoesInteractionResourceExist(Guid interactionId)
         {
-            var collectionUri = _documentDbHelper.CreateIntergoalDocumentCollectionUri();
+            var collectionUri = _documentDbHelper.CreateInteractionDocumentCollectionUri();
 
             var client = _databaseClient.CreateDocumentClient();
 

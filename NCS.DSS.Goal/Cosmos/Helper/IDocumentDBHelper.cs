@@ -7,6 +7,6 @@ namespace NCS.DSS.Goal.Cosmos.Helper
         Uri CreateDocumentCollectionUri();
         Uri CreateDocumentUri(Guid actionPlanId);
         Uri CreateCustomerDocumentCollectionUri();
-        Uri CreateIntergoalDocumentCollectionUri();
+        Uri CreateInteractionDocumentCollectionUri();
     }
 }
