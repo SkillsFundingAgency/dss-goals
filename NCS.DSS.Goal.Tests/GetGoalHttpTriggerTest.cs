@@ -22,12 +22,12 @@ namespace NCS.DSS.Goal.Tests
         private HttpRequestMessage _request;
         private IResourceHelper _resourceHelper;
         private IGetGoalHttpTriggerService _getGoalHttpTriggerService;
-        private Models.Goal _action;
+        private Models.Goal _goal;
 
         [SetUp]
         public void Setup()
         {
-            _action = Substitute.For<Models.Goal>();
+            _goal = Substitute.For<Models.Goal>();
 
             _request = new HttpRequestMessage()
             {
@@ -123,14 +123,31 @@ namespace NCS.DSS.Goal.Tests
         }
 
         [Test]
+        public async Task GetGoalHttpTrigger_ReturnsStatusCodeOk_WhenGoalDoesNotExists()
+        {
+            _resourceHelper.DoesCustomerExist(Arg.Any<Guid>()).Returns(true);
+            _resourceHelper.DoesInteractionExist(Arg.Any<Guid>()).Returns(true);
+            _resourceHelper.DoesActionPlanExist(Arg.Any<Guid>()).Returns(true);
+
+            _getGoalHttpTriggerService.GetGoalsAsync(Arg.Any<Guid>()).Returns(Task.FromResult<List<Models.Goal>>(null).Result);
+
+            // Act
+            var result = await RunFunction(ValidCustomerId, ValidInteractionId, ValidActionPlanId);
+
+            // Assert
+            Assert.IsInstanceOf<HttpResponseMessage>(result);
+            Assert.AreEqual(HttpStatusCode.NoContent, result.StatusCode);
+        }
+
+        [Test]
         public async Task GetGoalHttpTrigger_ReturnsStatusCodeOk_WhenGoalExists()
         {
             _resourceHelper.DoesCustomerExist(Arg.Any<Guid>()).Returns(true);
             _resourceHelper.DoesInteractionExist(Arg.Any<Guid>()).Returns(true);
             _resourceHelper.DoesActionPlanExist(Arg.Any<Guid>()).Returns(true);
 
-            var listOfActiones = new List<Models.Goal>();
-            _getGoalHttpTriggerService.GetGoalsAsync(Arg.Any<Guid>()).Returns(Task.FromResult<List<Models.Goal>>(listOfActiones).Result);
+            var goals = new List<Models.Goal>();
+            _getGoalHttpTriggerService.GetGoalsAsync(Arg.Any<Guid>()).Returns(Task.FromResult(goals).Result);
 
             // Act
             var result = await RunFunction(ValidCustomerId, ValidInteractionId, ValidActionPlanId);

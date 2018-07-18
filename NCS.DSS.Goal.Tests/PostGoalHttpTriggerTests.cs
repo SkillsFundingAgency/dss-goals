@@ -184,7 +184,7 @@ namespace NCS.DSS.Goal.Tests
             _resourceHelper.DoesInteractionExist(Arg.Any<Guid>()).Returns(true);
             _resourceHelper.DoesActionPlanExist(Arg.Any<Guid>()).Returns(true);
 
-            _postGoalHttpTriggerService.CreateAsync(Arg.Any<Models.Goal>()).Returns(Task.FromResult<Models.Goal>(_goal).Result);
+            _postGoalHttpTriggerService.CreateAsync(Arg.Any<Models.Goal>()).Returns(Task.FromResult(_goal).Result);
 
             var result = await RunFunction(ValidCustomerId, ValidInteractionId, ValidActionPlanId);
 

@@ -73,8 +73,8 @@
   <ItemGroup>
     <Compile Include="GetGoalByIdHttpTriggerTests.cs" />
     <Compile Include="GetGoalHttpTriggerTest.cs" />
-    <Compile Include="PatchActionHttpTriggerTests.cs" />
-    <Compile Include="PostActionHttpTriggerTests.cs" />
+    <Compile Include="PatchGoalHttpTriggerTests.cs" />
+    <Compile Include="PostGoalHttpTriggerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

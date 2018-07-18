@@ -190,7 +190,7 @@ namespace NCS.DSS.Goal.Tests
         }
 
         [Test]
-        public async Task GetActionHttpTrigger_ReturnsStatusCodeOk_WhenGoalPlanDoesNotExist()
+        public async Task GetActionHttpTrigger_ReturnsStatusCodeOk_WhenActionPlanDoesNotExist()
         {
             _httpRequestMessageHelper.GetGoalFromRequest<GoalPatch>(_request).Returns(Task.FromResult(_goalPatch).Result);
 
@@ -209,7 +209,7 @@ namespace NCS.DSS.Goal.Tests
         }
 
         [Test]
-        public async Task PatchGoalHttpTrigger_ReturnsStatusCodeBadRequest_WhenUnableToUpdateActionRecord()
+        public async Task PatchGoalHttpTrigger_ReturnsStatusCodeBadRequest_WhenUnableToUpdateGoalRecord()
         {
             _httpRequestMessageHelper.GetGoalFromRequest<GoalPatch>(_request).Returns(Task.FromResult(_goalPatch).Result);
 
@@ -248,10 +248,10 @@ namespace NCS.DSS.Goal.Tests
             Assert.AreEqual(HttpStatusCode.OK, result.StatusCode);
         }
 
-        private async Task<HttpResponseMessage> RunFunction(string customerId, string InteractionId, string actionPlanId, string GoalId)
+        private async Task<HttpResponseMessage> RunFunction(string customerId, string interactionId, string actionPlanId, string goalId)
         {
             return await PatchGoalHttpTrigger.Function.PatchGoalHttpTrigger.Run(
-                _request, _log, customerId, InteractionId, actionPlanId, GoalId, _resourceHelper, _httpRequestMessageHelper, _validate, _patchGoalHttpTriggerService).ConfigureAwait(false);
+                _request, _log, customerId, interactionId, actionPlanId, goalId, _resourceHelper, _httpRequestMessageHelper, _validate, _patchGoalHttpTriggerService).ConfigureAwait(false);
         }
 
     }
