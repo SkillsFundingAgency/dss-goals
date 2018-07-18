@@ -21,8 +21,8 @@ namespace NCS.DSS.Goal.Cosmos.Helper
         private readonly string _intergoalCollectionId = ConfigurationManager.AppSettings["IntergoalCollectionId"];
 
         private Uri _goalPlanDocumentCollectionUri;
-        private readonly string _goalPlanDatabaseId = ConfigurationManager.AppSettings["GoalPlanDatabaseId"];
-        private readonly string _goalPlanCollectionId = ConfigurationManager.AppSettings["GoalPlanCollectionId"];
+        private readonly string _goalPlanDatabaseId = ConfigurationManager.AppSettings["ActionPlanDatabaseId"];
+        private readonly string _goalPlanCollectionId = ConfigurationManager.AppSettings["ActionPlanCollectionId"];
 
         public Uri CreateDocumentCollectionUri()
         {
@@ -36,12 +36,12 @@ namespace NCS.DSS.Goal.Cosmos.Helper
             return _documentCollectionUri;
         }
         
-        public Uri CreateDocumentUri(Guid goalPlanId)
+        public Uri CreateDocumentUri(Guid actionPlanId)
         {
             if (_documentUri != null)
                 return _documentUri;
 
-            _documentUri = UriFactory.CreateDocumentUri(_databaseId, _collectionId, goalPlanId.ToString());
+            _documentUri = UriFactory.CreateDocumentUri(_databaseId, _collectionId, actionPlanId.ToString());
 
             return _documentUri;
 
@@ -77,9 +77,9 @@ namespace NCS.DSS.Goal.Cosmos.Helper
 
         #endregion
 
-        #region GoalPlanDB
+        #region ActionPlanDB
 
-        public Uri CreateGoalPlanDocumentCollectionUri()
+        public Uri CreateActionPlanDocumentCollectionUri()
         {
             if (_goalPlanDocumentCollectionUri != null)
                 return _goalPlanDocumentCollectionUri;

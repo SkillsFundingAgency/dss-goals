@@ -21,12 +21,12 @@ namespace NCS.DSS.Goal.Cosmos.Helper
             return doesIntergoalExist;
         }
 
-        public bool DoesActionPlanExist(Guid goalPlanId)
+        public bool DoesActionPlanExist(Guid actionPlanId)
         {
             var documentDbProvider = new DocumentDBProvider();
-            var doesGoalPlanExist = documentDbProvider.DoesActionPlanResourceExist(goalPlanId);
+            var doesActionPlanExist = documentDbProvider.DoesActionPlanResourceExist(actionPlanId);
 
-            return doesGoalPlanExist;
+            return doesActionPlanExist;
         }
     }
 }

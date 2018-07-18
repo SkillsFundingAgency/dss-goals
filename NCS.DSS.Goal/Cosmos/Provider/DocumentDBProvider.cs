@@ -47,9 +47,9 @@ namespace NCS.DSS.Goal.Cosmos.Provider
             return intergoalQuery.Where(x => x.Id == interactionId.ToString()).Select(x => x.Id).AsEnumerable().Any();
         }
 
-        public bool DoesActionPlanResourceExist(Guid goalPlanId)
+        public bool DoesActionPlanResourceExist(Guid actionPlanId)
         {
-            var collectionUri = _documentDbHelper.CreateGoalPlanDocumentCollectionUri();
+            var collectionUri = _documentDbHelper.CreateActionPlanDocumentCollectionUri();
 
             var client = _databaseClient.CreateDocumentClient();
 
@@ -57,7 +57,7 @@ namespace NCS.DSS.Goal.Cosmos.Provider
                 return false;
 
             var goalPlanQuery = client.CreateDocumentQuery<Document>(collectionUri, new FeedOptions() { MaxItemCount = 1 });
-            return goalPlanQuery.Where(x => x.Id == goalPlanId.ToString()).Select(x => x.Id).AsEnumerable().Any();
+            return goalPlanQuery.Where(x => x.Id == actionPlanId.ToString()).Select(x => x.Id).AsEnumerable().Any();
         }
 
         public async Task<List<Models.Goal>> GetGoalsForCustomerAsync(Guid customerId)
