@@ -7,9 +7,12 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using NCS.DSS.Goal.Cosmos.Helper;
 using NCS.DSS.Goal.Helpers;
+using NCS.DSS.Goal.Models;
 using NCS.DSS.Goal.PostGoalHttpTrigger.Service;
 using NCS.DSS.Goal.Validation;
+using Newtonsoft.Json;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 using NUnit.Framework;
 
 namespace NCS.DSS.Goal.Tests
@@ -102,8 +105,7 @@ namespace NCS.DSS.Goal.Tests
         [Test]
         public async Task PostGoalHttpTrigger_ReturnsStatusCodeUnprocessableEntity_WhenGoalRequestIsInvalid()
         {
-            var validationResults = new List<ValidationResult> { new ValidationResult("Customer Id is Required") };
-            _validate.ValidateResource(Arg.Any<Models.Goal>()).Returns(validationResults);
+            _httpRequestMessageHelper.GetGoalFromRequest<GoalPatch>(_request).Throws(new JsonException());
 
             var result = await RunFunction(ValidCustomerId, ValidInteractionId, ValidActionPlanId);
 

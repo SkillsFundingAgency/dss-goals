@@ -55,7 +55,7 @@ namespace NCS.DSS.Goal.PatchGoalHttpTrigger.Function
             {
                 goalPatchRequest = await httpRequestMessageHelper.GetGoalFromRequest<Models.GoalPatch>(req);
             }
-            catch (JsonSerializationException ex)
+            catch (JsonException ex)
             {
                 return HttpResponseMessageHelper.UnprocessableEntity(ex);
             }
