@@ -15,7 +15,7 @@ namespace NCS.DSS.Goal.Models
         [Required]
         [Display(Description = "Unique identifier for a subscription record. ")]
         [Example(Description = "b8592ff8-af97-49ad-9fb2-e5c3c717fd85")]
-        public Guid CustomerId { get; set; }
+        public Guid? CustomerId { get; set; }
 
         [Required]
         [Display(Description = "Unique identifier for the customers goal plan.")]
