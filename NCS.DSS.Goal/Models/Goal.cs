@@ -28,6 +28,7 @@ namespace NCS.DSS.Goal.Models
         [Example(Description = "2018-06-21T11:31:00")]
         public DateTime? DateGoalCaptured { get; set; }
 
+        [Required]
         [DataType(DataType.DateTime)]
         [Display(Description = "Date the customer aims to complete their goal by.")]
         [Example(Description = "2018-06-23T12:01:00")]
@@ -38,11 +39,13 @@ namespace NCS.DSS.Goal.Models
         [Example(Description = "2018-06-22T19:53:00")]
         public DateTime? DateGoalAchieved { get; set; }
 
+        [Required]
         [StringLength(2000)]
         [Display(Description = "Details of the customer goal.")]
         [Example(Description = "this is some text")]
         public string GoalSummary { get; set; }
 
+        [Required]
         [Display(Description = " GoalType reference data")]
         [Example(Description = "1")]
         public GoalType? GoalType { get; set; }
