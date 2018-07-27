@@ -11,12 +11,8 @@ namespace NCS.DSS.Goal.PostGoalHttpTrigger.Service
         {
             if (goal == null)
                 return null;
-
-            var goalId = Guid.NewGuid();
-            goal.GoalId = goalId;
-
-            if (!goal.LastModifiedDate.HasValue)
-                goal.LastModifiedDate = DateTime.Now;
+            
+            goal.SetDefaultValues();
 
             var documentDbProvider = new DocumentDBProvider();
 

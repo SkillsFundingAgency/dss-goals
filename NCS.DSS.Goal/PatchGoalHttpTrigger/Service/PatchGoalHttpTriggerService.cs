@@ -13,8 +13,7 @@ namespace NCS.DSS.Goal.PatchGoalHttpTrigger.Service
             if (goal == null)
                 return null;
 
-            if (!goalPatch.LastModifiedDate.HasValue)
-                goalPatch.LastModifiedDate = DateTime.Now;
+            goalPatch.SetDefaultValues();
 
             goal.Patch(goalPatch);
 
