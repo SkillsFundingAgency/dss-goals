@@ -68,7 +68,7 @@ namespace NCS.DSS.Goal.Models
             GoalId = Guid.NewGuid();
 
             if (!LastModifiedDate.HasValue)
-                LastModifiedDate = DateTime.Now;
+                LastModifiedDate = DateTime.UtcNow;
 
             if (GoalType == null)
                 GoalType = ReferenceData.GoalType.Other;

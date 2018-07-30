@@ -35,7 +35,14 @@ namespace NCS.DSS.Goal.PatchGoalHttpTrigger.Function
             [Inject]IValidate validate,
             [Inject]IPatchGoalHttpTriggerService goalPatchService)
         {
-            log.LogInformation("Patch Goal C# HTTP trigger function processed a request.");
+            var touchpointId = httpRequestMessageHelper.GetTouchpointId(req);
+            if (touchpointId == null)
+            {
+                log.LogInformation("Unable to locate 'APIM-TouchpointId' in request header.");
+                return HttpResponseMessageHelper.BadRequest();
+            }
+
+            log.LogInformation("Patch Goal C# HTTP trigger function  processed a request. " + touchpointId);
 
             if (!Guid.TryParse(customerId, out var customerGuid))
                 return HttpResponseMessageHelper.BadRequest(customerGuid);
@@ -62,6 +69,8 @@ namespace NCS.DSS.Goal.PatchGoalHttpTrigger.Function
 
             if (goalPatchRequest == null)
                 return HttpResponseMessageHelper.UnprocessableEntity(req);
+
+            goalPatchRequest.LastModifiedBy = touchpointId;
 
             var errors = validate.ValidateResource(goalPatchRequest);
 

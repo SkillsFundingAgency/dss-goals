@@ -47,7 +47,7 @@ namespace NCS.DSS.Goal.Models
         public void SetDefaultValues()
         {
             if (!LastModifiedDate.HasValue)
-                LastModifiedDate = DateTime.Now;
+                LastModifiedDate = DateTime.UtcNow;
         }
     }
 }
