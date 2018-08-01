@@ -69,7 +69,7 @@ namespace NCS.DSS.Goal.PostGoalHttpTrigger.Function
 
             goalRequest.LastModifiedBy = touchpointId;
 
-            var errors = validate.ValidateResource(goalRequest);
+            var errors = validate.ValidateResource(goalRequest, true);
 
             if (errors != null && errors.Any())
                 return HttpResponseMessageHelper.UnprocessableEntity(errors);

@@ -8,24 +8,27 @@ namespace NCS.DSS.Goal.Validation
 {
     public class Validate : IValidate
     {
-        public List<ValidationResult> ValidateResource(IGoal resource)
+        public List<ValidationResult> ValidateResource(IGoal resource, bool validateModelForPost)
         {
             var context = new ValidationContext(resource, null, null);
             var results = new List<ValidationResult>();
 
-             Validator.TryValidateObject(resource, context, results, true);
-            ValidateGoalRules(resource, results);
+            Validator.TryValidateObject(resource, context, results, true);
+            ValidateGoalRules(resource, results, validateModelForPost);
 
             return results;
         }
 
-        private void ValidateGoalRules(IGoal goalResource, List<ValidationResult> results)
+        private void ValidateGoalRules(IGoal goalResource, List<ValidationResult> results, bool validateModelForPost)
         {
             if (goalResource == null)
                 return;
 
-            if (string.IsNullOrWhiteSpace(goalResource.GoalSummary))
-                results.Add(new ValidationResult("Goal Summary is a required field", new[] { "GoalSummary" }));
+            if (validateModelForPost)
+            {
+                if (string.IsNullOrWhiteSpace(goalResource.GoalSummary))
+                    results.Add(new ValidationResult("Goal Summary is a required field", new[] { "GoalSummary" }));
+            }
 
             if (goalResource.DateGoalCaptured.HasValue && goalResource.DateGoalCaptured.Value > DateTime.UtcNow)
                 results.Add(new ValidationResult("Date Goal Captured must be less the current date/time", new[] { "DateGoalCaptured" }));

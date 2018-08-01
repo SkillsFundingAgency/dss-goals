@@ -121,7 +121,7 @@ namespace NCS.DSS.Goal.Tests
             _httpRequestMessageHelper.GetGoalFromRequest<GoalPatch>(_request).Returns(Task.FromResult(_goalPatch).Result);
 
             var validationResults = new List<ValidationResult> { new ValidationResult("interaction Id is Required") };
-            _validate.ValidateResource(Arg.Any<GoalPatch>()).Returns(validationResults);
+            _validate.ValidateResource(Arg.Any<GoalPatch>(), false).Returns(validationResults);
 
             var result = await RunFunction(ValidCustomerId, ValidInteractionId, ValidGoalId, ValidActionPlanId);
 
