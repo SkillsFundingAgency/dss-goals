@@ -63,8 +63,7 @@ namespace NCS.DSS.Goal.GetGoalHttpTrigger.Function
 
             return goals == null ?
                 HttpResponseMessageHelper.NoContent(customerGuid) :
-                HttpResponseMessageHelper.Ok(goals);
-
+                HttpResponseMessageHelper.Ok(JsonHelper.SerializeObjects(goals));
         }
     }
 }

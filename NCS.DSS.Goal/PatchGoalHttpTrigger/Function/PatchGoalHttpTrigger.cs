@@ -101,7 +101,7 @@ namespace NCS.DSS.Goal.PatchGoalHttpTrigger.Function
 
             return updatedGoal == null ?
                 HttpResponseMessageHelper.BadRequest(actionPlanGuid) :
-                HttpResponseMessageHelper.Ok(updatedGoal);
+                HttpResponseMessageHelper.Ok(JsonHelper.SerializeObject(updatedGoal));
         }
     }
 }

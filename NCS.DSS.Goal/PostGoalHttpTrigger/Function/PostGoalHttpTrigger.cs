@@ -93,7 +93,7 @@ namespace NCS.DSS.Goal.PostGoalHttpTrigger.Function
 
             return goal == null
                 ? HttpResponseMessageHelper.BadRequest(customerGuid)
-                : HttpResponseMessageHelper.Created(goal);
+                : HttpResponseMessageHelper.Created(JsonHelper.SerializeObject(goal));
         }
     }
 }
