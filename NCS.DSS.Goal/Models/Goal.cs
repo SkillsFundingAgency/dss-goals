@@ -58,10 +58,12 @@ namespace NCS.DSS.Goal.Models
         [Display(Description = "Date and time of the last modification to the record.")]
         [Example(Description = "2018-06-24T01:01:00")]
         public DateTime? LastModifiedDate { get; set; }
-
+        
+        [StringLength(10, MinimumLength = 10)]
         [Display(Description = "Identifier of the touchpoint who made the last change to the record")]
-        [Example(Description = "d1307d77-af23-4cb4-b600-a60e04f8c3df")]
-        public Guid? LastModifiedBy { get; set; }
+        [Example(Description = "0000000001")]
+
+        public string LastModifiedBy { get; set; }
         
         public void SetDefaultValues()
         {
@@ -103,7 +105,7 @@ namespace NCS.DSS.Goal.Models
             if(goalPatch.LastModifiedDate.HasValue)
                 LastModifiedDate = goalPatch.LastModifiedDate;
 
-            if (goalPatch.LastModifiedBy.HasValue)
+            if (!string.IsNullOrEmpty(goalPatch.LastModifiedBy))
                 LastModifiedBy = goalPatch.LastModifiedBy;
         }
     }

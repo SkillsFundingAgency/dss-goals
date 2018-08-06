@@ -7,6 +7,6 @@ namespace NCS.DSS.Goal.Helpers
     public interface IHttpRequestMessageHelper
     {
         Task<T> GetGoalFromRequest<T>(HttpRequestMessage req);
-        Guid? GetTouchpointId(HttpRequestMessage req);
+        string GetTouchpointId(HttpRequestMessage req);
     }
 }

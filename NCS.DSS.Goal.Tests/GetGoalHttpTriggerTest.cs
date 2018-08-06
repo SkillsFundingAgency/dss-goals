@@ -44,13 +44,13 @@ namespace NCS.DSS.Goal.Tests
             _resourceHelper = Substitute.For<IResourceHelper>();
             _httpRequestMessageHelper = Substitute.For<IHttpRequestMessageHelper>();
             _getGoalHttpTriggerService = Substitute.For<IGetGoalHttpTriggerService>();
-            _httpRequestMessageHelper.GetTouchpointId(_request).Returns(new Guid());
+            _httpRequestMessageHelper.GetTouchpointId(_request).Returns("0000000001");
         }
 
         [Test]
         public async Task GetGoalHttpTrigger_ReturnsStatusCodeBadRequest_WhenTouchpointIdIsNotProvided()
         {
-            _httpRequestMessageHelper.GetTouchpointId(_request).Returns((Guid?)null);
+            _httpRequestMessageHelper.GetTouchpointId(_request).Returns((string)null);
 
             // Act
             var result = await RunFunction(ValidCustomerId, ValidInteractionId, ValidActionPlanId);
