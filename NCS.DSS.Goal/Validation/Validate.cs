@@ -30,6 +30,11 @@ namespace NCS.DSS.Goal.Validation
                     results.Add(new ValidationResult("Goal Summary is a required field", new[] { "GoalSummary" }));
             }
 
+            if (goalResource.DateGoalCaptured.HasValue && 
+                goalResource.DateGoalShouldBeCompletedBy.HasValue &&
+                goalResource.DateGoalCaptured.Value > goalResource.DateGoalShouldBeCompletedBy.Value)
+                results.Add(new ValidationResult("Date Goal Captured must be less than Date Goal Should Be Completed By", new[] { "DateGoalCaptured" }));
+            
             if (goalResource.DateGoalCaptured.HasValue && goalResource.DateGoalCaptured.Value > DateTime.UtcNow)
                 results.Add(new ValidationResult("Date Goal Captured must be less the current date/time", new[] { "DateGoalCaptured" }));
 
