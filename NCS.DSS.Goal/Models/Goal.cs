@@ -12,12 +12,10 @@ namespace NCS.DSS.Goal.Models
         [Newtonsoft.Json.JsonProperty(PropertyName = "id")]
         public Guid? GoalId { get; set; }
 
-        [Required]
         [Display(Description = "Unique identifier for a subscription record. ")]
         [Example(Description = "b8592ff8-af97-49ad-9fb2-e5c3c717fd85")]
         public Guid? CustomerId { get; set; }
 
-        [Required]
         [Display(Description = "Unique identifier for the customers goal plan.")]
         [Example(Description = "2730af9c-fc34-4c2b-a905-c4b584b0f379")]
         public Guid? ActionPlanId { get; set; }
@@ -62,13 +60,10 @@ namespace NCS.DSS.Goal.Models
         [StringLength(10, MinimumLength = 10)]
         [Display(Description = "Identifier of the touchpoint who made the last change to the record")]
         [Example(Description = "0000000001")]
-
         public string LastModifiedBy { get; set; }
         
         public void SetDefaultValues()
         {
-            GoalId = Guid.NewGuid();
-
             if (!LastModifiedDate.HasValue)
                 LastModifiedDate = DateTime.UtcNow;
 
@@ -77,6 +72,14 @@ namespace NCS.DSS.Goal.Models
 
             if (GoalStatus == null)
                 GoalStatus = ReferenceData.GoalStatus.NoLongerRelevant;
+        }
+
+        public void SetIds(Guid customerId, Guid actionPlanId, string touchpointId)
+        {
+            GoalId = Guid.NewGuid();
+            CustomerId = customerId;
+            ActionPlanId = actionPlanId;
+            LastModifiedBy = touchpointId;
         }
 
         public void Patch(GoalPatch goalPatch)
