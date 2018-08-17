@@ -91,6 +91,9 @@ namespace NCS.DSS.Goal.PostGoalHttpTrigger.Function
 
             var goal = await goalPostService.CreateAsync(goalRequest);
 
+            if (goal != null)
+                await goalPostService.SendToServiceBusQueueAsync(goal, req.RequestUri.AbsoluteUri);
+
             return goal == null
                 ? HttpResponseMessageHelper.BadRequest(customerGuid)
                 : HttpResponseMessageHelper.Created(JsonHelper.SerializeObject(goal));

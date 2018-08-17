@@ -3,6 +3,7 @@ using System.Net;
 using System.Threading.Tasks;
 using NCS.DSS.Goal.Cosmos.Provider;
 using NCS.DSS.Goal.Models;
+using NCS.DSS.Goal.ServiceBus;
 
 namespace NCS.DSS.Goal.PatchGoalHttpTrigger.Service
 {
@@ -33,5 +34,9 @@ namespace NCS.DSS.Goal.PatchGoalHttpTrigger.Service
             return goal;
         }
 
+        public async Task SendToServiceBusQueueAsync(Models.Goal goal, Guid customerId, string reqUrl)
+        {
+            await ServiceBusClient.SendPatchMessageAsync(goal, customerId, reqUrl);
+        }
     }
 }

@@ -1,7 +1,7 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using System.Threading.Tasks;
 using NCS.DSS.Goal.Cosmos.Provider;
+using NCS.DSS.Goal.ServiceBus;
 
 namespace NCS.DSS.Goal.PostGoalHttpTrigger.Service
 {
@@ -19,6 +19,11 @@ namespace NCS.DSS.Goal.PostGoalHttpTrigger.Service
             var response = await documentDbProvider.CreateGoalAsync(goal);
 
             return response.StatusCode == HttpStatusCode.Created ? (dynamic)response.Resource : null;
+        }
+
+        public async Task SendToServiceBusQueueAsync(Models.Goal goal, string reqUrl)
+        {
+            await ServiceBusClient.SendPostMessageAsync(goal, reqUrl);
         }
     }
 }
