@@ -44,11 +44,18 @@ namespace NCS.DSS.Goal.Models
         public string GoalSummary { get; set; }
 
         [Required]
-        [Display(Description = " GoalType reference data")]
+        [Display(Description = " GoalType reference data   :  " +
+                                    "1 - Skills,  " +
+                                    "2 - Work,  " +
+                                    "3 - Learning,  " +
+                                    "99 - Other" )]
         [Example(Description = "1")]
         public GoalType? GoalType { get; set; }
 
-        [Display(Description = "Goal status reference data")]
+        [Display(Description = "Goal status reference data  :  " + 
+                                    "1 - In progress,  " +
+                                    "2 - Achieved,  " +
+                                    "99 - No longer relevant")]
         [Example(Description = "2")]
         public GoalStatus? GoalStatus { get ; set; }
 
