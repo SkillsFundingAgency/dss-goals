@@ -99,6 +99,9 @@ namespace NCS.DSS.Goal.PatchGoalHttpTrigger.Function
 
             var updatedGoal = await goalPatchService.UpdateAsync(goal, goalPatchRequest);
 
+            if (updatedGoal != null)
+                await goalPatchService.SendToServiceBusQueueAsync(updatedGoal, customerGuid, req.RequestUri.AbsoluteUri);
+
             return updatedGoal == null ?
                 HttpResponseMessageHelper.BadRequest(actionPlanGuid) :
                 HttpResponseMessageHelper.Ok(JsonHelper.SerializeObject(updatedGoal));

@@ -7,5 +7,6 @@ namespace NCS.DSS.Goal.PatchGoalHttpTrigger.Service
     {
         Task<Models.Goal> UpdateAsync(Models.Goal goal, Models.GoalPatch goalPatch);
         Task<Models.Goal> GetGoalForCustomerAsync(Guid customerId, Guid goalId);
+        Task SendToServiceBusQueueAsync(Models.Goal goal, Guid customerId, string reqUrl);
     }
 }
