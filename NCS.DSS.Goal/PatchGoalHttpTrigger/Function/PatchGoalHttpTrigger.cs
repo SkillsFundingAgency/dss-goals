@@ -42,6 +42,13 @@ namespace NCS.DSS.Goal.PatchGoalHttpTrigger.Function
                 return HttpResponseMessageHelper.BadRequest();
             }
 
+            var ApimURL = httpRequestMessageHelper.GetApimURL(req);
+            if (string.IsNullOrEmpty(ApimURL))
+            {
+                log.LogInformation("Unable to locate 'apimurl' in request header");
+                return HttpResponseMessageHelper.BadRequest();
+            }
+
             log.LogInformation("Patch Goal C# HTTP trigger function  processed a request. " + touchpointId);
 
             if (!Guid.TryParse(customerId, out var customerGuid))
@@ -105,7 +112,7 @@ namespace NCS.DSS.Goal.PatchGoalHttpTrigger.Function
             var updatedGoal = await goalPatchService.UpdateAsync(goal, goalPatchRequest);
 
             if (updatedGoal != null)
-                await goalPatchService.SendToServiceBusQueueAsync(updatedGoal, customerGuid, req.RequestUri.AbsoluteUri);
+                await goalPatchService.SendToServiceBusQueueAsync(updatedGoal, customerGuid, ApimURL);
 
             return updatedGoal == null ?
                 HttpResponseMessageHelper.BadRequest(actionPlanGuid) :

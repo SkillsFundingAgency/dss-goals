@@ -42,6 +42,13 @@ namespace NCS.DSS.Goal.PostGoalHttpTrigger.Function
                 return HttpResponseMessageHelper.BadRequest();
             }
 
+            var ApimURL = httpRequestMessageHelper.GetApimURL(req);
+            if (string.IsNullOrEmpty(ApimURL))
+            {
+                log.LogInformation("Unable to locate 'apimurl' in request header");
+                return HttpResponseMessageHelper.BadRequest();
+            }
+
             log.LogInformation("Post Goal C# HTTP trigger function  processed a request. " + touchpointId);
 
             if (!Guid.TryParse(customerId, out var customerGuid))
@@ -97,7 +104,7 @@ namespace NCS.DSS.Goal.PostGoalHttpTrigger.Function
             var goal = await goalPostService.CreateAsync(goalRequest);
 
             if (goal != null)
-                await goalPostService.SendToServiceBusQueueAsync(goal, req.RequestUri.AbsoluteUri);
+                await goalPostService.SendToServiceBusQueueAsync(goal, ApimURL);
 
             return goal == null
                 ? HttpResponseMessageHelper.BadRequest(customerGuid)

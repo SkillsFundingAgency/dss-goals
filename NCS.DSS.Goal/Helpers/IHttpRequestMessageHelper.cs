@@ -8,5 +8,6 @@ namespace NCS.DSS.Goal.Helpers
     {
         Task<T> GetGoalFromRequest<T>(HttpRequestMessage req);
         string GetTouchpointId(HttpRequestMessage req);
+        string GetApimURL(HttpRequestMessage req);
     }
 }
