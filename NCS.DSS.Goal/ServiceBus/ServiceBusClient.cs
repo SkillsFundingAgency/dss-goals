@@ -27,7 +27,7 @@ namespace NCS.DSS.Goal.ServiceBus
                 TitleMessage = "New Goal record {" + goal.GoalId + "} added at " + DateTime.UtcNow,
                 CustomerGuid = goal.CustomerId,
                 LastModifiedDate = goal.LastModifiedDate,
-                URL = reqUrl,
+                URL = reqUrl + goal.GoalId,
                 IsNewCustomer = false,
                 TouchpointId = goal.LastModifiedBy
             };
