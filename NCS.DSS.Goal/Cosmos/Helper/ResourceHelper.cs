@@ -6,10 +6,10 @@ namespace NCS.DSS.Goal.Cosmos.Helper
 {
     public class ResourceHelper : IResourceHelper
     {
-        public bool DoesCustomerExist(Guid customerId)
+        public async Task<bool> DoesCustomerExist(Guid customerId)
         {
             var documentDbProvider = new DocumentDBProvider();
-            var doesCustomerExist = documentDbProvider.DoesCustomerResourceExist(customerId);
+            var doesCustomerExist = await documentDbProvider.DoesCustomerResourceExist(customerId);
 
             return doesCustomerExist;
         }
@@ -22,18 +22,18 @@ namespace NCS.DSS.Goal.Cosmos.Helper
             return isCustomerReadOnly;
         }
 
-        public bool DoesInteractionExist(Guid interactionId)
+        public async Task<bool> DoesInteractionExist(Guid interactionId)
         {
             var documentDbProvider = new DocumentDBProvider();
-            var doesIntergoalExist = documentDbProvider.DoesInteractionResourceExist(interactionId);
+            var doesIntergoalExist = await documentDbProvider.DoesInteractionResourceExist(interactionId);
 
             return doesIntergoalExist;
         }
 
-        public bool DoesActionPlanExist(Guid actionPlanId)
+        public async Task<bool> DoesActionPlanExist(Guid actionPlanId)
         {
             var documentDbProvider = new DocumentDBProvider();
-            var doesActionPlanExist = documentDbProvider.DoesActionPlanResourceExist(actionPlanId);
+            var doesActionPlanExist = await documentDbProvider.DoesActionPlanResourceExist(actionPlanId);
 
             return doesActionPlanExist;
         }
