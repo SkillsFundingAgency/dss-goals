@@ -53,6 +53,7 @@ namespace NCS.DSS.Goal.Tests
             _validate = Substitute.For<IValidate>();
             _postGoalHttpTriggerService = Substitute.For<IPostGoalHttpTriggerService>();
             _httpRequestMessageHelper.GetTouchpointId(_request).Returns("0000000001");
+            _httpRequestMessageHelper.GetApimURL(_request).Returns("http://localhost:7071/");
         }
 
         [Test]

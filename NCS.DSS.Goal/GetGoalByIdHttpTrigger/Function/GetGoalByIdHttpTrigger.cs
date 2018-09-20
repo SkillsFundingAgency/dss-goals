@@ -47,17 +47,17 @@ namespace NCS.DSS.Goal.GetGoalByIdHttpTrigger.Function
             if (!Guid.TryParse(goalId, out var goalGuid))
                 return HttpResponseMessageHelper.BadRequest(goalGuid);
 
-            var doesCustomerExist = resourceHelper.DoesCustomerExist(customerGuid);
+            var doesCustomerExist = await resourceHelper.DoesCustomerExist(customerGuid);
 
             if (!doesCustomerExist)
                 return HttpResponseMessageHelper.NoContent(customerGuid);
 
-            var doesInteractionExist = resourceHelper.DoesInteractionExist(interactionGuid);
+            var doesInteractionExist = await resourceHelper.DoesInteractionExist(interactionGuid);
 
             if (!doesInteractionExist)
                 return HttpResponseMessageHelper.NoContent(interactionGuid);
 
-            var doesActionPlanExist = resourceHelper.DoesActionPlanExist(actionPlanGuid);
+            var doesActionPlanExist = await resourceHelper.DoesActionPlanExist(actionPlanGuid);
 
             if (!doesActionPlanExist)
                 return HttpResponseMessageHelper.NoContent(actionPlanGuid);
