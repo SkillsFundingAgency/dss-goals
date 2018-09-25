@@ -10,7 +10,7 @@ namespace NCS.DSS.Goal.Cosmos.Provider
     {
         Task<bool> DoesCustomerResourceExist(Guid customerId);
         bool DoesInteractionExistAndBelongToCustomer(Guid interactionId, Guid customerId);
-        bool DoesActionPlanExistAndBelongToCustomer(Guid actionPlanId, Guid customerId);
+        bool DoesActionPlanExistAndBelongToCustomer(Guid actionPlanId, Guid interactionId, Guid customerId);
         Task<bool> DoesCustomerHaveATerminationDate(Guid customerId);
         Task<List<Models.Goal>> GetGoalsForCustomerAsync(Guid customerId);
         Task<Models.Goal> GetGoalForCustomerAsync(Guid customerId, Guid goalId);

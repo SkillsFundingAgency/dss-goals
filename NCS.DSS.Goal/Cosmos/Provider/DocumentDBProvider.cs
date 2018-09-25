@@ -48,7 +48,10 @@ namespace NCS.DSS.Goal.Cosmos.Provider
             {
                 var query = client.CreateDocumentQuery<long>(collectionUri, new SqlQuerySpec()
                 {
-                    QueryText = "SELECT VALUE COUNT(1) FROM interactions i WHERE i.id = @interactionId AND i.CustomerId = @customerId",
+                    QueryText = "SELECT VALUE COUNT(1) FROM interactions i " +
+                                "WHERE i.id = @interactionId " +
+                                "AND i.CustomerId = @customerId",
+
                     Parameters = new SqlParameterCollection()
                     {
                         new SqlParameter("@interactionId", interactionId),
@@ -65,7 +68,7 @@ namespace NCS.DSS.Goal.Cosmos.Provider
            
         }
 
-        public bool DoesActionPlanExistAndBelongToCustomer(Guid actionPlanId, Guid customerId)
+        public bool DoesActionPlanExistAndBelongToCustomer(Guid actionPlanId, Guid interactionId, Guid customerId)
         {
             var collectionUri = DocumentDBHelper.CreateActionPlanDocumentCollectionUri();
 
@@ -78,10 +81,15 @@ namespace NCS.DSS.Goal.Cosmos.Provider
             {
                 var query = client.CreateDocumentQuery<long>(collectionUri, new SqlQuerySpec()
                 {
-                    QueryText = "SELECT VALUE COUNT(1) FROM actionplans a WHERE a.id = @actionPlanId AND a.CustomerId = @customerId",
+                    QueryText = "SELECT VALUE COUNT(1) FROM actionplans a " +
+                                "WHERE a.id = @actionPlanId " +
+                                "AND a.InteractionId = @interactionId " +
+                                "AND a.CustomerId = @customerId",
+
                     Parameters = new SqlParameterCollection()
                     {
                         new SqlParameter("@actionPlanId", actionPlanId),
+                        new SqlParameter("@interactionId", interactionId),
                         new SqlParameter("@customerId", customerId)
                     }
                 }).AsEnumerable().FirstOrDefault();

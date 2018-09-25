@@ -57,7 +57,7 @@ namespace NCS.DSS.Goal.GetGoalByIdHttpTrigger.Function
             if (!doesInteractionExist)
                 return HttpResponseMessageHelper.NoContent(interactionGuid);
 
-            var doesActionPlanExist = resourceHelper.DoesActionPlanExistAndBelongToCustomer(actionPlanGuid, customerGuid);
+            var doesActionPlanExist = resourceHelper.DoesActionPlanExistAndBelongToCustomer(actionPlanGuid, interactionGuid, customerGuid);
 
             if (!doesActionPlanExist)
                 return HttpResponseMessageHelper.NoContent(actionPlanGuid);

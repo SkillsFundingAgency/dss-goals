@@ -30,10 +30,10 @@ namespace NCS.DSS.Goal.Cosmos.Helper
             return doesInteractionExist;
         }
 
-        public bool DoesActionPlanExistAndBelongToCustomer(Guid actionPlanId, Guid customerId)
+        public bool DoesActionPlanExistAndBelongToCustomer(Guid actionPlanId, Guid interactionId, Guid customerId)
         {
             var documentDbProvider = new DocumentDBProvider();
-            var doesActionPlanExist = documentDbProvider.DoesActionPlanExistAndBelongToCustomer(actionPlanId, customerId);
+            var doesActionPlanExist = documentDbProvider.DoesActionPlanExistAndBelongToCustomer(actionPlanId, interactionId, customerId);
 
             return doesActionPlanExist;
         }
