@@ -52,12 +52,12 @@ namespace NCS.DSS.Goal.GetGoalByIdHttpTrigger.Function
             if (!doesCustomerExist)
                 return HttpResponseMessageHelper.NoContent(customerGuid);
 
-            var doesInteractionExist = await resourceHelper.DoesInteractionExist(interactionGuid);
+            var doesInteractionExist = resourceHelper.DoesInteractionExistAndBelongToCustomer(interactionGuid, customerGuid);
 
             if (!doesInteractionExist)
                 return HttpResponseMessageHelper.NoContent(interactionGuid);
 
-            var doesActionPlanExist = await resourceHelper.DoesActionPlanExist(actionPlanGuid);
+            var doesActionPlanExist = resourceHelper.DoesActionPlanExistAndBelongToCustomer(actionPlanGuid, customerGuid);
 
             if (!doesActionPlanExist)
                 return HttpResponseMessageHelper.NoContent(actionPlanGuid);
