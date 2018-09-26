@@ -111,7 +111,7 @@ namespace NCS.DSS.Goal.Tests
         public async Task GetGoalHttpTrigger_ReturnsStatusCodeNoContent_WhenInteractionDoesNotExist()
         {
             _resourceHelper.DoesCustomerExist(Arg.Any<Guid>()).Returns(true);
-            _resourceHelper.DoesInteractionExist(Arg.Any<Guid>()).Returns(false);
+            _resourceHelper.DoesInteractionExistAndBelongToCustomer(Arg.Any<Guid>(), Arg.Any<Guid>()).Returns(false);
 
             // Act
             var result = await RunFunction(ValidCustomerId, ValidInteractionId, ValidActionPlanId);
@@ -126,8 +126,8 @@ namespace NCS.DSS.Goal.Tests
         public async Task GetGoalHttpTrigger_ReturnsStatusCodeNoContent_WhenActionPlanDoesNotExist()
         {
             _resourceHelper.DoesCustomerExist(Arg.Any<Guid>()).Returns(true);
-            _resourceHelper.DoesInteractionExist(Arg.Any<Guid>()).Returns(true);
-            _resourceHelper.DoesActionPlanExist(Arg.Any<Guid>()).Returns(false);
+            _resourceHelper.DoesInteractionExistAndBelongToCustomer(Arg.Any<Guid>(), Arg.Any<Guid>()).Returns(true);
+            _resourceHelper.DoesActionPlanExistAndBelongToCustomer(Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<Guid>()).Returns(false);
 
             _getGoalHttpTriggerService.GetGoalsAsync(Arg.Any<Guid>()).Returns(Task.FromResult<List<Models.Goal>>(null).Result);
 
@@ -143,8 +143,8 @@ namespace NCS.DSS.Goal.Tests
         public async Task GetGoalHttpTrigger_ReturnsStatusCodeOk_WhenGoalDoesNotExists()
         {
             _resourceHelper.DoesCustomerExist(Arg.Any<Guid>()).Returns(true);
-            _resourceHelper.DoesInteractionExist(Arg.Any<Guid>()).Returns(true);
-            _resourceHelper.DoesActionPlanExist(Arg.Any<Guid>()).Returns(true);
+            _resourceHelper.DoesInteractionExistAndBelongToCustomer(Arg.Any<Guid>(), Arg.Any<Guid>()).Returns(true);
+            _resourceHelper.DoesActionPlanExistAndBelongToCustomer(Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<Guid>()).Returns(true);
 
             _getGoalHttpTriggerService.GetGoalsAsync(Arg.Any<Guid>()).Returns(Task.FromResult<List<Models.Goal>>(null).Result);
 
@@ -160,8 +160,8 @@ namespace NCS.DSS.Goal.Tests
         public async Task GetGoalHttpTrigger_ReturnsStatusCodeOk_WhenGoalExists()
         {
             _resourceHelper.DoesCustomerExist(Arg.Any<Guid>()).Returns(true);
-            _resourceHelper.DoesInteractionExist(Arg.Any<Guid>()).Returns(true);
-            _resourceHelper.DoesActionPlanExist(Arg.Any<Guid>()).Returns(true);
+            _resourceHelper.DoesInteractionExistAndBelongToCustomer(Arg.Any<Guid>(), Arg.Any<Guid>()).Returns(true);
+            _resourceHelper.DoesActionPlanExistAndBelongToCustomer(Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<Guid>()).Returns(true);
 
             var goals = new List<Models.Goal>();
             _getGoalHttpTriggerService.GetGoalsAsync(Arg.Any<Guid>()).Returns(Task.FromResult(goals).Result);

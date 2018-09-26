@@ -94,12 +94,12 @@ namespace NCS.DSS.Goal.PatchGoalHttpTrigger.Function
             if (isCustomerReadOnly)
                 return HttpResponseMessageHelper.Forbidden(customerGuid);
 
-            var doesInteractionExist = await resourceHelper.DoesInteractionExist(interactionGuid);
+            var doesInteractionExist = resourceHelper.DoesInteractionExistAndBelongToCustomer(interactionGuid, customerGuid);
 
             if (!doesInteractionExist)
                 return HttpResponseMessageHelper.NoContent(interactionGuid);
 
-            var doesActionPlanExist = await resourceHelper.DoesActionPlanExist(actionPlanGuid);
+            var doesActionPlanExist = resourceHelper.DoesActionPlanExistAndBelongToCustomer(actionPlanGuid, interactionGuid, customerGuid);
 
             if (!doesActionPlanExist)
                 return HttpResponseMessageHelper.NoContent(actionPlanGuid);

@@ -195,7 +195,7 @@ namespace NCS.DSS.Goal.Tests
             _httpRequestMessageHelper.GetGoalFromRequest<GoalPatch>(_request).Returns(Task.FromResult(_goalPatch).Result);
 
             _resourceHelper.DoesCustomerExist(Arg.Any<Guid>()).Returns(true);
-            _resourceHelper.DoesInteractionExist(Arg.Any<Guid>()).Returns(false);
+            _resourceHelper.DoesInteractionExistAndBelongToCustomer(Arg.Any<Guid>(), Arg.Any<Guid>()).Returns(false);
 
             // Act
             var result = await RunFunction(ValidCustomerId, ValidInteractionId, ValidGoalId, ValidActionPlanId);
@@ -211,8 +211,8 @@ namespace NCS.DSS.Goal.Tests
             _httpRequestMessageHelper.GetGoalFromRequest<GoalPatch>(_request).Returns(Task.FromResult(_goalPatch).Result);
 
             _resourceHelper.DoesCustomerExist(Arg.Any<Guid>()).Returns(true);
-            _resourceHelper.DoesInteractionExist(Arg.Any<Guid>()).Returns(true);
-            _resourceHelper.DoesActionPlanExist(Arg.Any<Guid>()).Returns(false);
+            _resourceHelper.DoesInteractionExistAndBelongToCustomer(Arg.Any<Guid>(), Arg.Any<Guid>()).Returns(true);
+            _resourceHelper.DoesActionPlanExistAndBelongToCustomer(Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<Guid>()).Returns(false);
 
             _patchGoalHttpTriggerService.GetGoalForCustomerAsync(Arg.Any<Guid>(), Arg.Any<Guid>()).Returns(Task.FromResult<Models.Goal>(null).Result);
 
@@ -230,8 +230,8 @@ namespace NCS.DSS.Goal.Tests
             _httpRequestMessageHelper.GetGoalFromRequest<GoalPatch>(_request).Returns(Task.FromResult(_goalPatch).Result);
 
             _resourceHelper.DoesCustomerExist(Arg.Any<Guid>()).ReturnsForAnyArgs(true);
-            _resourceHelper.DoesInteractionExist(Arg.Any<Guid>()).Returns(true);
-            _resourceHelper.DoesActionPlanExist(Arg.Any<Guid>()).Returns(true);
+            _resourceHelper.DoesInteractionExistAndBelongToCustomer(Arg.Any<Guid>(), Arg.Any<Guid>()).Returns(true);
+            _resourceHelper.DoesActionPlanExistAndBelongToCustomer(Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<Guid>()).Returns(true);
 
             _patchGoalHttpTriggerService.GetGoalForCustomerAsync(Arg.Any<Guid>(), Arg.Any<Guid>()).Returns(Task.FromResult(_goal).Result);
 
@@ -250,8 +250,8 @@ namespace NCS.DSS.Goal.Tests
             _httpRequestMessageHelper.GetGoalFromRequest<GoalPatch>(_request).Returns(Task.FromResult(_goalPatch).Result);
 
             _resourceHelper.DoesCustomerExist(Arg.Any<Guid>()).ReturnsForAnyArgs(true);
-            _resourceHelper.DoesInteractionExist(Arg.Any<Guid>()).Returns(true);
-            _resourceHelper.DoesActionPlanExist(Arg.Any<Guid>()).Returns(true);
+            _resourceHelper.DoesInteractionExistAndBelongToCustomer(Arg.Any<Guid>(), Arg.Any<Guid>()).Returns(true);
+            _resourceHelper.DoesActionPlanExistAndBelongToCustomer(Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<Guid>()).Returns(true);
 
             _patchGoalHttpTriggerService.GetGoalForCustomerAsync(Arg.Any<Guid>(), Arg.Any<Guid>()).Returns(Task.FromResult(_goal).Result);
 
