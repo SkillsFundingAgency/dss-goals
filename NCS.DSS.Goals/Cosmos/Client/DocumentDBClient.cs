@@ -1,0 +1,22 @@
+﻿using System;
+using Microsoft.Azure.Documents.Client;
+
+namespace NCS.DSS.Goals.Cosmos.Client
+{
+    public static class DocumentDBClient
+    {
+        private static DocumentClient _documentClient;
+
+        public static DocumentClient CreateDocumentClient()
+        {
+            if (_documentClient != null)
+                return _documentClient;
+
+            _documentClient = new DocumentClient(new Uri(
+                Environment.GetEnvironmentVariable("Endpoint")),
+                Environment.GetEnvironmentVariable("Key"));
+
+            return _documentClient;
+        }
+    }
+}
