@@ -32,6 +32,12 @@
     "sharedAppServicePlanResourceGroup": {
       "type": "string"
     },
+    "storageAccountName": {
+      "type": "string"
+    },
+    "storageAccountKey": {
+      "type": "string"
+    },
     "templateBaseUrl": {
       "type": "string"
     }
@@ -78,6 +84,12 @@
                 },
                 "serviceBusQueueName": {
                   "value": "[parameters('serviceBusQueueName')]"
+                },
+                "storageAccountName": {
+                  "value": "[parameters('storageAccountName')]"
+                },
+                "storageAccountKey": {
+                  "value": "[parameters('storageAccountKey')]"
                 }
               }
             },
