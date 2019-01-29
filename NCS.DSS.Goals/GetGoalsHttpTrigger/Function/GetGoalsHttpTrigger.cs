@@ -37,6 +37,8 @@ namespace NCS.DSS.Goals.GetGoalsHttpTrigger.Function
             [Inject]IJsonHelper jsonHelper)
         {
 
+
+
             Models.Goal testGoal = new Models.Goal
             {
                 GoalId = Guid.Parse("01cda95f-9a4e-41fa-aee3-10c3e55ad94a"),
@@ -53,6 +55,9 @@ namespace NCS.DSS.Goals.GetGoalsHttpTrigger.Function
                 LastModifiedBy = "Example Last Modified By",
                 LastModifiedTouchpointId = "0000000010"
             };
+
+
+
 
             return httpResponseMessageHelper.Ok(jsonHelper.SerializeObjectAndRenameIdProperty(testGoal, "id", "GoalId"));
 
