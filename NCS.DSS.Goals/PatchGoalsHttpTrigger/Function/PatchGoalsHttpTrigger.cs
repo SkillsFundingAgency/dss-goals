@@ -42,9 +42,26 @@ namespace NCS.DSS.Goals.PatchGoalsHttpTrigger.Function
             [Inject]IJsonHelper jsonHelper)
         {
 
-            return httpResponseMessageHelper.Ok("Successfully updated Goals record!");
-            
-            
+            Models.Goal testGoal = new Models.Goal
+            {
+                GoalId = Guid.Parse("01cda95f-9a4e-41fa-aee3-10c3e55ad94a"),
+                CustomerId = Guid.Parse("cca80ff0-23c2-45ff-b82f-47947ec8b783"),
+                SessionId = Guid.Parse("f0ec575f-5782-4cca-8eac-62644ae59786"),
+                ActionPlanId = Guid.Parse("af171e23-fbd0-41d0-bd66-886ae60e9b21"),
+                DateGoalAchieved = DateTime.Parse("01/06/2018"),
+                DateGoalCaptured = DateTime.Parse("01/02/2018"),
+                DateGoalShouldBeCompletedBy = DateTime.Parse("01/05/2018"),
+                LastModifiedDate = DateTime.Parse("01/08/2018"),
+                GoalStatus = ReferenceData.GoalStatus.Achieved,
+                GoalType = ReferenceData.GoalType.Work,
+                GoalSummary = "Summary of Goal in Text form",
+                LastModifiedBy = "Example Last Modified By",
+                LastModifiedTouchpointId = "0000000010"
+            };
+
+            return httpResponseMessageHelper.Ok(jsonHelper.SerializeObjectAndRenameIdProperty(testGoal, "id", "OutcomeId"));
+
+
             //var touchpointId = httpRequestHelper.GetDssTouchpointId(req);
             //if (string.IsNullOrEmpty(touchpointId))
             //{
