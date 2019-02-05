@@ -9,13 +9,15 @@ namespace NCS.DSS.Goals.Cosmos.Provider
     public interface IDocumentDBProvider
     {
         Task<bool> DoesCustomerResourceExist(Guid customerId);
-        bool DoesInteractionResourceExistAndBelongToCustomer(Guid interactionId, Guid customerId);
+        bool DoesSessionResourceExistAndBelongToCustomer(Guid sessionId, Guid interactionId, Guid customerId);
         bool DoesActionPlanResourceExistAndBelongToCustomer(Guid actionPlanId, Guid interactionId, Guid customerId);
         Task<bool> DoesCustomerHaveATerminationDate(Guid customerId);
         Task<List<Models.Goal>> GetGoalsForCustomerAsync(Guid customerId);
-        Task<Models.Goal> GetGoalsForCustomerAsync(Guid customerId, Guid interactionsId, Guid actionplanId, Guid outcomeId);
+        Task<Models.Goal> GetGoalsForCustomerAsync(Guid customerId, Guid goalId);
+
+        Task<string> GetGoalForCustomerToUpdateAsync(Guid customerId, Guid goalId);
         Task<ResourceResponse<Document>> CreateGoalsAsync(Models.Goal Goals);
-        Task<ResourceResponse<Document>> UpdateGoalsAsync(Models.Goal Goals);
+        Task<ResourceResponse<Document>> UpdateGoalsAsync(string Goals, Guid goalId);
         Task<bool> DeleteAsync(Guid OutcomeId);
     }
 }

@@ -4,34 +4,50 @@ using System.Threading.Tasks;
 using NCS.DSS.Goals.Cosmos.Provider;
 using NCS.DSS.Goals.Models;
 using NCS.DSS.Goals.ServiceBus;
+using Newtonsoft.Json;
 
 namespace NCS.DSS.Goals.PatchGoalsHttpTrigger.Service
 {
     public class PatchGoalsHttpTriggerService : IPatchGoalsHttpTriggerService
     {
-        public async Task<Models.Goal> UpdateAsync(Models.Goal Goals, GoalPatch GoalsPatch)
+
+        private readonly IGoalsPatchService _goalPatchService;
+        private readonly IDocumentDBProvider _documentDbProvider;
+
+        public PatchGoalsHttpTriggerService(IGoalsPatchService goalsPatchService, IDocumentDBProvider documentDbProvider)
         {
-            if (Goals == null)
-                return null;
-
-            GoalsPatch.SetDefaultValues();
-
-            Goals.Patch(GoalsPatch);
-
-            var documentDbProvider = new DocumentDBProvider();
-            var response = await documentDbProvider.UpdateGoalsAsync(Goals);
-
-            var responseStatusCode = response.StatusCode;
-
-            return responseStatusCode == HttpStatusCode.OK ? Goals : null;
+            _goalPatchService = goalsPatchService;
+            _documentDbProvider = documentDbProvider;
         }
 
-        public async Task<Models.Goal> GetGoalsForCustomerAsync(Guid customerId, Guid interactionsId, Guid actionplanId, Guid OutcomeId)
+        public async Task<Models.Goal> UpdateAsync(string goalJson, GoalPatch goalPatch, Guid goalId)
         {
-            var documentDbProvider = new DocumentDBProvider();
-            var Goals = await documentDbProvider.GetGoalsForCustomerAsync(customerId, interactionsId, actionplanId, OutcomeId);
+            if (string.IsNullOrEmpty(goalJson))
+                return null;
 
-            return Goals;
+            if (goalPatch == null)
+                return null;
+
+            goalPatch.SetDefaultValues();
+
+            var updatedJson = _goalPatchService.Patch(goalJson, goalPatch);
+
+            if (string.IsNullOrEmpty(updatedJson))
+                return null;
+
+            var response = await _documentDbProvider.UpdateGoalsAsync(updatedJson, goalId);
+
+            var responseStatusCode = response?.StatusCode;
+
+            return responseStatusCode == HttpStatusCode.OK ? JsonConvert.DeserializeObject<Goal>(updatedJson) : null;
+        }
+
+
+        public async Task<string> GetGoalForCustomerAsync(Guid customerId, Guid goalId)
+        {
+            var goal = await _documentDbProvider.GetGoalForCustomerToUpdateAsync(customerId, goalId);
+
+            return goal;
         }
 
         public async Task SendToServiceBusQueueAsync(Models.Goal Goals, Guid customerId, string reqUrl)

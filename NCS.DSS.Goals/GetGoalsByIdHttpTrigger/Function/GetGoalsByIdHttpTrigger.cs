@@ -36,69 +36,81 @@ namespace NCS.DSS.Goals.GetGoalsByIdHttpTrigger.Function
             [Inject]IHttpResponseMessageHelper httpResponseMessageHelper,
             [Inject]IJsonHelper jsonHelper)
         {
+            loggerHelper.LogMethodEnter(log);
 
-            Models.Goal testGoal = new Models.Goal
+            var correlationId = httpRequestHelper.GetDssCorrelationId(req);
+            if (string.IsNullOrEmpty(correlationId))
             {
-                GoalId = Guid.Parse("01cda95f-9a4e-41fa-aee3-10c3e55ad94a"),
-                CustomerId = Guid.Parse("cca80ff0-23c2-45ff-b82f-47947ec8b783"),
-                SessionId = Guid.Parse("f0ec575f-5782-4cca-8eac-62644ae59786"),
-                ActionPlanId = Guid.Parse("af171e23-fbd0-41d0-bd66-886ae60e9b21"),
-                DateGoalAchieved = DateTime.Parse("01/06/2018"),
-                DateGoalCaptured = DateTime.Parse("01/02/2018"),
-                DateGoalShouldBeCompletedBy = DateTime.Parse("01/05/2018"),
-                LastModifiedDate = DateTime.Parse("01/08/2018"),
-                GoalStatus = ReferenceData.GoalStatus.Achieved,
-                GoalType = ReferenceData.GoalType.Work,
-                GoalSummary = "Summary of Goal in Text form",
-                LastModifiedBy = "Example Last Modified By",
-                LastModifiedTouchpointId = "0000000010"
-            };
+                log.LogInformation("Unable to locate 'DssCorrelationId' in request header");
+            }
 
-            return httpResponseMessageHelper.Ok(jsonHelper.SerializeObjectAndRenameIdProperty(testGoal, "id", "GoalId"));
+            if (!Guid.TryParse(correlationId, out var correlationGuid))
+            {
+                log.LogInformation("Unable to parse 'DssCorrelationId' to a Guid");
+                correlationGuid = Guid.NewGuid();
+            }
 
+            var touchpointId = httpRequestHelper.GetDssTouchpointId(req);
+            if (string.IsNullOrEmpty(touchpointId))
+            {
+                loggerHelper.LogInformationMessage(log, correlationGuid, "Unable to locate 'TouchpointId' in request header");
+                return httpResponseMessageHelper.BadRequest();
+            }
 
-            //var touchpointId = httpRequestHelper.GetDssTouchpointId(req);
-            //if (string.IsNullOrEmpty(touchpointId))
-            //{
-            //    log.LogInformation("Unable to locate 'APIM-TouchpointId' in request header.");
-            //    return httpResponseMessageHelper.BadRequest();
-            //}
+            loggerHelper.LogInformationMessage(log, correlationGuid,
+                string.Format("Get Action Plan By Id C# HTTP trigger function  processed a request. By Touchpoint: {0}",
+                    touchpointId));
 
-            //log.LogInformation("Get Goals By Id C# HTTP trigger function  processed a request. " + touchpointId);
+            if (!Guid.TryParse(customerId, out var customerGuid))
+            {
+                loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Unable to parse 'customerId' to a Guid: {0}", customerId));
+                return httpResponseMessageHelper.BadRequest(customerGuid);
+            }
 
-            //if (!Guid.TryParse(customerId, out var customerGuid))
-            //    return httpResponseMessageHelper.BadRequest(customerGuid);
+            if (!Guid.TryParse(interactionId, out var interactionGuid))
+            {
+                loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Unable to parse 'interactionId' to a Guid: {0}", interactionId));
+                return httpResponseMessageHelper.BadRequest(interactionGuid);
+            }
 
-            //if (!Guid.TryParse(interactionId, out var interactionGuid))
-            //    return httpResponseMessageHelper.BadRequest(interactionGuid);
+            if (!Guid.TryParse(sessionId, out var sessionGuid))
+            {
+                loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Unable to parse 'sessionId' to a Guid: {0}", sessionGuid));
+                return httpResponseMessageHelper.BadRequest(sessionGuid);
+            }
 
-            //if (!Guid.TryParse(actionplanId, out var actionPlanGuid))
-            //    return httpResponseMessageHelper.BadRequest(actionPlanGuid);
+            if (!Guid.TryParse(GoalId, out var goalGuid))
+            {
+                loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Unable to parse 'actionPlanId' to a Guid: {0}", GoalId));
+                return httpResponseMessageHelper.BadRequest(goalGuid);
+            }
 
-            //if (!Guid.TryParse(OutcomeId, out var GoalsGuid))
-            //    return httpResponseMessageHelper.BadRequest(GoalsGuid);
+            loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Attempting to see if customer exists {0}", customerGuid));
+            var doesCustomerExist = await resourceHelper.DoesCustomerExist(customerGuid);
 
-            ////Check customer
-            //var doesCustomerExist = await resourceHelper.DoesCustomerExist(customerGuid);
+            if (!doesCustomerExist)
+            {
+                loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Customer does not exist {0}", customerGuid));
+                return httpResponseMessageHelper.NoContent(customerGuid);
+            }
 
-            //if (!doesCustomerExist)
-            //    return httpResponseMessageHelper.NoContent(customerGuid);
+            loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Attempting to get Session {0} for customer {1}", sessionGuid, customerGuid));
+            var doesSessionExist = resourceHelper.DoesSessionResourceExistAndBelongToCustomer(sessionGuid, interactionGuid, customerGuid);
 
-            //var doesInteractionExist = resourceHelper.DoesInteractionResourceExistAndBelongToCustomer(interactionGuid, customerGuid);
+            if (!doesSessionExist)
+            {
+                loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Session does not exist {0}", sessionGuid));
+                return httpResponseMessageHelper.NoContent(sessionGuid);
+            }
 
-            //if (!doesInteractionExist)
-            //    return httpResponseMessageHelper.NoContent(interactionGuid);
+            loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Attempting to get Goal {0} for customer {1}", goalGuid, customerGuid));
+            var goal = await GoalsGetService.GetGoalsForCustomerAsync(customerGuid, goalGuid);
 
-            //var doesActionPlanExist = resourceHelper.DoesActionPlanResourceExistAndBelongToCustomer(actionPlanGuid, interactionGuid, customerGuid);
+            loggerHelper.LogMethodExit(log);
 
-            //if (!doesActionPlanExist)
-            //    return httpResponseMessageHelper.NoContent(actionPlanGuid);
-
-            //var Goals = await GoalsGetService.GetGoalsForCustomerAsync(customerGuid, interactionGuid, actionPlanGuid, GoalsGuid);
-
-            //return Goals == null ?
-            //    httpResponseMessageHelper.NoContent(GoalsGuid) :
-            //    httpResponseMessageHelper.Ok(jsonHelper.SerializeObjectAndRenameIdProperty(Goals, "id", "OutcomeId"));
+            return goal == null ?
+                httpResponseMessageHelper.NoContent(customerGuid) :
+                httpResponseMessageHelper.Ok(jsonHelper.SerializeObjectAndRenameIdProperty(goal, "id", "GoalId"));
 
         }
     }

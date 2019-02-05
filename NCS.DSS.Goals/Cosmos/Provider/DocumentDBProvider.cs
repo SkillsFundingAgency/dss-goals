@@ -8,6 +8,7 @@ using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
 using NCS.DSS.Goals.Cosmos.Client;
 using NCS.DSS.Goals.Cosmos.Helper;
+using Newtonsoft.Json.Linq;
 
 namespace NCS.DSS.Goals.Cosmos.Provider
 {
@@ -36,9 +37,12 @@ namespace NCS.DSS.Goals.Cosmos.Provider
             return false;
         }
 
-        public bool DoesInteractionResourceExistAndBelongToCustomer(Guid interactionId, Guid customerId)
+
+
+        
+        public bool DoesSessionResourceExistAndBelongToCustomer(Guid sessionId, Guid interactionId, Guid customerId)
         {
-            var collectionUri = DocumentDBHelper.CreateInteractionDocumentCollectionUri();
+            var collectionUri = DocumentDBHelper.CreateSessionDocumentCollectionUri();
 
             var client = DocumentDBClient.CreateDocumentClient();
 
@@ -49,12 +53,14 @@ namespace NCS.DSS.Goals.Cosmos.Provider
             {
                 var query = client.CreateDocumentQuery<long>(collectionUri, new SqlQuerySpec()
                 {
-                    QueryText = "SELECT VALUE COUNT(1) FROM interactions i " +
-                                "WHERE i.id = @interactionId " +
-                                "AND i.CustomerId = @customerId",
+                    QueryText = "SELECT VALUE COUNT(1) FROM sessions s " +
+                                "WHERE s.id = @sessionId " +
+                                "AND s.InteractionId = @interactionId " +
+                                "AND s.CustomerId = @customerId",
 
                     Parameters = new SqlParameterCollection()
                     {
+                        new SqlParameter("@sessionId", sessionId),
                         new SqlParameter("@interactionId", interactionId),
                         new SqlParameter("@customerId", customerId)
                     }
@@ -68,6 +74,8 @@ namespace NCS.DSS.Goals.Cosmos.Provider
             }
 
         }
+
+
 
         public bool DoesActionPlanResourceExistAndBelongToCustomer(Guid actionPlanId, Guid interactionId, Guid customerId)
         {
@@ -127,6 +135,27 @@ namespace NCS.DSS.Goals.Cosmos.Provider
             }
         }
 
+
+        public async Task<string> GetGoalForCustomerToUpdateAsync(Guid customerId, Guid goalId)
+        {
+            var collectionUri = DocumentDBHelper.CreateDocumentCollectionUri();
+
+            var client = DocumentDBClient.CreateDocumentClient();
+
+            var goalForCustomerQuery = client
+                ?.CreateDocumentQuery<Models.Goal>(collectionUri, new FeedOptions { MaxItemCount = 1 })
+                .Where(x => x.CustomerId == customerId && x.GoalId == goalId)
+                .AsDocumentQuery();
+
+            if (goalForCustomerQuery == null)
+                return null;
+
+            var goals = await goalForCustomerQuery.ExecuteNextAsync();
+
+            return goals?.FirstOrDefault()?.ToString();
+        }
+
+
         public async Task<List<Models.Goal>> GetGoalsForCustomerAsync(Guid customerId)
         {
             var collectionUri = DocumentDBHelper.CreateDocumentCollectionUri();
@@ -150,25 +179,23 @@ namespace NCS.DSS.Goals.Cosmos.Provider
             return Goals.Any() ? Goals : null;
         }
 
-        public async Task<Models.Goal> GetGoalsForCustomerAsync(Guid customerId, Guid interactionsId, Guid actionplanId, Guid goalId)
+        public async Task<Models.Goal> GetGoalsForCustomerAsync(Guid customerId, Guid goalId)
         {
             var collectionUri = DocumentDBHelper.CreateDocumentCollectionUri();
 
             var client = DocumentDBClient.CreateDocumentClient();
 
-            var GoalsForCustomerQuery = client
+            var goalForCustomerQuery = client
                 ?.CreateDocumentQuery<Models.Goal>(collectionUri, new FeedOptions { MaxItemCount = 1 })
-                .Where(x => x.CustomerId == customerId && 
-                        x.ActionPlanId == actionplanId && 
-                        x.GoalId == goalId)
+                .Where(x => x.CustomerId == customerId && x.GoalId == goalId)
                 .AsDocumentQuery();
 
-            if (GoalsForCustomerQuery == null)
+            if (goalForCustomerQuery == null)
                 return null;
 
-            var Goals = await GoalsForCustomerQuery.ExecuteNextAsync<Models.Goal>();
+            var goals = await goalForCustomerQuery.ExecuteNextAsync<Models.Goal>();
 
-            return Goals?.FirstOrDefault();
+            return goals?.FirstOrDefault();
         }
 
         public async Task<ResourceResponse<Document>> CreateGoalsAsync(Models.Goal Goals)
@@ -187,16 +214,18 @@ namespace NCS.DSS.Goals.Cosmos.Provider
 
         }
 
-        public async Task<ResourceResponse<Document>> UpdateGoalsAsync(Models.Goal Goals)
+        public async Task<ResourceResponse<Document>> UpdateGoalsAsync(string goalsJson, Guid goalsId)
         {
-            var documentUri = DocumentDBHelper.CreateDocumentUri(Goals.GoalId.GetValueOrDefault());
+            var documentUri = DocumentDBHelper.CreateDocumentUri(goalsId);
 
             var client = DocumentDBClient.CreateDocumentClient();
 
             if (client == null)
                 return null;
 
-            var response = await client.ReplaceDocumentAsync(documentUri, Goals);
+            var content = JObject.Parse(goalsJson);
+
+            var response = await client.ReplaceDocumentAsync(documentUri, content);
 
             return response;
         }

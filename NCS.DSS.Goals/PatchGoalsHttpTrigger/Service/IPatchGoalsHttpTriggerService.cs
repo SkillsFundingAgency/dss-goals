@@ -1,12 +1,15 @@
-﻿using System;
+﻿using NCS.DSS.Goals.Models;
+using System;
 using System.Threading.Tasks;
 
 namespace NCS.DSS.Goals.PatchGoalsHttpTrigger.Service
 {
     public interface IPatchGoalsHttpTriggerService
     {
-        Task<Models.Goal> UpdateAsync(Models.Goal Goals, Models.GoalPatch goalsPatch);
-        Task<Models.Goal> GetGoalsForCustomerAsync(Guid customerId, Guid interactionsId, Guid actionplanId, Guid OutcomeId);
+        Task<Models.Goal> UpdateAsync(string goalJson, GoalPatch goalPatch, Guid goalId);
+
+        Task<string> GetGoalForCustomerAsync(Guid customerId, Guid goalId);
+        
         Task SendToServiceBusQueueAsync(Models.Goal Goals, Guid customerId, string reqUrl);
     }
 }

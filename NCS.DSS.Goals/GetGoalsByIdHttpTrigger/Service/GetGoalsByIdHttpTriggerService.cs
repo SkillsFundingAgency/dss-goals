@@ -6,10 +6,10 @@ namespace NCS.DSS.Goals.GetGoalsByIdHttpTrigger.Service
 {
     public class GetGoalsByIdHttpTriggerService : IGetGoalsByIdHttpTriggerService
     {
-        public async Task<Models.Goal> GetGoalsForCustomerAsync(Guid customerId, Guid interactionId, Guid actionplanId, Guid OutcomeId)
+        public async Task<Models.Goal> GetGoalsForCustomerAsync(Guid customerId, Guid goalGuid)
         {
             var documentDbProvider = new DocumentDBProvider();
-            var Goals = await documentDbProvider.GetGoalsForCustomerAsync(customerId, interactionId, actionplanId, OutcomeId);
+            var Goals = await documentDbProvider.GetGoalsForCustomerAsync(customerId, goalGuid);
 
             return Goals;
         }

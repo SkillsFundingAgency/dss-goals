@@ -64,5 +64,10 @@ namespace NCS.DSS.Goals.Models
             if (!LastModifiedDate.HasValue)
                 LastModifiedDate = DateTime.UtcNow;
         }
+
+        public void SetIds(string touchpointId)
+        {
+            LastModifiedTouchpointId = touchpointId;
+        }
     }
 }

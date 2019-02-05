@@ -22,10 +22,10 @@ namespace NCS.DSS.Goals.Cosmos.Helper
             return isCustomerReadOnly;
         }
 
-        public bool DoesInteractionResourceExistAndBelongToCustomer(Guid interactionId, Guid customerId)
+       public bool DoesSessionResourceExistAndBelongToCustomer(Guid sessionId, Guid interactionId, Guid customerId)
         {
             var documentDbProvider = new DocumentDBProvider();
-            var doesInteractionExist = documentDbProvider.DoesInteractionResourceExistAndBelongToCustomer(interactionId, customerId);
+            var doesInteractionExist = documentDbProvider.DoesSessionResourceExistAndBelongToCustomer(sessionId, interactionId, customerId);
 
             return doesInteractionExist;
         }

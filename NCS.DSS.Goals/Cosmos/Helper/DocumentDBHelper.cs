@@ -14,13 +14,13 @@ namespace NCS.DSS.Goals.Cosmos.Helper
         private static readonly string CustomerDatabaseId = Environment.GetEnvironmentVariable("CustomerDatabaseId");
         private static readonly string CustomerCollectionId = Environment.GetEnvironmentVariable("CustomerCollectionId");
 
-        private static Uri _interactionDocumentCollectionUri;
-        private static readonly string InteractionDatabaseId = Environment.GetEnvironmentVariable("InteractionDatabaseId");
-        private static readonly string InteractionCollectionId = Environment.GetEnvironmentVariable("InteractionCollectionId");
-
         private static Uri _actionplanDocumentCollectionUri;
         private static readonly string ActionPlanDatabaseId = Environment.GetEnvironmentVariable("ActionPlanDatabaseId");
         private static readonly string ActionPlanCollectionId = Environment.GetEnvironmentVariable("ActionPlanCollectionId");
+
+        private static Uri _sessionDocumentCollectionUri;
+        private static readonly string SessionDatabaseId = Environment.GetEnvironmentVariable("SessionDatabaseId");
+        private static readonly string SessionCollectionId = Environment.GetEnvironmentVariable("SessionCollectionId");
 
         public static Uri CreateDocumentCollectionUri()
         {
@@ -59,26 +59,6 @@ namespace NCS.DSS.Goals.Cosmos.Helper
 
         #endregion
 
-        #region InteractionDB
-
-        public static Uri CreateInteractionDocumentCollectionUri()
-        {
-            if (_interactionDocumentCollectionUri != null)
-                return _interactionDocumentCollectionUri;
-
-            _interactionDocumentCollectionUri = UriFactory.CreateDocumentCollectionUri(
-                InteractionDatabaseId, InteractionCollectionId);
-
-            return _interactionDocumentCollectionUri;
-        }
-
-        public static Uri CreateInteractionDocumentUri(Guid interactionId)
-        {
-            return UriFactory.CreateDocumentUri(InteractionDatabaseId, InteractionCollectionId, interactionId.ToString()); ;
-        }
-
-        #endregion
-
         #region ActionPlanDB
 
         public static Uri CreateActionPlanDocumentCollectionUri()
@@ -97,6 +77,22 @@ namespace NCS.DSS.Goals.Cosmos.Helper
         }
         #endregion   
 
+        #region SessionDB
 
+        public static Uri CreateSessionDocumentCollectionUri()
+        {
+            if (_sessionDocumentCollectionUri != null)
+                return _sessionDocumentCollectionUri;
+
+            _sessionDocumentCollectionUri = UriFactory.CreateDocumentCollectionUri(SessionDatabaseId, SessionCollectionId);
+
+            return _sessionDocumentCollectionUri;
+        }
+
+        public static Uri CreateSessionDocumentUri(Guid sessionId)
+        {
+            return UriFactory.CreateDocumentUri(SessionDatabaseId, SessionCollectionId, sessionId.ToString());
+        }
+        #endregion   
     }
 }

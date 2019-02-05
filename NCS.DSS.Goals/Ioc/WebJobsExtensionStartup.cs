@@ -6,6 +6,7 @@ using DFC.Swagger.Standard;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using NCS.DSS.Action.PatchActionsHttpTrigger.Service;
 using NCS.DSS.Goals.Cosmos.Helper;
 using NCS.DSS.Goals.Cosmos.Provider;
 using NCS.DSS.Goals.GetGoalsByIdHttpTrigger.Service;
@@ -33,7 +34,7 @@ namespace NCS.DSS.Goals.Ioc
             builder.Services.AddSingleton<IJsonHelper, JsonHelper>();
             builder.Services.AddSingleton<IDocumentDBProvider, DocumentDBProvider>();
 
-            //builder.Services.AddScoped<IActionPlansPatchService, GoalsPatchService>();
+            builder.Services.AddScoped<IGoalsPatchService, GoalsPatchService>();
             builder.Services.AddScoped<ISwaggerDocumentGenerator, SwaggerDocumentGenerator>();
             builder.Services.AddScoped<IGetGoalsHttpTriggerService, GetGoalsHttpTriggerService>();
             builder.Services.AddScoped<IGetGoalsByIdHttpTriggerService, GetGoalsByIdHttpTriggerService>();
