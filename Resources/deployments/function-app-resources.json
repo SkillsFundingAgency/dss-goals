@@ -98,12 +98,12 @@
               "value": "customers"
             },
             {
-              "name": "InteractionCollectionId",
-              "value": "interactions"
+              "name": "SessionCollectionId",
+              "value": "sessions"
             },
             {
-              "name": "InteractionDatabaseId",
-              "value": "interactions"
+              "name": "SessionDatabaseId",
+              "value": "sessions"
             },
             {
               "name": "ActionPlanCollectionId",
