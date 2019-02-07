@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A26E8080-41F0-4B56-89D6-B32D8FA98C78}</ProjectGuid>
+    <ProjectGuid>{FF3132CB-BA35-416C-A572-E0DD69EBCB33}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>NCS.DSS.ActionPlan.Tests</RootNamespace>
@@ -354,17 +354,30 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FunctionTests\GetGoalByIdHttpTriggerTests.cs" />
+    <Compile Include="FunctionTests\GetActionPlanByIdHttpTriggerTests.cs" />
     <Compile Include="FunctionTests\GetActionPlanHttpTriggerTest.cs" />
     <Compile Include="FunctionTests\PatchActionPlanHttpTriggerTests.cs" />
     <Compile Include="FunctionTests\PostActionPlanHttpTriggerTests.cs" />
+    <Compile Include="ModelTests\ActionPlanModelTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServiceTests\ActionPlanPatchServiceTests.cs" />
+    <Compile Include="ServiceTests\GetActionPlanHttpTriggerServiceTests.cs" />
+    <Compile Include="ServiceTests\GetActionPlanByIdHttpTriggerServiceTests.cs" />
+    <Compile Include="ServiceTests\PostActionPlanHttpTriggerServiceTests.cs" />
+    <Compile Include="ServiceTests\PatchActionPlanHttpTriggerServiceTests.cs" />
+    <Compile Include="ValidationTests\ValidateTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NCS.DSS.ActionPlan\NCS.DSS.ActionPlan.csproj">
+      <Project>{7e947d23-7d97-427d-9d8f-9f49dfcd6495}</Project>
+      <Name>NCS.DSS.ActionPlan</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
