@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Net;
 using System.Threading.Tasks;
-using NCS.DSS.Goals.Cosmos.Provider;
-using NCS.DSS.Goals.Models;
-using NCS.DSS.Goals.ServiceBus;
+using NCS.DSS.Goal.Cosmos.Provider;
+using NCS.DSS.Goal.Models;
+using NCS.DSS.Goal.ServiceBus;
 using Newtonsoft.Json;
 
-namespace NCS.DSS.Goals.PatchGoalsHttpTrigger.Service
+namespace NCS.DSS.Goal.PatchGoalsHttpTrigger.Service
 {
     public class PatchGoalsHttpTriggerService : IPatchGoalsHttpTriggerService
     {
@@ -39,7 +39,7 @@ namespace NCS.DSS.Goals.PatchGoalsHttpTrigger.Service
 
             var responseStatusCode = response?.StatusCode;
 
-            return responseStatusCode == HttpStatusCode.OK ? JsonConvert.DeserializeObject<Goal>(updatedJson) : null;
+            return responseStatusCode == HttpStatusCode.OK ? JsonConvert.DeserializeObject<Models.Goal>(updatedJson) : null;
         }
 
 

@@ -14,12 +14,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
-using NCS.DSS.Goals.Cosmos.Helper;
-using NCS.DSS.Goals.PostGoalsHttpTrigger.Service;
-using NCS.DSS.Goals.Validation;
+using NCS.DSS.Goal.Cosmos.Helper;
+using NCS.DSS.Goal.PostGoalsHttpTrigger.Service;
+using NCS.DSS.Goal.Validation;
 using Newtonsoft.Json;
 
-namespace NCS.DSS.Goals.PostGoalsHttpTrigger.Function
+namespace NCS.DSS.Goal.PostGoalsHttpTrigger.Function
 {
     public static class PostGoalsHttpTrigger
     {

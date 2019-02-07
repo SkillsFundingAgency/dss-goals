@@ -1,9 +1,9 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
-using NCS.DSS.Goals.Cosmos.Provider;
-using NCS.DSS.Goals.ServiceBus;
+using NCS.DSS.Goal.Cosmos.Provider;
+using NCS.DSS.Goal.ServiceBus;
 
-namespace NCS.DSS.Goals.PostGoalsHttpTrigger.Service
+namespace NCS.DSS.Goal.PostGoalsHttpTrigger.Service
 {
     public class PostGoalsHttpTriggerService : IPostGoalsHttpTriggerService
     {

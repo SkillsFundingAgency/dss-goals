@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
-using NCS.DSS.Goals.Cosmos.Client;
-using NCS.DSS.Goals.Cosmos.Helper;
+using NCS.DSS.Goal.Cosmos.Client;
+using NCS.DSS.Goal.Cosmos.Helper;
 using Newtonsoft.Json.Linq;
 
-namespace NCS.DSS.Goals.Cosmos.Provider
+namespace NCS.DSS.Goal.Cosmos.Provider
 {
     public class DocumentDBProvider : IDocumentDBProvider
     {

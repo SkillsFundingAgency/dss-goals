@@ -1,6 +1,6 @@
 ﻿using DFC.JSON.Standard;
-using NCS.DSS.Goals.Models;
-using NCS.DSS.Goals.PatchGoalsHttpTrigger.Service;
+using NCS.DSS.Goal.Models;
+using NCS.DSS.Goal.PatchGoalsHttpTrigger.Service;
 using Newtonsoft.Json.Linq;
 
 namespace NCS.DSS.Action.PatchActionsHttpTrigger.Service

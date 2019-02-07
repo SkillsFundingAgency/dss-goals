@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace NCS.DSS.Goals.PostGoalsHttpTrigger.Service
+namespace NCS.DSS.Goal.PostGoalsHttpTrigger.Service
 {
     public interface IPostGoalsHttpTriggerService
     {

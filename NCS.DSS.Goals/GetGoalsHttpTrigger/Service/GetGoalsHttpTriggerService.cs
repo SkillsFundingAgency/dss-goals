@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using NCS.DSS.Goals.Cosmos.Provider;
+using NCS.DSS.Goal.Cosmos.Provider;
 
-namespace NCS.DSS.Goals.GetGoalsHttpTrigger.Service
+namespace NCS.DSS.Goal.GetGoalsHttpTrigger.Service
 {
     public class GetGoalsHttpTriggerService : IGetGoalsHttpTriggerService
     {

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-using NCS.DSS.Goals.Cosmos.Provider;
+using NCS.DSS.Goal.Cosmos.Provider;
 
-namespace NCS.DSS.Goals.Cosmos.Helper
+namespace NCS.DSS.Goal.Cosmos.Helper
 {
     public class ResourceHelper : IResourceHelper
     {

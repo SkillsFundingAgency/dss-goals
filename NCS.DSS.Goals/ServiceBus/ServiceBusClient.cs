@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.Azure.ServiceBus;
 using Newtonsoft.Json;
 
-namespace NCS.DSS.Goals.ServiceBus
+namespace NCS.DSS.Goal.ServiceBus
 {
     public static class ServiceBusClient
     {

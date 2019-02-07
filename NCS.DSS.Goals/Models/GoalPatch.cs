@@ -1,9 +1,9 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using DFC.Swagger.Standard.Annotations;
-using NCS.DSS.Goals.ReferenceData;
+using NCS.DSS.Goal.ReferenceData;
 
-namespace NCS.DSS.Goals.Models
+namespace NCS.DSS.Goal.Models
 {
     public class GoalPatch : IGoal
     {

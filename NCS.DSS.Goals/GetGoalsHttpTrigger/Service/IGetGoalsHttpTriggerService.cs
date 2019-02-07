@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace NCS.DSS.Goals.GetGoalsHttpTrigger.Service
+namespace NCS.DSS.Goal.GetGoalsHttpTrigger.Service
 {
     public interface IGetGoalsHttpTriggerService
     {
