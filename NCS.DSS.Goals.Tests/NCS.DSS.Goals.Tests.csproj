@@ -366,12 +366,6 @@
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\NCS.DSS.Goals\NCS.DSS.Goals.csproj">
-      <Project>{7e947d23-7d97-427d-9d8f-9f49dfcd6495}</Project>
-      <Name>NCS.DSS.ActionPlan</Name>
-    </ProjectReference>
-  </ItemGroup>
   <ItemGroup />
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
