@@ -354,9 +354,6 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FunctionTests\GetActionPlanByIdHttpTriggerTests.cs" />
-    <Compile Include="FunctionTests\GetActionPlanHttpTriggerTest.cs" />
-    <Compile Include="FunctionTests\PatchActionPlanHttpTriggerTests.cs" />
     <Compile Include="FunctionTests\PostActionPlanHttpTriggerTests.cs" />
     <Compile Include="ModelTests\ActionPlanModelTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -374,7 +371,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NCS.DSS.ActionPlan\NCS.DSS.ActionPlan.csproj">
+    <ProjectReference Include="..\NCS.DSS.Goals\NCS.DSS.Goals.csproj">
       <Project>{7e947d23-7d97-427d-9d8f-9f49dfcd6495}</Project>
       <Name>NCS.DSS.ActionPlan</Name>
     </ProjectReference>
