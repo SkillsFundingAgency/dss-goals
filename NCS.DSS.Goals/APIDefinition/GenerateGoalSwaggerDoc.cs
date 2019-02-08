@@ -9,7 +9,7 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 
 namespace NCS.DSS.Goal.APIDefinition
 {
-    public static class GenerateGoalswaggerDoc
+    public static class GenerateGoalSwaggerDoc
     {
         public const string APITitle = "Goals";
         public const string APIDefinitionName = "API-Definition";

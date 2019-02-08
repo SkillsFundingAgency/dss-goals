@@ -129,7 +129,7 @@ namespace NCS.DSS.Goal.PatchGoalsHttpTrigger.Function
             goalPatchRequest.SetIds(touchpointId);
 
             loggerHelper.LogInformationMessage(log, correlationGuid, "Attempt to validate resource");
-            var errors = validate.ValidateResource(goalPatchRequest, true);
+            var errors = validate.ValidateResource(goalPatchRequest, false);
 
             if (errors != null && errors.Any())
             {
