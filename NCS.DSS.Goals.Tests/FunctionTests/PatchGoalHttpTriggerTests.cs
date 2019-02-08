@@ -162,7 +162,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
             _httpRequestHelper.GetResourceFromRequest<GoalPatch>(_request).Returns(Task.FromResult(_GoalPatch).Result);
 
             var validationResults = new List<ValidationResult> { new ValidationResult("interaction Id is Required") };
-            _validate.ValidateResource(Arg.Any<GoalPatch>(), true).Returns(validationResults);
+            _validate.ValidateResource(Arg.Any<GoalPatch>(), false).Returns(validationResults);
 
             _httpResponseMessageHelper
                 .UnprocessableEntity(Arg.Any<List<ValidationResult>>()).Returns(x => new HttpResponseMessage((HttpStatusCode)422));
