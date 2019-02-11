@@ -156,7 +156,7 @@ namespace NCS.DSS.Goal.Cosmos.Provider
         }
 
 
-        public async Task<List<Models.Goal>> GetGoalsForCustomerAsync(Guid customerId)
+        public async Task<List<Models.Goal>> GetAllGoalsForCustomerAsync(Guid customerId)
         {
             var collectionUri = DocumentDBHelper.CreateDocumentCollectionUri();
 

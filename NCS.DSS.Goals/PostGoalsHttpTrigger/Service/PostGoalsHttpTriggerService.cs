@@ -7,6 +7,14 @@ namespace NCS.DSS.Goal.PostGoalsHttpTrigger.Service
 {
     public class PostGoalsHttpTriggerService : IPostGoalsHttpTriggerService
     {
+
+        private readonly IDocumentDBProvider _documentDbProvider;
+
+        public PostGoalsHttpTriggerService(IDocumentDBProvider documentDbProvider)
+        {
+            _documentDbProvider = documentDbProvider;
+        }
+
         public async Task<Models.Goal> CreateAsync(Models.Goal Goals)
         {
             if (Goals == null)
@@ -14,9 +22,7 @@ namespace NCS.DSS.Goal.PostGoalsHttpTrigger.Service
 
             Goals.SetDefaultValues();
 
-            var documentDbProvider = new DocumentDBProvider();
-
-            var response = await documentDbProvider.CreateGoalsAsync(Goals);
+            var response = await _documentDbProvider.CreateGoalsAsync(Goals);
 
             return response.StatusCode == HttpStatusCode.Created ? (dynamic)response.Resource : null;
         }
