@@ -82,7 +82,7 @@ namespace NCS.DSS.Goal.Models
                 GoalType = ReferenceData.GoalType.Other;
 
             if (GoalStatus == null)
-                GoalStatus = ReferenceData.GoalStatus.NoLongerRelevant;
+                GoalStatus = ReferenceData.GoalStatus.InProgress;
         }
 
         public void SetIds(Guid customerId, Guid actionPlanId, string touchpointId, Guid sessionId)
