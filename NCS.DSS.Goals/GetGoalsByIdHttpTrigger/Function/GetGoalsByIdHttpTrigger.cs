@@ -28,7 +28,7 @@ namespace NCS.DSS.Goal.GetGoalsByIdHttpTrigger.Function
         [Response(HttpStatusCode = (int)HttpStatusCode.Unauthorized, Description = "API key is unknown or invalid", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
         [Display(Name = "Get", Description = "Ability to retrieve an individual Goals for the given customer")]
-        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Customers/{customerId}/Interactions/{interactionId}/sessions/{sessionId}/actionplans/{actionplanId}/Goals/{GoalId}")]HttpRequest req, ILogger log, string customerId, string interactionId, string actionplanId, string GoalId, string sessionId,
+        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Customers/{customerId}/Interactions/{interactionId}/actionplans/{actionplanId}/Goals/{GoalId}")]HttpRequest req, ILogger log, string customerId, string interactionId, string actionplanId, string GoalId,
             [Inject]IResourceHelper resourceHelper,
             [Inject]IGetGoalsByIdHttpTriggerService GoalsGetService,
             [Inject]ILoggerHelper loggerHelper,
@@ -73,12 +73,7 @@ namespace NCS.DSS.Goal.GetGoalsByIdHttpTrigger.Function
                 return httpResponseMessageHelper.BadRequest(interactionGuid);
             }
 
-            if (!Guid.TryParse(sessionId, out var sessionGuid))
-            {
-                loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Unable to parse 'sessionId' to a Guid: {0}", sessionGuid));
-                return httpResponseMessageHelper.BadRequest(sessionGuid);
-            }
-
+           
             if (!Guid.TryParse(GoalId, out var goalGuid))
             {
                 loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Unable to parse 'actionPlanId' to a Guid: {0}", GoalId));
@@ -94,13 +89,13 @@ namespace NCS.DSS.Goal.GetGoalsByIdHttpTrigger.Function
                 return httpResponseMessageHelper.NoContent(customerGuid);
             }
 
-            loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Attempting to get Session {0} for customer {1}", sessionGuid, customerGuid));
-            var doesSessionExist = resourceHelper.DoesSessionResourceExistAndBelongToCustomer(sessionGuid, interactionGuid, customerGuid);
+            loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Attempting to get Interaction {0} for customer {1}", interactionGuid, customerGuid));
+            var doesInteractionExist = resourceHelper.DoesInteractionExistAndBelongToCustomer(interactionGuid, customerGuid);
 
-            if (!doesSessionExist)
+            if (!doesInteractionExist)
             {
-                loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Session does not exist {0}", sessionGuid));
-                return httpResponseMessageHelper.NoContent(sessionGuid);
+                loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Interaction does not exist {0}", interactionGuid));
+                return httpResponseMessageHelper.NoContent(interactionGuid);
             }
 
             loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Attempting to get Goal {0} for customer {1}", goalGuid, customerGuid));

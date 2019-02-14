@@ -35,7 +35,7 @@ namespace NCS.DSS.Goal.Tests.ModelTests
         {
             var Goal = new Models.Goal();
 
-            Goal.SetIds(Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<string>(), Arg.Any<Guid>());
+            Goal.SetIds(Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<string>());
 
             // Assert
             Assert.AreNotSame(Guid.Empty, Goal.GoalId);
@@ -47,7 +47,7 @@ namespace NCS.DSS.Goal.Tests.ModelTests
             var Goal = new Models.Goal();
 
             var customerId = Guid.NewGuid();
-            Goal.SetIds(customerId, Arg.Any<Guid>(), Arg.Any<string>(), Arg.Any<Guid>());
+            Goal.SetIds(customerId, Arg.Any<Guid>(), Arg.Any<string>());
 
             // Assert
             Assert.AreEqual(customerId, Goal.CustomerId);
@@ -59,7 +59,7 @@ namespace NCS.DSS.Goal.Tests.ModelTests
             var Goal = new Models.Goal();
 
             var actionPlanId = Guid.NewGuid();
-            Goal.SetIds(Arg.Any<Guid>(), actionPlanId, Arg.Any<string>(), Arg.Any<Guid>());
+            Goal.SetIds(Arg.Any<Guid>(), actionPlanId, Arg.Any<string>());
 
             // Assert
             Assert.AreEqual(actionPlanId, Goal.ActionPlanId);
@@ -70,7 +70,7 @@ namespace NCS.DSS.Goal.Tests.ModelTests
         {
             var Goal = new Models.Goal();
 
-            Goal.SetIds(Arg.Any<Guid>(), Arg.Any<Guid>(), "0000000000", Arg.Any<Guid>());
+            Goal.SetIds(Arg.Any<Guid>(), Arg.Any<Guid>(), "0000000000");
 
             // Assert
             Assert.AreEqual("0000000000", Goal.LastModifiedTouchpointId);

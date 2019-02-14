@@ -28,7 +28,7 @@ namespace NCS.DSS.Goal.GetGoalsHttpTrigger.Function
         [Response(HttpStatusCode = (int)HttpStatusCode.Unauthorized, Description = "API key is unknown or invalid", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
         [Display(Name = "Get", Description = "Ability to return all Goals for the given Interactions.")]
-        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Customers/{customerId}/Interactions/{interactionId}/sessions/{sessionId}/actionplans/{actionplanId}/Goals")]HttpRequest req, ILogger log, string customerId, string interactionId, string actionplanId, string sessionId,
+        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Customers/{customerId}/Interactions/{interactionId}/actionplans/{actionplanId}/Goals")]HttpRequest req, ILogger log, string customerId, string interactionId, string actionplanId,
             [Inject]IResourceHelper resourceHelper,
             [Inject]IGetGoalsHttpTriggerService GoalsGetService,
             [Inject]ILoggerHelper loggerHelper,

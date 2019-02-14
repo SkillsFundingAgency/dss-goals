@@ -32,7 +32,7 @@ namespace NCS.DSS.Goal.PostGoalsHttpTrigger.Function
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
         [Response(HttpStatusCode = 422, Description = "Goals validation error(s)", ShowSchema = false)]
         [Display(Name = "Post", Description = "Ability to create a new Goals for a customer.")]
-        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "Customers/{customerId}/Interactions/{interactionId}/sessions/{sessionId}/actionplans/{actionplanId}/Goals")]HttpRequest req, ILogger log, string customerId, string interactionId, string actionplanId, string sessionId,
+        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "Customers/{customerId}/Interactions/{interactionId}/actionplans/{actionplanId}/Goals")]HttpRequest req, ILogger log, string customerId, string interactionId, string actionplanId, 
             [Inject]IResourceHelper resourceHelper,
             [Inject]IPostGoalsHttpTriggerService GoalsPostService,
             [Inject]IValidate validate,
@@ -88,12 +88,6 @@ namespace NCS.DSS.Goal.PostGoalsHttpTrigger.Function
                 return httpResponseMessageHelper.BadRequest(interactionGuid);
             }
 
-            if (!Guid.TryParse(sessionId, out var sessionGuid))
-            {
-                loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Unable to parse 'sessionId' to a Guid: {0}", sessionGuid));
-                return httpResponseMessageHelper.BadRequest(sessionGuid);
-            }
-
             if (!Guid.TryParse(actionplanId, out var actionPlanGuid))
             {
                 loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Unable to parse 'actionPlanId' to a Guid: {0}", actionplanId));
@@ -120,7 +114,7 @@ namespace NCS.DSS.Goal.PostGoalsHttpTrigger.Function
             }
 
             loggerHelper.LogInformationMessage(log, correlationGuid, "Attempt to set id's for Goal");
-            goalRequest.SetIds(customerGuid, actionPlanGuid, touchpointId, sessionGuid);
+            goalRequest.SetIds(customerGuid, actionPlanGuid, touchpointId);
 
             loggerHelper.LogInformationMessage(log, correlationGuid, "Attempt to validate resource");
             var errors = validate.ValidateResource(goalRequest, true);
@@ -148,14 +142,14 @@ namespace NCS.DSS.Goal.PostGoalsHttpTrigger.Function
                 loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Customer is read only {0}", customerGuid));
                 return httpResponseMessageHelper.Forbidden(customerGuid);
             }
-           
-            loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Attempting to get Session {0} for customer {1}", sessionGuid, customerGuid));
-            var doesSessionExist = resourceHelper.DoesSessionResourceExistAndBelongToCustomer(sessionGuid, interactionGuid, customerGuid);
 
-            if (!doesSessionExist)
+            loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Attempting to get Interaction {0} for customer {1}", interactionGuid, customerGuid));
+            var doesInteractionExist = resourceHelper.DoesInteractionExistAndBelongToCustomer(interactionGuid, customerGuid);
+
+            if (!doesInteractionExist)
             {
-                loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Session does not exist {0}", interactionGuid));
-                return httpResponseMessageHelper.NoContent(sessionGuid);
+                loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Interaction does not exist {0}", interactionGuid));
+                return httpResponseMessageHelper.NoContent(interactionGuid);
             }
 
             loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Attempting to Create Goal for customer {0}", customerGuid));

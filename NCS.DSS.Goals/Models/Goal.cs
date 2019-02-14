@@ -85,10 +85,9 @@ namespace NCS.DSS.Goal.Models
                 GoalStatus = ReferenceData.GoalStatus.InProgress;
         }
 
-        public void SetIds(Guid customerId, Guid actionPlanId, string touchpointId, Guid sessionId)
+        public void SetIds(Guid customerId, Guid actionPlanId, string touchpointId)
         {
             GoalId = Guid.NewGuid();
-            SessionId = sessionId;
             CustomerId = customerId;
             ActionPlanId = actionPlanId;
             LastModifiedTouchpointId = touchpointId;

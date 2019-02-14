@@ -32,7 +32,7 @@ namespace NCS.DSS.Goal.PatchGoalsHttpTrigger.Function
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
         [Response(HttpStatusCode = 422, Description = "Goals validation error(s)", ShowSchema = false)]
         [Display(Name = "Patch", Description = "Ability to modify/update a customers Goals record.")]
-        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "patch", Route = "Customers/{customerId}/Interactions/{interactionId}/sessions/{sessionId}/actionplans/{actionplanId}/Goals/{GoalId}")]HttpRequest req, ILogger log, string customerId, string interactionId, string actionplanId, string GoalId, string sessionId,
+        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "patch", Route = "Customers/{customerId}/Interactions/{interactionId}/actionplans/{actionplanId}/Goals/{GoalId}")]HttpRequest req, ILogger log, string customerId, string interactionId, string actionplanId, string GoalId,
             [Inject]IResourceHelper resourceHelper, 
             [Inject]IPatchGoalsHttpTriggerService GoalsPatchService,
             [Inject]IValidate validate,
@@ -86,12 +86,6 @@ namespace NCS.DSS.Goal.PatchGoalsHttpTrigger.Function
             {
                 loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Unable to parse 'interactionId' to a Guid: {0}", interactionId));
                 return httpResponseMessageHelper.BadRequest(interactionGuid);
-            }
-
-            if (!Guid.TryParse(sessionId, out var sessionGuid))
-            {
-                loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Unable to parse 'sessionId' to a Guid: {0}", sessionGuid));
-                return httpResponseMessageHelper.BadRequest(sessionGuid);
             }
 
             if (!Guid.TryParse(actionplanId, out var actionPlanGuid))
@@ -155,13 +149,13 @@ namespace NCS.DSS.Goal.PatchGoalsHttpTrigger.Function
                 return httpResponseMessageHelper.Forbidden(customerGuid);
             }
 
-            loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Attempting to get Session {0} for customer {1}", sessionGuid, customerGuid));
-            var doesSessionExist = resourceHelper.DoesSessionResourceExistAndBelongToCustomer(sessionGuid, interactionGuid, customerGuid);
+            loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Attempting to get Interaction {0} for customer {1}", interactionGuid, customerGuid));
+            var doesInteractionExist = resourceHelper.DoesInteractionExistAndBelongToCustomer(interactionGuid, customerGuid);
 
-            if (!doesSessionExist)
+            if (!doesInteractionExist)
             {
-                loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Session does not exist {0}", interactionGuid));
-                return httpResponseMessageHelper.NoContent(sessionGuid);
+                loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Interaction does not exist {0}", interactionGuid));
+                return httpResponseMessageHelper.NoContent(interactionGuid);
             }
 
             loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Attempting to get goal {0} for customer {1}", goalGuid, customerGuid));

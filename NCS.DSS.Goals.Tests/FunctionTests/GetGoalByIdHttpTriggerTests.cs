@@ -64,7 +64,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
                 .BadRequest(Arg.Any<Guid>()).Returns(x => new HttpResponseMessage(HttpStatusCode.BadRequest));
 
             // Act
-            var result = await RunFunction(InValidId, ValidInteractionId, ValidSessionId, ValidGoalId, ValidActionPlanId);
+            var result = await RunFunction(InValidId, ValidInteractionId, ValidGoalId, ValidActionPlanId);
 
             // Assert
             Assert.IsInstanceOf<HttpResponseMessage>(result);
@@ -80,7 +80,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
 
 
             // Act
-            var result = await RunFunction(InValidId, ValidInteractionId, ValidSessionId, ValidGoalId, ValidActionPlanId);
+            var result = await RunFunction(InValidId, ValidInteractionId, ValidGoalId, ValidActionPlanId);
 
             // Assert
             Assert.IsInstanceOf<HttpResponseMessage>(result);
@@ -94,7 +94,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
                 .BadRequest(Arg.Any<Guid>()).Returns(x => new HttpResponseMessage(HttpStatusCode.BadRequest));
 
             // Act
-            var result = await RunFunction(InValidId, ValidInteractionId, ValidSessionId, ValidGoalId, ValidActionPlanId);
+            var result = await RunFunction(InValidId, ValidInteractionId, ValidGoalId, ValidActionPlanId);
 
             // Assert
             Assert.IsInstanceOf<HttpResponseMessage>(result);
@@ -108,22 +108,8 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
                 .BadRequest(Arg.Any<Guid>()).Returns(x => new HttpResponseMessage(HttpStatusCode.BadRequest));
 
             // Act
-            var result = await RunFunction(ValidCustomerId, InValidId, ValidSessionId, ValidGoalId, ValidActionPlanId);
+            var result = await RunFunction(ValidCustomerId, InValidId, ValidGoalId, ValidActionPlanId);
             
-            // Assert
-            Assert.IsInstanceOf<HttpResponseMessage>(result);
-            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
-        }
-
-        [Test]
-        public async Task GetGoalsByIdHttpTrigger_ReturnsStatusCodeBadRequest_WhenSessionIdIsInvalid()
-        {
-            _httpResponseMessageHelper
-                .BadRequest(Arg.Any<Guid>()).Returns(x => new HttpResponseMessage(HttpStatusCode.BadRequest));
-
-            // Act
-            var result = await RunFunction(ValidCustomerId, ValidInteractionId, InValidId, ValidGoalId, ValidActionPlanId);
-
             // Assert
             Assert.IsInstanceOf<HttpResponseMessage>(result);
             Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
@@ -136,7 +122,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
                 .BadRequest(Arg.Any<Guid>()).Returns(x => new HttpResponseMessage(HttpStatusCode.BadRequest));
 
             // Act
-            var result = await RunFunction(ValidCustomerId, ValidInteractionId, ValidSessionId, InValidId, ValidActionPlanId);
+            var result = await RunFunction(ValidCustomerId, ValidInteractionId, InValidId, ValidActionPlanId);
 
             // Assert
             Assert.IsInstanceOf<HttpResponseMessage>(result);
@@ -152,7 +138,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
                 .NoContent(Arg.Any<Guid>()).Returns(x => new HttpResponseMessage(HttpStatusCode.NoContent));
 
             // Act
-            var result = await RunFunction(ValidCustomerId, ValidInteractionId, ValidSessionId, ValidGoalId, ValidActionPlanId);
+            var result = await RunFunction(ValidCustomerId, ValidInteractionId, ValidGoalId, ValidActionPlanId);
 
             // Assert
             Assert.IsInstanceOf<HttpResponseMessage>(result);
@@ -163,13 +149,13 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
         public async Task GetGoalsByIdHttpTrigger_ReturnsStatusCodeNoContent_WhenInteractionDoesNotExist()
         {
             _resourceHelper.DoesCustomerExist(Arg.Any<Guid>()).Returns(true);
-            _resourceHelper.DoesSessionResourceExistAndBelongToCustomer(Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<Guid>()).Returns(false);
+            _resourceHelper.DoesInteractionExistAndBelongToCustomer(Arg.Any<Guid>(), Arg.Any<Guid>()).Returns(false);
 
             _httpResponseMessageHelper
                 .NoContent(Arg.Any<Guid>()).Returns(x => new HttpResponseMessage(HttpStatusCode.NoContent));
 
             // Act
-            var result = await RunFunction(ValidCustomerId, ValidInteractionId, ValidSessionId, ValidGoalId, ValidActionPlanId);
+            var result = await RunFunction(ValidCustomerId, ValidInteractionId, ValidGoalId, ValidActionPlanId);
 
             // Assert
             Assert.IsInstanceOf<HttpResponseMessage>(result);
@@ -180,7 +166,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
         public async Task GetGoalsByIdHttpTrigger_ReturnsStatusCodeNoContent_WhenGoalDoesNotExist()
         {
             _resourceHelper.DoesCustomerExist(Arg.Any<Guid>()).Returns(true);
-            _resourceHelper.DoesSessionResourceExistAndBelongToCustomer(Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<Guid>()).Returns(true);
+            _resourceHelper.DoesInteractionExistAndBelongToCustomer(Arg.Any<Guid>(), Arg.Any<Guid>()).Returns(true);
 
             _GetGoalsByIdHttpTriggerService.GetGoalsForCustomerAsync(Arg.Any<Guid>(), Arg.Any<Guid>()).Returns(Task.FromResult<Models.Goal>(null).Result);
 
@@ -188,7 +174,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
                 .NoContent(Arg.Any<Guid>()).Returns(x => new HttpResponseMessage(HttpStatusCode.NoContent));
 
             // Act
-            var result = await RunFunction(ValidCustomerId, ValidInteractionId, ValidSessionId, ValidGoalId, ValidActionPlanId);
+            var result = await RunFunction(ValidCustomerId, ValidInteractionId, ValidGoalId, ValidActionPlanId);
 
             // Assert
             Assert.IsInstanceOf<HttpResponseMessage>(result);
@@ -199,7 +185,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
         public async Task GetGoalsByIdHttpTrigger_ReturnsStatusCodeOk_WhenGoalExists()
         {
             _resourceHelper.DoesCustomerExist(Arg.Any<Guid>()).Returns(true);
-            _resourceHelper.DoesSessionResourceExistAndBelongToCustomer(Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<Guid>()).Returns(true);
+            _resourceHelper.DoesInteractionExistAndBelongToCustomer(Arg.Any<Guid>(), Arg.Any<Guid>()).Returns(true);
 
             _GetGoalsByIdHttpTriggerService.GetGoalsForCustomerAsync(Arg.Any<Guid>(), Arg.Any<Guid>()).Returns(Task.FromResult(_Goal).Result);
 
@@ -207,14 +193,14 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
                 .Ok(Arg.Any<string>()).Returns(x => new HttpResponseMessage(HttpStatusCode.OK));
 
             // Act
-            var result = await RunFunction(ValidCustomerId, ValidInteractionId, ValidSessionId, ValidGoalId, ValidActionPlanId);
+            var result = await RunFunction(ValidCustomerId, ValidInteractionId, ValidGoalId, ValidActionPlanId);
 
             // Assert
             Assert.IsInstanceOf<HttpResponseMessage>(result);
             Assert.AreEqual(HttpStatusCode.OK, result.StatusCode);
         }
 
-        private async Task<HttpResponseMessage> RunFunction(string customerId, string interactionId, string sessionId, string GoalId, string actionplanId)
+        private async Task<HttpResponseMessage> RunFunction(string customerId, string interactionId, string GoalId, string actionplanId)
         {
             return await GetGoalsByIdHttpTrigger.Function.GetGoalsByIdHttpTrigger.Run(
                 _request, 
@@ -222,7 +208,6 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
                 customerId, 
                 interactionId,
                 actionplanId,
-                sessionId,
                 GoalId, 
                 _resourceHelper,
                 _GetGoalsByIdHttpTriggerService,
