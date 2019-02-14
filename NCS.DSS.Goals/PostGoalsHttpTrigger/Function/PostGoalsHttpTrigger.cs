@@ -114,7 +114,7 @@ namespace NCS.DSS.Goal.PostGoalsHttpTrigger.Function
             }
 
             loggerHelper.LogInformationMessage(log, correlationGuid, "Attempt to set id's for Goal");
-            goalRequest.SetIds(customerGuid, actionPlanGuid, touchpointId);
+            goalRequest.SetIds(customerGuid, actionPlanGuid, touchpointId, subcontractorId);
 
             loggerHelper.LogInformationMessage(log, correlationGuid, "Attempt to validate resource");
             var errors = validate.ValidateResource(goalRequest, true);

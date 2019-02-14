@@ -120,7 +120,7 @@ namespace NCS.DSS.Goal.PatchGoalsHttpTrigger.Function
             }
 
             loggerHelper.LogInformationMessage(log, correlationGuid, "Attempt to set id's for Goal");
-            goalPatchRequest.SetIds(touchpointId);
+            goalPatchRequest.SetIds(touchpointId, subcontractorId);
 
             loggerHelper.LogInformationMessage(log, correlationGuid, "Attempt to validate resource");
             var errors = validate.ValidateResource(goalPatchRequest, false);
