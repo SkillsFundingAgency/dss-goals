@@ -72,6 +72,20 @@ namespace NCS.DSS.Goal.Cosmos.Provider
         }
 
 
+        public async Task<ResourceResponse<Document>> UpdateGoalsAsync(Models.Goal goal)
+        {
+            var documentUri = DocumentDBHelper.CreateDocumentUri(goal.GoalId.GetValueOrDefault());
+
+            var client = DocumentDBClient.CreateDocumentClient();
+
+            if (client == null)
+                return null;
+
+            var response = await client.ReplaceDocumentAsync(documentUri, goal);
+
+            return response;
+        }
+
 
         public bool DoesActionPlanResourceExistAndBelongToCustomer(Guid actionPlanId, Guid interactionId, Guid customerId)
         {
@@ -210,22 +224,6 @@ namespace NCS.DSS.Goal.Cosmos.Provider
 
         }
 
-        public async Task<ResourceResponse<Document>> UpdateGoalsAsync(string goalsJson, Guid goalsId)
-        {
-            var documentUri = DocumentDBHelper.CreateDocumentUri(goalsId);
-
-            var client = DocumentDBClient.CreateDocumentClient();
-
-            if (client == null)
-                return null;
-
-            var content = JObject.Parse(goalsJson);
-
-            var response = await client.ReplaceDocumentAsync(documentUri, content);
-
-            return response;
-        }
-
         public async Task<bool> DeleteAsync(Guid outcomeId)
         {
             var documentUri = DocumentDBHelper.CreateDocumentUri(outcomeId);
@@ -239,5 +237,9 @@ namespace NCS.DSS.Goal.Cosmos.Provider
 
             return response.StatusCode == HttpStatusCode.OK;
         }
+
+
+
+
     }
 }

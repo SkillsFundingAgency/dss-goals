@@ -20,7 +20,8 @@ namespace NCS.DSS.Goal.PatchGoalsHttpTrigger.Service
             _documentDbProvider = documentDbProvider;
         }
 
-        public async Task<Models.Goal> UpdateAsync(string goalJson, GoalPatch goalPatch, Guid goalId)
+
+        public Models.Goal PatchResource(string goalJson, GoalPatch goalPatch)
         {
             if (string.IsNullOrEmpty(goalJson))
                 return null;
@@ -30,18 +31,22 @@ namespace NCS.DSS.Goal.PatchGoalsHttpTrigger.Service
 
             goalPatch.SetDefaultValues();
 
-            var updatedJson = _goalPatchService.Patch(goalJson, goalPatch);
+            var updatedgoal = _goalPatchService.Patch(goalJson, goalPatch);
 
-            if (string.IsNullOrEmpty(updatedJson))
+            return updatedgoal;
+        }
+
+        public async Task<Models.Goal> UpdateCosmosAsync(Models.Goal goal)
+        {
+            if (goal == null)
                 return null;
 
-            var response = await _documentDbProvider.UpdateGoalsAsync(updatedJson, goalId);
+            var response = await _documentDbProvider.UpdateGoalsAsync(goal);
 
             var responseStatusCode = response?.StatusCode;
 
-            return responseStatusCode == HttpStatusCode.OK ? JsonConvert.DeserializeObject<Models.Goal>(updatedJson) : null;
+            return responseStatusCode == HttpStatusCode.OK ? (dynamic)response.Resource : null;
         }
-
 
         public async Task<string> GetGoalForCustomerAsync(Guid customerId, Guid goalId)
         {

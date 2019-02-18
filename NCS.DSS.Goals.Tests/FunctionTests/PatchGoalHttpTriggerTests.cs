@@ -252,27 +252,6 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
             Assert.AreEqual(HttpStatusCode.NoContent, result.StatusCode);
         }
 
-        [Test]
-        public async Task PatchGoalHttpTrigger_ReturnsStatusCodeBadRequest_WhenUnableToUpdateGoalRecord()
-        {
-            _httpRequestHelper.GetResourceFromRequest<GoalPatch>(_request).Returns(Task.FromResult(_GoalPatch).Result);
-
-            _resourceHelper.DoesCustomerExist(Arg.Any<Guid>()).ReturnsForAnyArgs(true);
-            _resourceHelper.DoesInteractionExistAndBelongToCustomer(Arg.Any<Guid>(), Arg.Any<Guid>()).Returns(true);
-
-            _patchGoalHttpTriggerService.GetGoalForCustomerAsync(Arg.Any<Guid>(), Arg.Any<Guid>()).Returns(Task.FromResult("Goal").Result);
-
-            _patchGoalHttpTriggerService.UpdateAsync(Arg.Any<string>(), Arg.Any<GoalPatch>(),Arg.Any<Guid>()).Returns(Task.FromResult<Models.Goal>(null).Result);
-
-            _httpResponseMessageHelper
-                .BadRequest(Arg.Any<Guid>()).Returns(x => new HttpResponseMessage(HttpStatusCode.BadRequest));
-
-            var result = await RunFunction(ValidCustomerId, ValidInteractionId, ValidActionPlanId, ValidGoalId);
-
-            // Assert
-            Assert.IsInstanceOf<HttpResponseMessage>(result);
-            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
-        }
 
         [Test]
         public async Task PatchGoalHttpTrigger_ReturnsStatusCodeNoContent_WhenGoalCannotBeFound()
@@ -284,7 +263,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
 
             _patchGoalHttpTriggerService.GetGoalForCustomerAsync(Arg.Any<Guid>(), Arg.Any<Guid>()).Returns(Task.FromResult<string>(null).Result);
 
-            _patchGoalHttpTriggerService.UpdateAsync(Arg.Any<string>(), Arg.Any<GoalPatch>(), Arg.Any<Guid>()).Returns(Task.FromResult<Models.Goal>(null).Result);
+            _patchGoalHttpTriggerService.UpdateCosmosAsync(Arg.Any<Models.Goal>()).Returns(Task.FromResult<Models.Goal>(null).Result);
 
             _httpResponseMessageHelper
                 .NoContent(Arg.Any<Guid>()).Returns(x => new HttpResponseMessage(HttpStatusCode.NoContent));
@@ -296,28 +275,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
             Assert.AreEqual(HttpStatusCode.NoContent, result.StatusCode);
         }
 
-        [Test]
-        public async Task PatchGoalHttpTrigger_ReturnsStatusCodeOK_WhenRequestIsValid()
-        {
-            _httpRequestHelper.GetResourceFromRequest<GoalPatch>(_request).Returns(Task.FromResult(_GoalPatch).Result);
-
-            _resourceHelper.DoesCustomerExist(Arg.Any<Guid>()).ReturnsForAnyArgs(true);
-            _resourceHelper.DoesInteractionExistAndBelongToCustomer(Arg.Any<Guid>(), Arg.Any<Guid>()).Returns(true);
-
-            _patchGoalHttpTriggerService.GetGoalForCustomerAsync(Arg.Any<Guid>(), Arg.Any<Guid>()).Returns(Task.FromResult("Goal").Result);
-
-            _patchGoalHttpTriggerService.UpdateAsync(Arg.Any<string>(), Arg.Any<GoalPatch>(), Arg.Any<Guid>()).Returns(Task.FromResult(_Goal).Result);
-
-            _httpResponseMessageHelper
-                .Ok(Arg.Any<string>()).Returns(x => new HttpResponseMessage(HttpStatusCode.OK));
-
-            var result = await RunFunction(ValidCustomerId, ValidInteractionId, ValidActionPlanId, ValidGoalId);
-
-            // Assert
-            Assert.IsInstanceOf<HttpResponseMessage>(result);
-            Assert.AreEqual(HttpStatusCode.OK, result.StatusCode);
-        }
-
+        
         private async Task<HttpResponseMessage> RunFunction(string customerId, string interactionId, string actionplanId, string goalId)
         {
             return await PatchGoalsHttpTrigger.Function.PatchGoalsHttpTrigger.Run(

@@ -8,6 +8,6 @@ namespace NCS.DSS.Goal.PatchGoalsHttpTrigger.Service
 {
     public interface IGoalsPatchService
     {
-        string Patch(string goalsJson, GoalPatch goalPatch);
+        Models.Goal Patch(string goalsJson, GoalPatch goalPatch);
     }
 }

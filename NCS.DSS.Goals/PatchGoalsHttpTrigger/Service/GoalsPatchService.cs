@@ -3,7 +3,7 @@ using NCS.DSS.Goal.Models;
 using NCS.DSS.Goal.PatchGoalsHttpTrigger.Service;
 using Newtonsoft.Json.Linq;
 
-namespace NCS.DSS.Action.PatchActionsHttpTrigger.Service
+namespace NCS.DSS.Goal.PatchGoalsHttpTrigger.Service
 {
     public class GoalsPatchService : IGoalsPatchService
     {
@@ -13,7 +13,7 @@ namespace NCS.DSS.Action.PatchActionsHttpTrigger.Service
         {
             _jsonHelper = jsonHelper;
         }
-        public string Patch(string goalsJson, GoalPatch goalPatch)
+        public Goal.Models.Goal Patch(string goalsJson, GoalPatch goalPatch)
         {
             if (string.IsNullOrEmpty(goalsJson))
                 return null;
@@ -44,8 +44,16 @@ namespace NCS.DSS.Action.PatchActionsHttpTrigger.Service
             if (!string.IsNullOrEmpty(goalPatch.LastModifiedTouchpointId))
                 _jsonHelper.UpdatePropertyValue(obj["LastModifiedTouchpointId"], goalPatch.LastModifiedTouchpointId);
 
+            if (!string.IsNullOrEmpty(goalPatch.SubcontractorId))
+            {
+                if (obj["SubcontractorId"] == null)
+                    _jsonHelper.CreatePropertyOnJObject(obj, "SubcontractorId", goalPatch.SubcontractorId);
+                else
+                    _jsonHelper.UpdatePropertyValue(obj["SubcontractorId"], goalPatch.SubcontractorId);
+            }
 
-            return obj.ToString();
+
+            return obj.ToObject<Goal.Models.Goal>();
         }
     }
 }

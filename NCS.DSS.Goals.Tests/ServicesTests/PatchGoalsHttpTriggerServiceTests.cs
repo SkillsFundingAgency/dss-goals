@@ -14,87 +14,100 @@ using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 using NUnit.Framework;
 
-namespace NCS.DSS.Goal.Tests.ServiceTests
+namespace NCS.DSS.goal.Tests.ServiceTests
 {
     [TestFixture]
-    public class PatchGoalHttpTriggerServiceTests
+    public class PatchgoalHttpTriggerServiceTests
     {
-        private IPatchGoalsHttpTriggerService _GoalHttpTriggerService;
-        private IGoalsPatchService _GoalPatchService;
+        private IPatchGoalsHttpTriggerService _goalHttpTriggerService;
+        private IGoalsPatchService _goalPatchService;
         private IDocumentDBProvider _documentDbProvider;
         private string _json;
-        private GoalPatch _GoalPatch;
-        private readonly Guid _GoalId = Guid.Parse("7E467BDB-213F-407A-B86A-1954053D3C24");
+        private Goal.Models.Goal _goal;
+        private GoalPatch _goalPatch;
+        private readonly Guid _goalId = Guid.Parse("7E467BDB-213F-407A-B86A-1954053D3C24");
 
         [SetUp]
         public void Setup()
         {
-            _GoalPatchService = Substitute.For<IGoalsPatchService>();
+            _goalPatchService = Substitute.For<IGoalsPatchService>();
             _documentDbProvider = Substitute.For<IDocumentDBProvider>();
-            _GoalHttpTriggerService = Substitute.For<PatchGoalsHttpTriggerService>(_GoalPatchService, _documentDbProvider);
-            _GoalPatch = Substitute.For<GoalPatch>();
-            _json = JsonConvert.SerializeObject(_GoalPatch);
-            _GoalPatchService.Patch(_json, _GoalPatch).Returns(_json);
+            _goalHttpTriggerService = Substitute.For<PatchGoalsHttpTriggerService>(_goalPatchService, _documentDbProvider);
+            _goalPatch = Substitute.For<GoalPatch>();
+            _goal = Substitute.For<Goal.Models.Goal>();
+
+            _json = JsonConvert.SerializeObject(_goalPatch);
+            _goalPatchService.Patch(_json, _goalPatch).Returns(_goal);
         }
 
         [Test]
-        public async Task PatchGoalHttpTriggerServiceTests_UpdateAsync_ReturnsNullWhenGoalJsonIsNullOrEmpty()
+        public void PatchgoalHttpTriggerServiceTests_PatchResource_ReturnsNullWhenGoalJsonIsNullOrEmpty()
         {
             // Act
-            var result = await _GoalHttpTriggerService.UpdateAsync(null, Arg.Any<GoalPatch>(), Arg.Any<Guid>());
+            var result = _goalHttpTriggerService.PatchResource(null, Arg.Any<GoalPatch>());
 
             // Assert
             Assert.IsNull(result);
         }
 
         [Test]
-        public async Task PatchGoalHttpTriggerServiceTests_UpdateAsync_ReturnsNullWhenGoalPatchIsNullOrEmpty()
+        public void PatchgoalHttpTriggerServiceTests_PatchResource_ReturnsNullWhenGoalPatchIsNullOrEmpty()
         {
             // Act
-            var result = await _GoalHttpTriggerService.UpdateAsync(Arg.Any<string>(), null, Arg.Any<Guid>());
+            var result = _goalHttpTriggerService.PatchResource(Arg.Any<string>(), null);
 
             // Assert
             Assert.IsNull(result);
         }
 
         [Test]
-        public async Task PatchGoalHttpTriggerServiceTests_UpdateAsync_ReturnsNullWhenGoalPatchServicePatchJsonIsNullOrEmpty()
+        public async Task PatchgoalHttpTriggerServiceTests_UpdateAsync_ReturnsNullWhenGoalIsNullOrEmpty()
         {
-            _GoalPatchService.Patch(Arg.Any<string>(), Arg.Any<GoalPatch>()).ReturnsNull();
-
             // Act
-            var result = await _GoalHttpTriggerService.UpdateAsync(_json, _GoalPatch, _GoalId);
+            var result = await _goalHttpTriggerService.UpdateCosmosAsync(null);
 
             // Assert
             Assert.IsNull(result);
         }
 
         [Test]
-        public async Task PatchGoalHttpTriggerServiceTests_UpdateAsync_ReturnsNullWhenResourceCannotBeUpdated()
+        public async Task PatchgoalHttpTriggerServiceTests_UpdateAsync_ReturnsNullWhenGoalPatchServicePatchJsonIsNullOrEmpty()
         {
-            _documentDbProvider.UpdateGoalsAsync(Arg.Any<string>(), Arg.Any<Guid>()).ReturnsNull();
+            _goalPatchService.Patch(Arg.Any<string>(), Arg.Any<GoalPatch>()).ReturnsNull();
 
             // Act
-            var result = await _GoalHttpTriggerService.UpdateAsync(_json, _GoalPatch, _GoalId);
+            var result = await _goalHttpTriggerService.UpdateCosmosAsync(_goal);
 
             // Assert
             Assert.IsNull(result);
         }
 
         [Test]
-        public async Task PatchGoalHttpTriggerServiceTests_UpdateAsync_ReturnsNullWhenResourceCannotBeFound()
+        public async Task PatchgoalHttpTriggerServiceTests_UpdateAsync_ReturnsNullWhenResourceCannotBeUpdated()
         {
-            _documentDbProvider.CreateGoalsAsync(Arg.Any<Models.Goal>()).Returns(Task.FromResult(new ResourceResponse<Document>(null)).Result);
+            _documentDbProvider.UpdateGoalsAsync(Arg.Any<Goal.Models.Goal>()).ReturnsNull();
 
             // Act
-            var result = await _GoalHttpTriggerService.UpdateAsync(_json, _GoalPatch, _GoalId);
+            var result = await _goalHttpTriggerService.UpdateCosmosAsync(_goal);
 
             // Assert
             Assert.IsNull(result);
         }
 
         [Test]
-        public async Task PatchGoalHttpTriggerServiceTests_UpdateAsync_ReturnsResourceWhenUpdated()
+        public async Task PatchgoalHttpTriggerServiceTests_UpdateAsync_ReturnsNullWhenResourceCannotBeFound()
+        {
+            _documentDbProvider.CreateGoalsAsync(Arg.Any<Goal.Models.Goal>()).Returns(Task.FromResult(new ResourceResponse<Document>(null)).Result);
+
+            // Act
+            var result = await _goalHttpTriggerService.UpdateCosmosAsync(_goal);
+
+            // Assert
+            Assert.IsNull(result);
+        }
+
+        [Test]
+        public async Task PatchgoalHttpTriggerServiceTests_UpdateAsync_ReturnsResourceWhenUpdated()
         {
             const string documentServiceResponseClass = "Microsoft.Azure.Documents.DocumentServiceResponse, Microsoft.Azure.DocumentDB.Core, Version=2.2.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35";
             const string dictionaryNameValueCollectionClass = "Microsoft.Azure.Documents.Collections.DictionaryNameValueCollection, Microsoft.Azure.DocumentDB.Core, Version=2.2.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35";
@@ -118,36 +131,36 @@ namespace NCS.DSS.Goal.Tests.ServiceTests
 
             responseField?.SetValue(resourceResponse, documentServiceResponse);
 
-            _documentDbProvider.UpdateGoalsAsync(Arg.Any<string>(), Arg.Any<Guid>()).Returns(Task.FromResult(resourceResponse).Result);
+            _documentDbProvider.UpdateGoalsAsync(Arg.Any<Goal.Models.Goal>()).Returns(Task.FromResult(resourceResponse).Result);
 
             // Act
-            var result = await _GoalHttpTriggerService.UpdateAsync(_json, _GoalPatch, _GoalId);
+            var result = await _goalHttpTriggerService.UpdateCosmosAsync(_goal);
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.IsInstanceOf<Models.Goal>(result);
+            Assert.IsInstanceOf<Goal.Models.Goal>(result);
 
         }
 
         [Test]
-        public async Task PatchGoalHttpTriggerServiceTests_GetGoalForCustomerAsync_ReturnsNullWhenResourceHasNotBeenFound()
+        public async Task PatchgoalHttpTriggerServiceTests_GetgoalForCustomerAsync_ReturnsNullWhenResourceHasNotBeenFound()
         {
             _documentDbProvider.GetGoalForCustomerToUpdateAsync(Arg.Any<Guid>(), Arg.Any<Guid>()).ReturnsNull();
 
             // Act
-            var result = await _GoalHttpTriggerService.GetGoalForCustomerAsync(Arg.Any<Guid>(), Arg.Any<Guid>());
+            var result = await _goalHttpTriggerService.GetGoalForCustomerAsync(Arg.Any<Guid>(), Arg.Any<Guid>());
 
             // Assert
             Assert.IsNull(result);
         }
 
         [Test]
-        public async Task PatchGoalHttpTriggerServiceTests_GetGoalForCustomerAsync_ReturnsResourceWhenResourceHasBeenFound()
+        public async Task PatchgoalHttpTriggerServiceTests_GetgoalForCustomerAsync_ReturnsResourceWhenResourceHasBeenFound()
         {
             _documentDbProvider.GetGoalForCustomerToUpdateAsync(Arg.Any<Guid>(), Arg.Any<Guid>()).Returns(Task.FromResult(_json).Result);
 
             // Act
-            var result = await _GoalHttpTriggerService.GetGoalForCustomerAsync(Arg.Any<Guid>(), Arg.Any<Guid>());
+            var result = await _goalHttpTriggerService.GetGoalForCustomerAsync(Arg.Any<Guid>(), Arg.Any<Guid>());
 
             // Assert
             Assert.IsNotNull(result);

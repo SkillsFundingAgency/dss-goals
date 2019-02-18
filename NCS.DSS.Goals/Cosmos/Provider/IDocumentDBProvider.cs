@@ -16,7 +16,8 @@ namespace NCS.DSS.Goal.Cosmos.Provider
 
         Task<string> GetGoalForCustomerToUpdateAsync(Guid customerId, Guid goalId);
         Task<ResourceResponse<Document>> CreateGoalsAsync(Models.Goal Goals);
-        Task<ResourceResponse<Document>> UpdateGoalsAsync(string Goals, Guid goalId);
+        Task<ResourceResponse<Document>> UpdateGoalsAsync(Models.Goal goal);
+
         Task<bool> DeleteAsync(Guid OutcomeId);
         bool DoesInteractionResourceExistAndBelongToCustomer(Guid interactionId, Guid customerId);
 

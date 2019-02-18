@@ -15,6 +15,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using NCS.DSS.Goal.Cosmos.Helper;
+using NCS.DSS.Goal.Models;
 using NCS.DSS.Goal.PatchGoalsHttpTrigger.Service;
 using NCS.DSS.Goal.Validation;
 using Newtonsoft.Json;
@@ -100,12 +101,12 @@ namespace NCS.DSS.Goal.PatchGoalsHttpTrigger.Function
                 return httpResponseMessageHelper.BadRequest(goalGuid);
             }
 
-            Models.GoalPatch goalPatchRequest;
+            GoalPatch goalPatchRequest;
 
             try
             {
                 loggerHelper.LogInformationMessage(log, correlationGuid, "Attempt to get resource from body of the request");
-                goalPatchRequest = await httpRequestHelper.GetResourceFromRequest<Models.GoalPatch>(req);
+                goalPatchRequest = await httpRequestHelper.GetResourceFromRequest<GoalPatch>(req);
             }
             catch (JsonException ex)
             {
@@ -159,16 +160,25 @@ namespace NCS.DSS.Goal.PatchGoalsHttpTrigger.Function
             }
 
             loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Attempting to get goal {0} for customer {1}", goalGuid, customerGuid));
-            var goal = await GoalsPatchService.GetGoalForCustomerAsync(customerGuid, goalGuid);
+            var goalForCustomer = await GoalsPatchService.GetGoalForCustomerAsync(customerGuid, goalGuid);
 
-            if (goal == null)
+            if (goalForCustomer == null)
             {
                 loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Goal does not exist {0}", goalGuid));
                 return httpResponseMessageHelper.NoContent(goalGuid);
             }
 
+            var goal = GoalsPatchService.PatchResource(goalForCustomer, goalPatchRequest);
+
+            if (goal == null)
+            {
+                loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Goal does not exist {0}", goalGuid));
+                return httpResponseMessageHelper.NoContent(actionPlanGuid);
+            }
+
+
             loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Attempting to update goal {0}", goalGuid));
-            var updatedGoal = await GoalsPatchService.UpdateAsync(goal, goalPatchRequest, goalGuid);
+            var updatedGoal = await GoalsPatchService.UpdateCosmosAsync(goal);
 
             if (updatedGoal != null)
             {

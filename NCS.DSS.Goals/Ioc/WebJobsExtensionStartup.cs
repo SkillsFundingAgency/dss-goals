@@ -6,7 +6,6 @@ using DFC.Swagger.Standard;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using NCS.DSS.Action.PatchActionsHttpTrigger.Service;
 using NCS.DSS.Goal.Cosmos.Helper;
 using NCS.DSS.Goal.Cosmos.Provider;
 using NCS.DSS.Goal.GetGoalsByIdHttpTrigger.Service;
