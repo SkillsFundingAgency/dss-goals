@@ -104,12 +104,17 @@ namespace NCS.DSS.Goal.PatchGoalHttpTrigger.Function
             if (!doesActionPlanExist)
                 return HttpResponseMessageHelper.NoContent(actionPlanGuid);
 
-            var goal = await goalPatchService.GetGoalForCustomerAsync(customerGuid, goalGuid);
+            var goalForCustomer = await goalPatchService.GetGoalForCustomerAsync(customerGuid, goalGuid);
 
-            if (goal == null)
+            if (goalForCustomer == null)
                 return HttpResponseMessageHelper.NoContent(goalGuid);
 
-            var updatedGoal = await goalPatchService.UpdateAsync(goal, goalPatchRequest);
+            var patchedGoal = goalPatchService.PatchResource(goalForCustomer, goalPatchRequest);
+
+            if (patchedGoal == null)
+                return HttpResponseMessageHelper.NoContent(goalGuid);
+
+            var updatedGoal = await goalPatchService.UpdateCosmosAsync(patchedGoal, goalGuid);
 
             if (updatedGoal != null)
                 await goalPatchService.SendToServiceBusQueueAsync(updatedGoal, customerGuid, ApimURL);
