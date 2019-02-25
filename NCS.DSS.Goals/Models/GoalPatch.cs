@@ -50,12 +50,6 @@ namespace NCS.DSS.Goals.Models
         [StringLength(10, MinimumLength = 10)]
         [Display(Description = "Identifier of the touchpoint who made the last change to the record")]
         [Example(Description = "0000000001")]
-
-        public string LastModifiedBy { get; set; }
-
-        [StringLength(10, MinimumLength = 10)]
-        [Display(Description = "Identifier of the touchpoint who made the last change to the record")]
-        [Example(Description = "0000000001")]
         public string LastModifiedTouchpointId { get; set; }
 
 

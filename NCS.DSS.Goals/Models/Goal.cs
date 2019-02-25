@@ -16,18 +16,14 @@ namespace NCS.DSS.Goals.Models
         [Example(Description = "b8592ff8-af97-49ad-9fb2-e5c3c717fd85")]
         public Guid? CustomerId { get; set; }
 
+        [Display(Description = "Unique identifier for the customers goal plan.")]
+        [Example(Description = "2730af9c-fc34-4c2b-a905-c4b584b0f379")]
+        public Guid? ActionPlanId { get; set; }
+
         [StringLength(50)]
         [Display(Description = "Identifier supplied by the touchpoint to indicate their subcontractor")]
         [Example(Description = "01234567899876543210")]
         public string SubcontractorId { get; set; }
-
-        [Display(Description = "Unique identifier to the related session.")]
-        [Example(Description = "2730af9c-fc34-4c2b-a905-c4b584b0f379")]
-        public Guid? SessionId { get; set; }
-
-        [Display(Description = "Unique identifier for the customers goal plan.")]
-        [Example(Description = "2730af9c-fc34-4c2b-a905-c4b584b0f379")]
-        public Guid? ActionPlanId { get; set; }
 
         [Required]
         [DataType(DataType.DateTime)]
@@ -125,8 +121,8 @@ namespace NCS.DSS.Goals.Models
             if(goalPatch.LastModifiedDate.HasValue)
                 LastModifiedDate = goalPatch.LastModifiedDate;
 
-            if (!string.IsNullOrEmpty(goalPatch.LastModifiedBy))
-                LastModifiedTouchpointId = goalPatch.LastModifiedBy;
+            if (!string.IsNullOrEmpty(goalPatch.LastModifiedTouchpointId))
+                LastModifiedTouchpointId = goalPatch.LastModifiedTouchpointId;
         }
     }
 }
