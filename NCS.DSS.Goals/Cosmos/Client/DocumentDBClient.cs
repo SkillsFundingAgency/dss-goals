@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Azure.Documents.Client;
 
-namespace NCS.DSS.Goal.Cosmos.Client
+namespace NCS.DSS.Goals.Cosmos.Client
 {
     public static class DocumentDBClient
     {

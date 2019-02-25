@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 
-namespace NCS.DSS.Goal.APIDefinition
+namespace NCS.DSS.Goals.APIDefinition
 {
     public static class GenerateGoalSwaggerDoc
     {

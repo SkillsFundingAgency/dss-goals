@@ -1,7 +1,7 @@
 ﻿using System;
-using NCS.DSS.Goal.ReferenceData;
+using NCS.DSS.Goals.ReferenceData;
 
-namespace NCS.DSS.Goal.Models
+namespace NCS.DSS.Goals.Models
 {
     public interface IGoal
     {

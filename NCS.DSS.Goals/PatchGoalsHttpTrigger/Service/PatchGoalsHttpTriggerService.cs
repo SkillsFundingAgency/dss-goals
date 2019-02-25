@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Net;
 using System.Threading.Tasks;
-using NCS.DSS.Goal.Cosmos.Provider;
-using NCS.DSS.Goal.Models;
-using NCS.DSS.Goal.ServiceBus;
-using Newtonsoft.Json;
+using NCS.DSS.Goals.Models;
+using NCS.DSS.Goals.ServiceBus;
+using NCS.DSS.Goals.Cosmos.Provider;
 
-namespace NCS.DSS.Goal.PatchGoalsHttpTrigger.Service
+namespace NCS.DSS.Goals.PatchGoalsHttpTrigger.Service
 {
     public class PatchGoalsHttpTriggerService : IPatchGoalsHttpTriggerService
     {
@@ -21,7 +20,7 @@ namespace NCS.DSS.Goal.PatchGoalsHttpTrigger.Service
         }
 
 
-        public Models.Goal PatchResource(string goalJson, GoalPatch goalPatch)
+        public string PatchResource(string goalJson, GoalPatch goalPatch)
         {
             if (string.IsNullOrEmpty(goalJson))
                 return null;
@@ -31,17 +30,17 @@ namespace NCS.DSS.Goal.PatchGoalsHttpTrigger.Service
 
             goalPatch.SetDefaultValues();
 
-            var updatedgoal = _goalPatchService.Patch(goalJson, goalPatch);
+            var updatedGoal = _goalPatchService.Patch(goalJson, goalPatch);
 
-            return updatedgoal;
+            return updatedGoal;
         }
 
-        public async Task<Models.Goal> UpdateCosmosAsync(Models.Goal goal)
+        public async Task<Goal> UpdateCosmosAsync(string goalJson, Guid goalId)
         {
-            if (goal == null)
+            if (string.IsNullOrEmpty(goalJson))
                 return null;
 
-            var response = await _documentDbProvider.UpdateGoalsAsync(goal);
+            var response = await _documentDbProvider.UpdateGoalAsync(goalJson, goalId);
 
             var responseStatusCode = response?.StatusCode;
 
@@ -55,9 +54,9 @@ namespace NCS.DSS.Goal.PatchGoalsHttpTrigger.Service
             return goal;
         }
 
-        public async Task SendToServiceBusQueueAsync(Models.Goal Goals, Guid customerId, string reqUrl)
+        public async Task SendToServiceBusQueueAsync(Goal goal, Guid customerId, string reqUrl)
         {
-            await ServiceBusClient.SendPatchMessageAsync(Goals, customerId, reqUrl);
+            await ServiceBusClient.SendPatchMessageAsync(goal, customerId, reqUrl);
         }
     }
 }

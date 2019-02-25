@@ -10,16 +10,16 @@ using DFC.JSON.Standard;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.Extensions.Logging;
-using NCS.DSS.Goal.Cosmos.Helper;
-using NCS.DSS.Goal.Models;
-using NCS.DSS.Goal.PatchGoalsHttpTrigger.Service;
-using NCS.DSS.Goal.Validation;
+using NCS.DSS.Goals.Cosmos.Helper;
+using NCS.DSS.Goals.Models;
+using NCS.DSS.Goals.PatchGoalsHttpTrigger.Service;
+using NCS.DSS.Goals.Validation;
 using Newtonsoft.Json;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using NUnit.Framework;
 
-namespace NCS.DSS.Goal.Tests.FunctionTests
+namespace NCS.DSS.Goals.Tests.FunctionTests
 {
     [TestFixture]
     public class PatchGoalHttpTriggerTests
@@ -263,7 +263,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
 
             _patchGoalHttpTriggerService.GetGoalForCustomerAsync(Arg.Any<Guid>(), Arg.Any<Guid>()).Returns(Task.FromResult<string>(null).Result);
 
-            _patchGoalHttpTriggerService.UpdateCosmosAsync(Arg.Any<Models.Goal>()).Returns(Task.FromResult<Models.Goal>(null).Result);
+            _patchGoalHttpTriggerService.UpdateCosmosAsync(Arg.Any<string>(), Arg.Any<Guid>()).Returns(Task.FromResult<Models.Goal>(null).Result);
 
             _httpResponseMessageHelper
                 .NoContent(Arg.Any<Guid>()).Returns(x => new HttpResponseMessage(HttpStatusCode.NoContent));

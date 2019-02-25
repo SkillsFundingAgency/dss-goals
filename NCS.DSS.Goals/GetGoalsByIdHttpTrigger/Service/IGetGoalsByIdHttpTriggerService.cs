@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace NCS.DSS.Goal.GetGoalsByIdHttpTrigger.Service
+namespace NCS.DSS.Goals.GetGoalsByIdHttpTrigger.Service
 {
     public interface IGetGoalsByIdHttpTriggerService
     {

@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using NCS.DSS.Goal.Models;
+using NCS.DSS.Goals.Models;
 
-namespace NCS.DSS.Goal.Validation
+namespace NCS.DSS.Goals.Validation
 {
     public interface IValidate
     {

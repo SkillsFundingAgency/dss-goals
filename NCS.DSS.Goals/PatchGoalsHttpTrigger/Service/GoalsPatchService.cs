@@ -1,19 +1,18 @@
 ﻿using DFC.JSON.Standard;
-using NCS.DSS.Goal.Models;
-using NCS.DSS.Goal.PatchGoalsHttpTrigger.Service;
+using NCS.DSS.Goals.Models;
 using Newtonsoft.Json.Linq;
 
-namespace NCS.DSS.Goal.PatchGoalsHttpTrigger.Service
+namespace NCS.DSS.Goals.PatchGoalsHttpTrigger.Service
 {
     public class GoalsPatchService : IGoalsPatchService
     {
-        private IJsonHelper _jsonHelper;
+        private readonly IJsonHelper _jsonHelper;
 
         public GoalsPatchService(IJsonHelper jsonHelper)
         {
             _jsonHelper = jsonHelper;
         }
-        public Goal.Models.Goal Patch(string goalsJson, GoalPatch goalPatch)
+        public string Patch(string goalsJson, GoalPatch goalPatch)
         {
             if (string.IsNullOrEmpty(goalsJson))
                 return null;
@@ -53,7 +52,7 @@ namespace NCS.DSS.Goal.PatchGoalsHttpTrigger.Service
             }
 
 
-            return obj.ToObject<Goal.Models.Goal>();
+            return obj.ToString();
         }
     }
 }

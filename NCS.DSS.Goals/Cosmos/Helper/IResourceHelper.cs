@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace NCS.DSS.Goal.Cosmos.Helper
+namespace NCS.DSS.Goals.Cosmos.Helper
 {
     public interface IResourceHelper
     {

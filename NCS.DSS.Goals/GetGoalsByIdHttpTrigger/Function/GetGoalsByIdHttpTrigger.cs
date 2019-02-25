@@ -7,8 +7,8 @@ using System.Net;
 using System.Threading.Tasks;
 using DFC.Common.Standard.Logging;
 using Microsoft.Extensions.Logging;
-using NCS.DSS.Goal.Cosmos.Helper;
-using NCS.DSS.Goal.GetGoalsByIdHttpTrigger.Service;
+using NCS.DSS.Goals.Cosmos.Helper;
+using NCS.DSS.Goals.GetGoalsByIdHttpTrigger.Service;
 using DFC.Swagger.Standard.Annotations;
 using Microsoft.AspNetCore.Mvc;
 using DFC.Functions.DI.Standard.Attributes;
@@ -16,7 +16,7 @@ using DFC.HTTP.Standard;
 using DFC.JSON.Standard;
 using Microsoft.AspNetCore.Http;
 
-namespace NCS.DSS.Goal.GetGoalsByIdHttpTrigger.Function
+namespace NCS.DSS.Goals.GetGoalsByIdHttpTrigger.Function
 {
     public static class GetGoalsByIdHttpTrigger
     {

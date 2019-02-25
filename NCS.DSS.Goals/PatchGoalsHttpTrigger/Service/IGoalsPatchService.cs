@@ -1,13 +1,9 @@
-﻿using DFC.JSON.Standard;
-using NCS.DSS.Goal.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using NCS.DSS.Goals.Models;
 
-namespace NCS.DSS.Goal.PatchGoalsHttpTrigger.Service
+namespace NCS.DSS.Goals.PatchGoalsHttpTrigger.Service
 {
     public interface IGoalsPatchService
     {
-        Models.Goal Patch(string goalsJson, GoalPatch goalPatch);
+        string Patch(string goalsJson, GoalPatch goalPatch);
     }
 }
