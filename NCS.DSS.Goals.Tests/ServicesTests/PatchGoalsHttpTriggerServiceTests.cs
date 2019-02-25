@@ -6,24 +6,24 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
-using NCS.DSS.Goal.Cosmos.Provider;
-using NCS.DSS.Goal.Models;
-using NCS.DSS.Goal.PatchGoalsHttpTrigger.Service;
+using NCS.DSS.Goals.Cosmos.Provider;
+using NCS.DSS.Goals.Models;
+using NCS.DSS.Goals.PatchGoalsHttpTrigger.Service;
 using Newtonsoft.Json;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 using NUnit.Framework;
 
-namespace NCS.DSS.goal.Tests.ServiceTests
+namespace NCS.DSS.Goals.Tests.ServicesTests
 {
     [TestFixture]
-    public class PatchgoalHttpTriggerServiceTests
+    public class PatchGoalHttpTriggerServiceTests
     {
         private IPatchGoalsHttpTriggerService _goalHttpTriggerService;
         private IGoalsPatchService _goalPatchService;
         private IDocumentDBProvider _documentDbProvider;
         private string _json;
-        private Goal.Models.Goal _goal;
+        private Goal _goal;
         private GoalPatch _goalPatch;
         private readonly Guid _goalId = Guid.Parse("7E467BDB-213F-407A-B86A-1954053D3C24");
 
@@ -34,10 +34,10 @@ namespace NCS.DSS.goal.Tests.ServiceTests
             _documentDbProvider = Substitute.For<IDocumentDBProvider>();
             _goalHttpTriggerService = Substitute.For<PatchGoalsHttpTriggerService>(_goalPatchService, _documentDbProvider);
             _goalPatch = Substitute.For<GoalPatch>();
-            _goal = Substitute.For<Goal.Models.Goal>();
+            _goal = Substitute.For<Goal>();
 
             _json = JsonConvert.SerializeObject(_goalPatch);
-            _goalPatchService.Patch(_json, _goalPatch).Returns(_goal);
+            _goalPatchService.Patch(_json, _goalPatch).Returns(_goal.ToString());
         }
 
         [Test]
@@ -64,7 +64,7 @@ namespace NCS.DSS.goal.Tests.ServiceTests
         public async Task PatchgoalHttpTriggerServiceTests_UpdateAsync_ReturnsNullWhenGoalIsNullOrEmpty()
         {
             // Act
-            var result = await _goalHttpTriggerService.UpdateCosmosAsync(null);
+            var result = await _goalHttpTriggerService.UpdateCosmosAsync(null, _goalId);
 
             // Assert
             Assert.IsNull(result);
@@ -76,7 +76,7 @@ namespace NCS.DSS.goal.Tests.ServiceTests
             _goalPatchService.Patch(Arg.Any<string>(), Arg.Any<GoalPatch>()).ReturnsNull();
 
             // Act
-            var result = await _goalHttpTriggerService.UpdateCosmosAsync(_goal);
+            var result = await _goalHttpTriggerService.UpdateCosmosAsync(Arg.Any<string>(), _goalId);
 
             // Assert
             Assert.IsNull(result);
@@ -85,10 +85,10 @@ namespace NCS.DSS.goal.Tests.ServiceTests
         [Test]
         public async Task PatchgoalHttpTriggerServiceTests_UpdateAsync_ReturnsNullWhenResourceCannotBeUpdated()
         {
-            _documentDbProvider.UpdateGoalsAsync(Arg.Any<Goal.Models.Goal>()).ReturnsNull();
+            _documentDbProvider.UpdateGoalAsync(Arg.Any<string>(), Arg.Any<Guid>()).ReturnsNull();
 
             // Act
-            var result = await _goalHttpTriggerService.UpdateCosmosAsync(_goal);
+            var result = await _goalHttpTriggerService.UpdateCosmosAsync(Arg.Any<string>(), _goalId);
 
             // Assert
             Assert.IsNull(result);
@@ -97,10 +97,10 @@ namespace NCS.DSS.goal.Tests.ServiceTests
         [Test]
         public async Task PatchgoalHttpTriggerServiceTests_UpdateAsync_ReturnsNullWhenResourceCannotBeFound()
         {
-            _documentDbProvider.CreateGoalsAsync(Arg.Any<Goal.Models.Goal>()).Returns(Task.FromResult(new ResourceResponse<Document>(null)).Result);
+            _documentDbProvider.CreateGoalsAsync(Arg.Any<Goal>()).Returns(Task.FromResult(new ResourceResponse<Document>(null)).Result);
 
             // Act
-            var result = await _goalHttpTriggerService.UpdateCosmosAsync(_goal);
+            var result = await _goalHttpTriggerService.UpdateCosmosAsync(_goal.ToString(), _goalId);
 
             // Assert
             Assert.IsNull(result);
@@ -131,14 +131,14 @@ namespace NCS.DSS.goal.Tests.ServiceTests
 
             responseField?.SetValue(resourceResponse, documentServiceResponse);
 
-            _documentDbProvider.UpdateGoalsAsync(Arg.Any<Goal.Models.Goal>()).Returns(Task.FromResult(resourceResponse).Result);
+            _documentDbProvider.UpdateGoalAsync(Arg.Any<string>(), Arg.Any<Guid>()).Returns(Task.FromResult(resourceResponse).Result);
 
             // Act
-            var result = await _goalHttpTriggerService.UpdateCosmosAsync(_goal);
+            var result = await _goalHttpTriggerService.UpdateCosmosAsync(_goal.ToString(), _goalId);
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.IsInstanceOf<Goal.Models.Goal>(result);
+            Assert.IsInstanceOf<Goal>(result);
 
         }
 

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using NCS.DSS.Goal.Models;
-using NCS.DSS.Goal.ReferenceData;
+using NCS.DSS.Goals.Models;
+using NCS.DSS.Goals.ReferenceData;
 
-namespace NCS.DSS.Goal.Validation
+namespace NCS.DSS.Goals.Validation
 {
     public class Validate : IValidate
     {

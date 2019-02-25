@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using NCS.DSS.Goal.Cosmos.Provider;
-using NCS.DSS.Goal.GetGoalsHttpTrigger.Service;
+using NCS.DSS.Goals.Cosmos.Provider;
+using NCS.DSS.Goals.GetGoalsHttpTrigger.Service;
 using NSubstitute;
 using NUnit.Framework;
 
-namespace NCS.DSS.Goal.Tests.ServiceTests
+namespace NCS.DSS.Goals.Tests.ServicesTests
 {
     [TestFixture]
     public class GetGoalHttpTriggerServiceTests

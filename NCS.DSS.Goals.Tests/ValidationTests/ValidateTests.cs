@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using NCS.DSS.Goal.ReferenceData;
-using NCS.DSS.Goal.Validation;
-using NCS.DSS.Goal.Models;
-using NSubstitute;
+using NCS.DSS.Goals.ReferenceData;
+using NCS.DSS.Goals.Validation;
 using NUnit.Framework;
 
-namespace NCS.DSS.Goal.Tests.ValidationTests
+namespace NCS.DSS.Goals.Tests.ValidationTests
 {
     [TestFixture]
     public class ValidateTests

@@ -14,13 +14,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
-using NCS.DSS.Goal.Cosmos.Helper;
-using NCS.DSS.Goal.Models;
-using NCS.DSS.Goal.PatchGoalsHttpTrigger.Service;
-using NCS.DSS.Goal.Validation;
+using NCS.DSS.Goals.Cosmos.Helper;
+using NCS.DSS.Goals.Models;
+using NCS.DSS.Goals.PatchGoalsHttpTrigger.Service;
+using NCS.DSS.Goals.Validation;
 using Newtonsoft.Json;
 
-namespace NCS.DSS.Goal.PatchGoalsHttpTrigger.Function
+namespace NCS.DSS.Goals.PatchGoalsHttpTrigger.Function
 {
     public static class PatchGoalsHttpTrigger
     {
@@ -35,7 +35,7 @@ namespace NCS.DSS.Goal.PatchGoalsHttpTrigger.Function
         [Display(Name = "Patch", Description = "Ability to modify/update a customers Goals record.")]
         public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "patch", Route = "Customers/{customerId}/Interactions/{interactionId}/actionplans/{actionplanId}/Goals/{GoalId}")]HttpRequest req, ILogger log, string customerId, string interactionId, string actionplanId, string GoalId,
             [Inject]IResourceHelper resourceHelper, 
-            [Inject]IPatchGoalsHttpTriggerService GoalsPatchService,
+            [Inject]IPatchGoalsHttpTriggerService goalsPatchService,
             [Inject]IValidate validate,
             [Inject]ILoggerHelper loggerHelper,
             [Inject]IHttpRequestHelper httpRequestHelper,
@@ -160,7 +160,7 @@ namespace NCS.DSS.Goal.PatchGoalsHttpTrigger.Function
             }
 
             loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Attempting to get goal {0} for customer {1}", goalGuid, customerGuid));
-            var goalForCustomer = await GoalsPatchService.GetGoalForCustomerAsync(customerGuid, goalGuid);
+            var goalForCustomer = await goalsPatchService.GetGoalForCustomerAsync(customerGuid, goalGuid);
 
             if (goalForCustomer == null)
             {
@@ -168,22 +168,21 @@ namespace NCS.DSS.Goal.PatchGoalsHttpTrigger.Function
                 return httpResponseMessageHelper.NoContent(goalGuid);
             }
 
-            var goal = GoalsPatchService.PatchResource(goalForCustomer, goalPatchRequest);
+            var patchedGoal = goalsPatchService.PatchResource(goalForCustomer, goalPatchRequest);
 
-            if (goal == null)
+            if (patchedGoal == null)
             {
-                loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Goal does not exist {0}", goalGuid));
+                loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Unable to patch Goal {0}", goalGuid));
                 return httpResponseMessageHelper.NoContent(actionPlanGuid);
             }
-
-
+            
             loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Attempting to update goal {0}", goalGuid));
-            var updatedGoal = await GoalsPatchService.UpdateCosmosAsync(goal);
+            var updatedGoal = await goalsPatchService.UpdateCosmosAsync(patchedGoal, goalGuid);
 
             if (updatedGoal != null)
             {
                 loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("attempting to send to service bus {0}", goalGuid));
-                await GoalsPatchService.SendToServiceBusQueueAsync(updatedGoal, customerGuid, apimUrl);
+                await goalsPatchService.SendToServiceBusQueueAsync(updatedGoal, customerGuid, apimUrl);
             }
 
             loggerHelper.LogMethodExit(log);

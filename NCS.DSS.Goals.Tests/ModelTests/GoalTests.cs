@@ -2,7 +2,7 @@
 using NSubstitute;
 using NUnit.Framework;
 
-namespace NCS.DSS.Goal.Tests.ModelTests
+namespace NCS.DSS.Goals.Tests.ModelTests
 {
 
     [TestFixture]

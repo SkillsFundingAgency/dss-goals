@@ -2,7 +2,7 @@
 using System;
 using Microsoft.Azure.Documents.Client;
 
-namespace NCS.DSS.Goal.Cosmos.Helper
+namespace NCS.DSS.Goals.Cosmos.Helper
 {
     public static class DocumentDBHelper
     {

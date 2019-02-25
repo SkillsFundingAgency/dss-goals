@@ -6,14 +6,14 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
-using NCS.DSS.Goal.Cosmos.Provider;
-using NCS.DSS.Goal.PostGoalsHttpTrigger.Service;
-using NCS.DSS.Goal.Models;
+using NCS.DSS.Goals.Cosmos.Provider;
+using NCS.DSS.Goals.Models;
+using NCS.DSS.Goals.PostGoalsHttpTrigger.Service;
 using Newtonsoft.Json;
 using NSubstitute;
 using NUnit.Framework;
 
-namespace NCS.DSS.Goal.Tests.ServiceTests
+namespace NCS.DSS.Goals.Tests.ServicesTests
 {
     [TestFixture]
     public class PosGoalsHttpTriggerServiceTests
@@ -21,7 +21,7 @@ namespace NCS.DSS.Goal.Tests.ServiceTests
         private IPostGoalsHttpTriggerService _goalHttpTriggerService;
         private IDocumentDBProvider _documentDbProvider;
         private string _json;
-        private Models.Goal _goal;
+        private Goal _goal;
         private readonly Guid _goalId = Guid.Parse("7E467BDB-213F-407A-B86A-1954053D3C24");
 
         [SetUp]
@@ -29,7 +29,7 @@ namespace NCS.DSS.Goal.Tests.ServiceTests
         {
             _documentDbProvider = Substitute.For<IDocumentDBProvider>();
             _goalHttpTriggerService = Substitute.For<PostGoalsHttpTriggerService>(_documentDbProvider);
-            _goal = Substitute.For<Models.Goal>();
+            _goal = Substitute.For<Goal>();
             _json = JsonConvert.SerializeObject(_goal);
         }
 
@@ -37,7 +37,7 @@ namespace NCS.DSS.Goal.Tests.ServiceTests
         public async Task PostActionPlanHttpTriggerServiceTests_CreateAsync_ReturnsNullWhenActionPlanJsonIsNull()
         {
             // Act
-            var result = await _goalHttpTriggerService.CreateAsync(Arg.Any<Models.Goal>());
+            var result = await _goalHttpTriggerService.CreateAsync(Arg.Any<Goal>());
 
             // Assert
             Assert.IsNull(result);
@@ -75,7 +75,7 @@ namespace NCS.DSS.Goal.Tests.ServiceTests
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.IsInstanceOf<Models.Goal>(result);
+            Assert.IsInstanceOf<Goal>(result);
 
         }
     }

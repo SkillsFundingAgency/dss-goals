@@ -9,12 +9,12 @@ using DFC.JSON.Standard;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.Extensions.Logging;
-using NCS.DSS.Goal.Cosmos.Helper;
-using NCS.DSS.Goal.GetGoalsHttpTrigger.Service;
+using NCS.DSS.Goals.Cosmos.Helper;
+using NCS.DSS.Goals.GetGoalsHttpTrigger.Service;
 using NSubstitute;
 using NUnit.Framework;
 
-namespace NCS.DSS.Goal.Tests.FunctionTests
+namespace NCS.DSS.Goals.Tests.FunctionTests
 {
     [TestFixture]
     public class GetGoalHttpTriggerTest

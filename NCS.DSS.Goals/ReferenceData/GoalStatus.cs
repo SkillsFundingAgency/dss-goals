@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace NCS.DSS.Goal.ReferenceData
+namespace NCS.DSS.Goals.ReferenceData
 {
     public enum GoalStatus
     {

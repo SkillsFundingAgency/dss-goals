@@ -6,18 +6,18 @@ using DFC.Swagger.Standard;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using NCS.DSS.Goal.Cosmos.Helper;
-using NCS.DSS.Goal.Cosmos.Provider;
-using NCS.DSS.Goal.GetGoalsByIdHttpTrigger.Service;
-using NCS.DSS.Goal.GetGoalsHttpTrigger.Service;
-using NCS.DSS.Goal.Ioc;
-using NCS.DSS.Goal.PatchGoalsHttpTrigger.Service;
-using NCS.DSS.Goal.PostGoalsHttpTrigger.Service;
-using NCS.DSS.Goal.Validation;
+using NCS.DSS.Goals.Cosmos.Helper;
+using NCS.DSS.Goals.GetGoalsByIdHttpTrigger.Service;
+using NCS.DSS.Goals.GetGoalsHttpTrigger.Service;
+using NCS.DSS.Goals.PatchGoalsHttpTrigger.Service;
+using NCS.DSS.Goals.PostGoalsHttpTrigger.Service;
+using NCS.DSS.Goals.Validation;
+using NCS.DSS.Goals.Ioc;
+using NCS.DSS.Goals.Cosmos.Provider;
 
 [assembly: WebJobsStartup(typeof(WebJobsExtensionStartup), "Web Jobs Extension Startup")]
 
-namespace NCS.DSS.Goal.Ioc
+namespace NCS.DSS.Goals.Ioc
 {
     public class WebJobsExtensionStartup : IWebJobsStartup
     {

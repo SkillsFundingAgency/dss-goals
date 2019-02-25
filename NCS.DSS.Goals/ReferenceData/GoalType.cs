@@ -1,4 +1,4 @@
-﻿namespace NCS.DSS.Goal.ReferenceData
+﻿namespace NCS.DSS.Goals.ReferenceData
 {
     public enum GoalType
     {
