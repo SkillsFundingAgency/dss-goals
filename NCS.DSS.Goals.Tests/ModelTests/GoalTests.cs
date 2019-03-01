@@ -73,7 +73,7 @@ namespace NCS.DSS.Goals.Tests.ModelTests
             Goal.SetIds(Arg.Any<Guid>(), Arg.Any<Guid>(), "0000000000", Arg.Any<string>());
 
             // Assert
-            Assert.AreEqual("0000000000", Goal.LastModifiedTouchpointId);
+            Assert.AreEqual("0000000000", Goal.LastModifiedBy);
         }
 
     }

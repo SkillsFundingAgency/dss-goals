@@ -40,8 +40,8 @@ namespace NCS.DSS.Goals.PatchGoalsHttpTrigger.Service
             if (goalPatch.LastModifiedDate.HasValue)
                 _jsonHelper.UpdatePropertyValue(obj["LastModifiedDate"], goalPatch.LastModifiedDate);
 
-            if (!string.IsNullOrEmpty(goalPatch.LastModifiedTouchpointId))
-                _jsonHelper.UpdatePropertyValue(obj["LastModifiedTouchpointId"], goalPatch.LastModifiedTouchpointId);
+            if (!string.IsNullOrEmpty(goalPatch.LastModifiedBy))
+                _jsonHelper.UpdatePropertyValue(obj["LastModifiedBy"], goalPatch.LastModifiedBy);
 
             if (!string.IsNullOrEmpty(goalPatch.SubcontractorId))
             {

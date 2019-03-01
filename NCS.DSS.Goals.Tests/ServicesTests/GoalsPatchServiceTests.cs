@@ -133,14 +133,14 @@ namespace NCS.DSS.Goals.Tests.ServicesTests
         [Test]
         public void GoalPatchServiceTests_CheckLastModifiedTouchpointIdIsUpdated_WhenPatchIsCalled()
         {
-            var goalPatch = new GoalPatch { LastModifiedTouchpointId = "0000000111" };
+            var goalPatch = new GoalPatch { LastModifiedBy = "0000000111" };
             
             var patchedGoal = _goalPatchService.Patch(_json, goalPatch);
 
             var goal = JsonConvert.DeserializeObject<Goal>(patchedGoal);
    
             // Assert
-            Assert.AreEqual("0000000111", goal.LastModifiedTouchpointId);
+            Assert.AreEqual("0000000111", goal.LastModifiedBy);
         }
 
     }

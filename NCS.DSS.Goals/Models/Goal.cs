@@ -72,7 +72,7 @@ namespace NCS.DSS.Goals.Models
         [StringLength(10, MinimumLength = 10)]
         [Display(Description = "Identifier of the touchpoint who made the last change to the record")]
         [Example(Description = "0000000001")]
-        public string LastModifiedTouchpointId { get; set; }
+        public string LastModifiedBy { get; set; }
 
         public void SetDefaultValues()
         {
@@ -91,7 +91,7 @@ namespace NCS.DSS.Goals.Models
             GoalId = Guid.NewGuid();
             CustomerId = customerId;
             ActionPlanId = actionPlanId;
-            LastModifiedTouchpointId = touchpointId;
+            LastModifiedBy = touchpointId;
             SubcontractorId = subcontractorId;
         }
 
@@ -121,8 +121,8 @@ namespace NCS.DSS.Goals.Models
             if(goalPatch.LastModifiedDate.HasValue)
                 LastModifiedDate = goalPatch.LastModifiedDate;
 
-            if (!string.IsNullOrEmpty(goalPatch.LastModifiedTouchpointId))
-                LastModifiedTouchpointId = goalPatch.LastModifiedTouchpointId;
+            if (!string.IsNullOrEmpty(goalPatch.LastModifiedBy))
+                LastModifiedBy = goalPatch.LastModifiedBy;
         }
     }
 }

@@ -12,7 +12,7 @@ namespace NCS.DSS.Goals.Models
         GoalType? GoalType { get; set; }
         GoalStatus? GoalStatus { get; set; }
         DateTime? LastModifiedDate { get; set; }
-        string LastModifiedTouchpointId { get; set; }
+        string LastModifiedBy { get; set; }
 
         void SetDefaultValues();
     }
