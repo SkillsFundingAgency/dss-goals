@@ -9,34 +9,54 @@ namespace NCS.DSS.Goal.PatchGoalHttpTrigger.Service
 {
     public class PatchGoalHttpTriggerService : IPatchGoalHttpTriggerService
     {
-        public async Task<Models.Goal> UpdateAsync(Models.Goal goal, GoalPatch goalPatch)
+
+        private readonly IGoalsPatchService _goalPatchService;
+        private readonly IDocumentDBProvider _documentDbProvider;
+
+        public PatchGoalHttpTriggerService(IGoalsPatchService goalsPatchService, IDocumentDBProvider documentDbProvider)
         {
-            if (goal == null)
+            _goalPatchService = goalsPatchService;
+            _documentDbProvider = documentDbProvider;
+        }
+        
+        public string PatchResource(string goalJson, GoalPatch goalPatch)
+        {
+            if (string.IsNullOrEmpty(goalJson))
+                return null;
+
+            if (goalPatch == null)
                 return null;
 
             goalPatch.SetDefaultValues();
 
-            goal.Patch(goalPatch);
+            var updatedGoal = _goalPatchService.Patch(goalJson, goalPatch);
 
-            var documentDbProvider = new DocumentDBProvider();
-            var response = await documentDbProvider.UpdateGoalAsync(goal);
-
-            var responseStatusCode = response.StatusCode;
-
-            return responseStatusCode == HttpStatusCode.OK ? goal : null;
+            return updatedGoal;
         }
 
-        public async Task<Models.Goal> GetGoalForCustomerAsync(Guid customerId, Guid goalId)
+        public async Task<Models.Goal> UpdateCosmosAsync(string goalJson, Guid goalId)
         {
-            var documentDbProvider = new DocumentDBProvider();
-            var goal = await documentDbProvider.GetGoalForCustomerAsync(customerId, goalId);
+            if (string.IsNullOrEmpty(goalJson))
+                return null;
+
+            var response = await _documentDbProvider.UpdateGoalAsync(goalJson, goalId);
+
+            var responseStatusCode = response?.StatusCode;
+
+            return responseStatusCode == HttpStatusCode.OK ? (dynamic)response.Resource : null;
+        }
+
+        public async Task<string> GetGoalForCustomerAsync(Guid customerId, Guid goalId)
+        {
+            var goal = await _documentDbProvider.GetGoalForCustomerToUpdateAsync(customerId, goalId);
 
             return goal;
         }
 
-        public async Task SendToServiceBusQueueAsync(Models.Goal goal, Guid customerId, string reqUrl)
+        public async Task SendToServiceBusQueueAsync(Models.Goal Goals, Guid customerId, string reqUrl)
         {
-            await ServiceBusClient.SendPatchMessageAsync(goal, customerId, reqUrl);
+            await ServiceBusClient.SendPatchMessageAsync(Goals, customerId, reqUrl);
         }
+
     }
 }

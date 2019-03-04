@@ -14,7 +14,8 @@ namespace NCS.DSS.Goal.Cosmos.Provider
         Task<bool> DoesCustomerHaveATerminationDate(Guid customerId);
         Task<List<Models.Goal>> GetGoalsForCustomerAsync(Guid customerId);
         Task<Models.Goal> GetGoalForCustomerAsync(Guid customerId, Guid goalId);
+        Task<string> GetGoalForCustomerToUpdateAsync(Guid customerId, Guid goalId);
         Task<ResourceResponse<Document>> CreateGoalAsync(Models.Goal goal);
-        Task<ResourceResponse<Document>> UpdateGoalAsync(Models.Goal goal);
+        Task<ResourceResponse<Document>> UpdateGoalAsync(string goalJson, Guid goalId);
     }
 }
