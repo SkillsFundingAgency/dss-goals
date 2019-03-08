@@ -1,17 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.ServiceBus;
 using Newtonsoft.Json;
 
-namespace NCS.DSS.Goals.GoalChangeFeedTrigger.Service
+namespace NCS.DSS.Goal.GoalChangeFeedTrigger.Service
 {
     public class GoalChangeFeedTriggerService : IGoalChangeFeedTriggerService
     {
         private readonly string _queueName = Environment.GetEnvironmentVariable("ChangeFeedQueueName");
-        private readonly string _serviceBusConnectionString = Environment.GetEnvironmentVariable("ChangeFeedServiceBusConnectionString");
+        private readonly string _serviceBusConnectionString = Environment.GetEnvironmentVariable("ServiceBusConnectionString");
 
         public async Task SendMessageToChangeFeedQueueAsync(Document document)
         {

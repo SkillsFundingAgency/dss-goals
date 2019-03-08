@@ -1,19 +1,14 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
 using DFC.Common.Standard.Logging;
 using DFC.Functions.DI.Standard.Attributes;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.Documents;
 using Microsoft.Extensions.Logging;
-using NCS.DSS.Goals.GoalChangeFeedTrigger.Service;
-using Newtonsoft.Json;
+using NCS.DSS.Goal.GoalChangeFeedTrigger.Service;
 
-namespace NCS.DSS.Goals.GoalChangeFeedTrigger.Function
+namespace NCS.DSS.Goal.GoalChangeFeedTrigger.Function
 {
     public static class GoalChangeFeedTrigger
     {
