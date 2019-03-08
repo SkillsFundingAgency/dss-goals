@@ -6,36 +6,31 @@ namespace NCS.DSS.Goal.Cosmos.Helper
 {
     public class ResourceHelper : IResourceHelper
     {
+        private readonly IDocumentDBProvider _documentDbProvider;
+
+        public ResourceHelper(IDocumentDBProvider documentDbProvider)
+        {
+            _documentDbProvider = documentDbProvider;
+        }
+
         public async Task<bool> DoesCustomerExist(Guid customerId)
         {
-            var documentDbProvider = new DocumentDBProvider();
-            var doesCustomerExist = await documentDbProvider.DoesCustomerResourceExist(customerId);
-
-            return doesCustomerExist;
+            return await _documentDbProvider.DoesCustomerResourceExist(customerId);
         }
 
         public async Task<bool> IsCustomerReadOnly(Guid customerId)
         {
-            var documentDbProvider = new DocumentDBProvider();
-            var isCustomerReadOnly = await documentDbProvider.DoesCustomerHaveATerminationDate(customerId);
-
-            return isCustomerReadOnly;
+            return await _documentDbProvider.DoesCustomerHaveATerminationDate(customerId);
         }
 
         public bool DoesInteractionExistAndBelongToCustomer(Guid interactionId, Guid customerId)
         {
-            var documentDbProvider = new DocumentDBProvider();
-            var doesInteractionExist = documentDbProvider.DoesInteractionExistAndBelongToCustomer(interactionId, customerId);
-
-            return doesInteractionExist;
+            return _documentDbProvider.DoesInteractionExistAndBelongToCustomer(interactionId, customerId);
         }
 
         public bool DoesActionPlanExistAndBelongToCustomer(Guid actionPlanId, Guid interactionId, Guid customerId)
         {
-            var documentDbProvider = new DocumentDBProvider();
-            var doesActionPlanExist = documentDbProvider.DoesActionPlanExistAndBelongToCustomer(actionPlanId, interactionId, customerId);
-
-            return doesActionPlanExist;
+            return _documentDbProvider.DoesActionPlanExistAndBelongToCustomer(actionPlanId, interactionId, customerId); 
         }
     }
 }

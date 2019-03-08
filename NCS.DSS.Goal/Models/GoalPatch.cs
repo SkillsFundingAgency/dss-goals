@@ -1,6 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using NCS.DSS.Goal.Annotations;
+using DFC.Swagger.Standard.Annotations;
 using NCS.DSS.Goal.ReferenceData;
 
 namespace NCS.DSS.Goal.Models
@@ -50,13 +50,23 @@ namespace NCS.DSS.Goal.Models
         [StringLength(10, MinimumLength = 10)]
         [Display(Description = "Identifier of the touchpoint who made the last change to the record")]
         [Example(Description = "0000000001")]
-
         public string LastModifiedBy { get; set; }
+
+        [StringLength(50)]
+        [Display(Description = "Identifier supplied by the touchpoint to indicate their subcontractor")]
+        [Example(Description = "01234567899876543210")]
+        public string SubcontractorId { get; set; }
 
         public void SetDefaultValues()
         {
             if (!LastModifiedDate.HasValue)
                 LastModifiedDate = DateTime.UtcNow;
+        }
+
+        public void SetIds(string touchpointId, string subcontractorId)
+        {
+            LastModifiedBy = touchpointId;
+            SubcontractorId = subcontractorId;
         }
     }
 }

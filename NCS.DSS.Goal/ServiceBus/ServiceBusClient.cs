@@ -1,73 +1,61 @@
 ﻿using System;
-using System.Configuration;
-using System.IO;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.ServiceBus;
-using Microsoft.ServiceBus.Messaging;
+using Microsoft.Azure.ServiceBus;
 using Newtonsoft.Json;
 
 namespace NCS.DSS.Goal.ServiceBus
 {
     public static class ServiceBusClient
     {
-        public static readonly string KeyName = ConfigurationManager.AppSettings["KeyName"];
-        public static readonly string AccessKey = ConfigurationManager.AppSettings["AccessKey"];
-        public static readonly string BaseAddress = ConfigurationManager.AppSettings["BaseAddress"];
-        public static readonly string QueueName = ConfigurationManager.AppSettings["QueueName"];
+        public static readonly string QueueName = Environment.GetEnvironmentVariable("QueueName");
+        public static readonly string ServiceBusConnectionString = Environment.GetEnvironmentVariable("ServiceBusConnectionString");
 
-        public static async Task SendPostMessageAsync(Models.Goal goal, string reqUrl)
+        public static async Task SendPostMessageAsync(Models.Goal goals, string reqUrl)
         {
-            var tokenProvider = TokenProvider.CreateSharedAccessSignatureTokenProvider(KeyName, AccessKey);
-            var messagingFactory = MessagingFactory.Create(BaseAddress, tokenProvider);
-            var sender = messagingFactory.CreateMessageSender(QueueName);
+            var queueClient = new QueueClient(ServiceBusConnectionString, QueueName);
 
             var messageModel = new MessageModel()
             {
-                TitleMessage = "New Goal record {" + goal.GoalId + "} added at " + DateTime.UtcNow,
-                CustomerGuid = goal.CustomerId,
-                LastModifiedDate = goal.LastModifiedDate,
-                URL = reqUrl + "/" + goal.GoalId,
+                TitleMessage = "New Goals record {" + goals.GoalId + "} added at " + DateTime.UtcNow,
+                CustomerGuid = goals.CustomerId,
+                LastModifiedDate = goals.LastModifiedDate,
+                URL = reqUrl + "/" + goals.GoalId,
                 IsNewCustomer = false,
-                TouchpointId = goal.LastModifiedBy
+                TouchpointId = goals.LastModifiedBy
             };
-            
-            var msg = new BrokeredMessage(new MemoryStream(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(messageModel))))
+
+            var msg = new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(messageModel)))
             {
                 ContentType = "application/json",
-                MessageId = goal.CustomerId + " " + DateTime.UtcNow
+                MessageId = goals.CustomerId + " " + DateTime.UtcNow
             };
 
-            //msg.ForcePersistence = true; Required when we save message to cosmos
-            await sender.SendAsync(msg);
+            await queueClient.SendAsync(msg);
         }
 
-        public static async Task SendPatchMessageAsync(Models.Goal goal, Guid customerId, string reqUrl)
+        public static async Task SendPatchMessageAsync(Models.Goal goals, Guid customerId, string reqUrl)
         {
-            var tokenProvider = TokenProvider.CreateSharedAccessSignatureTokenProvider(KeyName, AccessKey);
-            var messagingFactory = MessagingFactory.Create(BaseAddress, tokenProvider);
-            var sender = messagingFactory.CreateMessageSender(QueueName);
+            var queueClient = new QueueClient(ServiceBusConnectionString, QueueName);
+
             var messageModel = new MessageModel
             {
-                TitleMessage = "Goal record modification for {" + customerId + "} at " + DateTime.UtcNow,
+                TitleMessage = "Goals record modification for {" + customerId + "} at " + DateTime.UtcNow,
                 CustomerGuid = customerId,
-                LastModifiedDate = goal.LastModifiedDate,
+                LastModifiedDate = goals.LastModifiedDate,
                 URL = reqUrl,
                 IsNewCustomer = false,
-                TouchpointId = goal.LastModifiedBy
-
+                TouchpointId = goals.LastModifiedBy
             };
 
-            var msg = new BrokeredMessage(new MemoryStream(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(messageModel))))
+            var msg = new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(messageModel)))
             {
                 ContentType = "application/json",
                 MessageId = customerId + " " + DateTime.UtcNow
             };
 
-            //msg.ForcePersistence = true; Required when we save message to cosmos
-            await sender.SendAsync(msg);
+            await queueClient.SendAsync(msg);
         }
-
     }
 
     public class MessageModel
@@ -79,6 +67,4 @@ namespace NCS.DSS.Goal.ServiceBus
         public bool IsNewCustomer { get; set; }
         public string TouchpointId { get; set; }
     }
-
 }
-

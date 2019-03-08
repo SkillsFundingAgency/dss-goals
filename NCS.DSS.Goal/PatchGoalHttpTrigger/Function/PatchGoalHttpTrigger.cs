@@ -4,14 +4,18 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.Web.Http.Description;
+using DFC.Common.Standard.Logging;
+using DFC.Functions.DI.Standard.Attributes;
+using DFC.HTTP.Standard;
+using DFC.JSON.Standard;
+using DFC.Swagger.Standard.Annotations;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
-using NCS.DSS.Goal.Annotations;
 using NCS.DSS.Goal.Cosmos.Helper;
-using NCS.DSS.Goal.Helpers;
-using NCS.DSS.Goal.Ioc;
+using NCS.DSS.Goal.Models;
 using NCS.DSS.Goal.PatchGoalHttpTrigger.Service;
 using NCS.DSS.Goal.Validation;
 using Newtonsoft.Json;
@@ -21,102 +25,180 @@ namespace NCS.DSS.Goal.PatchGoalHttpTrigger.Function
     public static class PatchGoalHttpTrigger
     {
         [FunctionName("Patch")]
-        [ResponseType(typeof(Models.Goal))]
-        [Response(HttpStatusCode = (int)HttpStatusCode.OK, Description = "Goal Updated", ShowSchema = true)]
-        [Response(HttpStatusCode = (int)HttpStatusCode.NoContent, Description = "Goal does not exist", ShowSchema = false)]
+        [ProducesResponseType(typeof(Models.Goal), 200)]
+        [Response(HttpStatusCode = (int)HttpStatusCode.OK, Description = "Goals Updated", ShowSchema = true)]
+        [Response(HttpStatusCode = (int)HttpStatusCode.NoContent, Description = "Goals does not exist", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.BadRequest, Description = "Request was malformed", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Unauthorized, Description = "API key is unknown or invalid", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
-        [Response(HttpStatusCode = 422, Description = "Goal validation error(s)", ShowSchema = false)]
-        [Display(Name = "Patch", Description = "Ability to update an existing goal record")]
-        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "patch", Route = "Customers/{customerId}/Interactions/{interactionId}/ActionPlans/{actionPlanId}/Goals/{goalId}")]HttpRequestMessage req, ILogger log, string customerId, string interactionId, string actionPlanId, string goalId,
+        [Response(HttpStatusCode = 422, Description = "Goals validation error(s)", ShowSchema = false)]
+        [Display(Name = "Patch", Description = "Ability to modify/update a customers Goals record.")]
+        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "patch", Route = "Customers/{customerId}/Interactions/{interactionId}/ActionPlans/{actionPlanId}/Goals/{goalId}")]HttpRequest req, ILogger log, string customerId, string interactionId, string actionPlanId, string goalId,
             [Inject]IResourceHelper resourceHelper,
-            [Inject]IHttpRequestMessageHelper httpRequestMessageHelper,
+            [Inject]IPatchGoalHttpTriggerService goalsPatchService,
             [Inject]IValidate validate,
-            [Inject]IPatchGoalHttpTriggerService goalPatchService)
+            [Inject]ILoggerHelper loggerHelper,
+            [Inject]IHttpRequestHelper httpRequestHelper,
+            [Inject]IHttpResponseMessageHelper httpResponseMessageHelper,
+            [Inject]IJsonHelper jsonHelper)
         {
-            var touchpointId = httpRequestMessageHelper.GetTouchpointId(req);
+
+            loggerHelper.LogMethodEnter(log);
+
+            var correlationId = httpRequestHelper.GetDssCorrelationId(req);
+            if (string.IsNullOrEmpty(correlationId))
+                log.LogInformation("Unable to locate 'DssCorrelationId' in request header");
+
+            if (!Guid.TryParse(correlationId, out var correlationGuid))
+            {
+                log.LogInformation("Unable to parse 'DssCorrelationId' to a Guid");
+                correlationGuid = Guid.NewGuid();
+            }
+
+            var touchpointId = httpRequestHelper.GetDssTouchpointId(req);
             if (string.IsNullOrEmpty(touchpointId))
             {
-                log.LogInformation("Unable to locate 'TouchpointId' in request header.");
-                return HttpResponseMessageHelper.BadRequest();
+                loggerHelper.LogInformationMessage(log, correlationGuid, "Unable to locate 'TouchpointId' in request header");
+                return httpResponseMessageHelper.BadRequest();
             }
 
-            var ApimURL = httpRequestMessageHelper.GetApimURL(req);
-            if (string.IsNullOrEmpty(ApimURL))
+            var apimUrl = httpRequestHelper.GetDssApimUrl(req);
+            if (string.IsNullOrEmpty(apimUrl))
             {
-                log.LogInformation("Unable to locate 'apimurl' in request header");
-                return HttpResponseMessageHelper.BadRequest();
+                loggerHelper.LogInformationMessage(log, correlationGuid, "Unable to locate 'apimurl' in request header");
+                return httpResponseMessageHelper.BadRequest();
             }
 
-            log.LogInformation("Patch Goal C# HTTP trigger function  processed a request. " + touchpointId);
+            var subcontractorId = httpRequestHelper.GetDssSubcontractorId(req);
+            if (string.IsNullOrEmpty(subcontractorId))
+                loggerHelper.LogInformationMessage(log, correlationGuid, "Unable to locate 'SubcontractorId' in request header");
+
+            loggerHelper.LogInformationMessage(log, correlationGuid,
+                string.Format("Post Actions C# HTTP trigger function  processed a request. By Touchpoint: {0}",
+                    touchpointId));
 
             if (!Guid.TryParse(customerId, out var customerGuid))
-                return HttpResponseMessageHelper.BadRequest(customerGuid);
+            {
+                loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Unable to parse 'customerId' to a Guid: {0}", customerId));
+                return httpResponseMessageHelper.BadRequest(customerGuid);
+            }
 
             if (!Guid.TryParse(interactionId, out var interactionGuid))
-                return HttpResponseMessageHelper.BadRequest(interactionGuid);
+            {
+                loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Unable to parse 'interactionId' to a Guid: {0}", interactionId));
+                return httpResponseMessageHelper.BadRequest(interactionGuid);
+            }
 
             if (!Guid.TryParse(actionPlanId, out var actionPlanGuid))
-                return HttpResponseMessageHelper.BadRequest(actionPlanGuid);
+            {
+                loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Unable to parse 'actionPlanId' to a Guid: {0}", actionPlanId));
+                return httpResponseMessageHelper.BadRequest(actionPlanGuid);
+            }
 
             if (!Guid.TryParse(goalId, out var goalGuid))
-                return HttpResponseMessageHelper.BadRequest(goalGuid);
+            {
+                loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Unable to parse 'GoalId' to a Guid: {0}", goalId));
+                return httpResponseMessageHelper.BadRequest(goalGuid);
+            }
 
-            Models.GoalPatch goalPatchRequest;
+            GoalPatch goalPatchRequest;
 
             try
             {
-                goalPatchRequest = await httpRequestMessageHelper.GetGoalFromRequest<Models.GoalPatch>(req);
+                loggerHelper.LogInformationMessage(log, correlationGuid, "Attempt to get resource from body of the request");
+                goalPatchRequest = await httpRequestHelper.GetResourceFromRequest<GoalPatch>(req);
             }
             catch (JsonException ex)
             {
-                return HttpResponseMessageHelper.UnprocessableEntity(ex);
+                loggerHelper.LogError(log, correlationGuid, "Unable to retrieve body from req", ex);
+                return httpResponseMessageHelper.UnprocessableEntity(ex);
             }
 
             if (goalPatchRequest == null)
-                return HttpResponseMessageHelper.UnprocessableEntity(req);
+            {
+                loggerHelper.LogInformationMessage(log, correlationGuid, "Goal patch request is null");
+                return httpResponseMessageHelper.UnprocessableEntity(req);
+            }
 
-            goalPatchRequest.LastModifiedBy = touchpointId;
+            loggerHelper.LogInformationMessage(log, correlationGuid, "Attempt to set id's for Goal");
+            goalPatchRequest.SetIds(touchpointId, subcontractorId);
 
+            loggerHelper.LogInformationMessage(log, correlationGuid, "Attempt to validate resource");
             var errors = validate.ValidateResource(goalPatchRequest, false);
 
             if (errors != null && errors.Any())
-                return HttpResponseMessageHelper.UnprocessableEntity(errors);
+            {
+                loggerHelper.LogInformationMessage(log, correlationGuid, "validation errors with resource");
+                return httpResponseMessageHelper.UnprocessableEntity(errors);
+            }
 
+            loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Attempting to see if customer exists {0}", customerGuid));
             var doesCustomerExist = await resourceHelper.DoesCustomerExist(customerGuid);
 
             if (!doesCustomerExist)
-                return HttpResponseMessageHelper.NoContent(customerGuid);
+            {
+                loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Customer does not exist {0}", customerGuid));
+                return httpResponseMessageHelper.NoContent(customerGuid);
+            }
 
+            loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Attempting to see if this is a read only customer {0}", customerGuid));
             var isCustomerReadOnly = await resourceHelper.IsCustomerReadOnly(customerGuid);
 
             if (isCustomerReadOnly)
-                return HttpResponseMessageHelper.Forbidden(customerGuid);
+            {
+                loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Customer is read only {0}", customerGuid));
+                return httpResponseMessageHelper.Forbidden(customerGuid);
+            }
 
+            loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Attempting to get Interaction {0} for customer {1}", interactionGuid, customerGuid));
             var doesInteractionExist = resourceHelper.DoesInteractionExistAndBelongToCustomer(interactionGuid, customerGuid);
 
             if (!doesInteractionExist)
-                return HttpResponseMessageHelper.NoContent(interactionGuid);
+            {
+                loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Interaction does not exist {0}", interactionGuid));
+                return httpResponseMessageHelper.NoContent(interactionGuid);
+            }
 
-            var doesActionPlanExist = resourceHelper.DoesActionPlanExistAndBelongToCustomer(actionPlanGuid, interactionGuid, customerGuid);
+            var doesActionPlanExistAndBelongToCustomer = resourceHelper.DoesActionPlanExistAndBelongToCustomer(actionPlanGuid, interactionGuid, customerGuid);
 
-            if (!doesActionPlanExist)
-                return HttpResponseMessageHelper.NoContent(actionPlanGuid);
+            if (!doesActionPlanExistAndBelongToCustomer)
+            {
+                loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Action Plan does not exist {0}", actionPlanGuid));
+                return httpResponseMessageHelper.NoContent(actionPlanGuid);
+            }
 
-            var goal = await goalPatchService.GetGoalForCustomerAsync(customerGuid, goalGuid);
+            loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Attempting to get goal {0} for customer {1}", goalGuid, customerGuid));
+            var goalForCustomer = await goalsPatchService.GetGoalForCustomerAsync(customerGuid, goalGuid, actionPlanGuid);
 
-            if (goal == null)
-                return HttpResponseMessageHelper.NoContent(goalGuid);
+            if (goalForCustomer == null)
+            {
+                loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Goal does not exist {0}", goalGuid));
+                return httpResponseMessageHelper.NoContent(goalGuid);
+            }
 
-            var updatedGoal = await goalPatchService.UpdateAsync(goal, goalPatchRequest);
+            var patchedGoal = goalsPatchService.PatchResource(goalForCustomer, goalPatchRequest);
+
+            if (patchedGoal == null)
+            {
+                loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Unable to patch Goal {0}", goalGuid));
+                return httpResponseMessageHelper.NoContent(actionPlanGuid);
+            }
+
+            loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Attempting to update goal {0}", goalGuid));
+            var updatedGoal = await goalsPatchService.UpdateCosmosAsync(patchedGoal, goalGuid);
 
             if (updatedGoal != null)
-                await goalPatchService.SendToServiceBusQueueAsync(updatedGoal, customerGuid, ApimURL);
+            {
+                loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("attempting to send to service bus {0}", goalGuid));
+                await goalsPatchService.SendToServiceBusQueueAsync(updatedGoal, customerGuid, apimUrl);
+            }
+
+            loggerHelper.LogMethodExit(log);
 
             return updatedGoal == null ?
-                HttpResponseMessageHelper.BadRequest(actionPlanGuid) :
-                HttpResponseMessageHelper.Ok(JsonHelper.SerializeObject(updatedGoal));
+                httpResponseMessageHelper.BadRequest(goalGuid) :
+                httpResponseMessageHelper.Ok(jsonHelper.SerializeObjectAndRenameIdProperty(updatedGoal, "id", "GoalId"));
+
         }
     }
 }
