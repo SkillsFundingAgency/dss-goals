@@ -19,7 +19,7 @@ namespace NCS.DSS.Goal.Tests.ValidationTests
                 DateGoalShouldBeCompletedBy = DateTime.Today.AddDays(-5),
                 GoalSummary = "Summary",
                 GoalType = GoalType.Learning,
-                LastModifiedDate = DateTime.Now
+                LastModifiedDate = DateTime.UtcNow
             };
 
             var validation = new Validate();
@@ -42,7 +42,7 @@ namespace NCS.DSS.Goal.Tests.ValidationTests
                 DateGoalAchieved = DateTime.Today.AddDays(3),
                 GoalSummary = "Summary",
                 GoalType = GoalType.Learning,
-                LastModifiedDate = DateTime.Now
+                LastModifiedDate = DateTime.UtcNow
             };
 
             var validation = new Validate();
@@ -64,7 +64,7 @@ namespace NCS.DSS.Goal.Tests.ValidationTests
                 DateGoalShouldBeCompletedBy = DateTime.Today.AddDays(-3),
                 GoalSummary = "Summary",
                 GoalType = (GoalType)100,
-                LastModifiedDate = DateTime.Now
+                LastModifiedDate = DateTime.UtcNow
             };
 
             var validation = new Validate();
@@ -87,7 +87,7 @@ namespace NCS.DSS.Goal.Tests.ValidationTests
                 GoalSummary = "Summary",
                 GoalType = GoalType.Other,
                 GoalStatus= (GoalStatus)1000,
-                LastModifiedDate = DateTime.Now
+                LastModifiedDate = DateTime.UtcNow
             };
 
             var validation = new Validate();
