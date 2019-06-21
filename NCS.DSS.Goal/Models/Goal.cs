@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using DFC.JSON.Standard.Attributes;
 using DFC.Swagger.Standard.Annotations;
 using NCS.DSS.Goal.ReferenceData;
 
@@ -67,6 +68,10 @@ namespace NCS.DSS.Goal.Models
         [Example(Description = "0000000001")]
         public string LastModifiedBy { get; set; }
 
+        [JsonIgnoreOnSerialize]
+        public string CreatedBy { get; set; }
+
+
         public void SetDefaultValues()
         {
             if (!LastModifiedDate.HasValue)
@@ -86,6 +91,7 @@ namespace NCS.DSS.Goal.Models
             ActionPlanId = actionPlanId;
             LastModifiedBy = touchpointId;
             SubcontractorId = subcontractorId;
+            CreatedBy = touchpointId;
         }
 
     }
