@@ -112,20 +112,8 @@
               "value": "actionplans"
             },
             {
-              "name": "LeaseCollectionName",
-              "value": "goal-lease"
-            },
-            {
-              "name": "LeaseCollectionPrefix",
-              "value": "goalChangeFeedPrefix"
-            },
-            {
               "name": "ServiceBusConnectionString",
               "value": "[parameters('serviceBusConnectionString')]"
-            },
-            {
-              "name": "ChangeFeedQueueName",
-              "value": "dss.changefeedqueue"
             },
             {
               "name": "QueueName",
