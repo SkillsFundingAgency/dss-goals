@@ -10,7 +10,6 @@ using NCS.DSS.Goal.Cosmos.Helper;
 using NCS.DSS.Goal.Cosmos.Provider;
 using NCS.DSS.Goal.GetGoalByIdHttpTrigger.Service;
 using NCS.DSS.Goal.GetGoalHttpTrigger.Service;
-using NCS.DSS.Goal.GoalChangeFeedTrigger.Service;
 using NCS.DSS.Goal.Ioc;
 using NCS.DSS.Goal.PatchGoalHttpTrigger.Service;
 using NCS.DSS.Goal.PostGoalHttpTrigger.Service;
@@ -40,7 +39,6 @@ namespace NCS.DSS.Goal.Ioc
             builder.Services.AddScoped<IGetGoalByIdHttpTriggerService, GetGoalByIdHttpTriggerService>();
             builder.Services.AddScoped<IPostGoalHttpTriggerService, PostGoalHttpTriggerService>();
             builder.Services.AddScoped<IPatchGoalHttpTriggerService, PatchGoalHttpTriggerService>();
-            builder.Services.AddScoped<IGoalChangeFeedTriggerService, GoalChangeFeedTriggerService>();
         }
     }
 }
