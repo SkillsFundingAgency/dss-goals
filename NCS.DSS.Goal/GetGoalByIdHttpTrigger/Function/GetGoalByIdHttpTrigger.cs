@@ -18,23 +18,33 @@ using NCS.DSS.Goal.GetGoalByIdHttpTrigger.Service;
 
 namespace NCS.DSS.Goal.GetGoalByIdHttpTrigger.Function
 {
-    public static class GetGoalByIdHttpTrigger
+    public class GetGoalByIdHttpTrigger
     {
+        private IResourceHelper resourceHelper;
+        private readonly IGetGoalByIdHttpTriggerService goalsGetByIdService;
+        private ILoggerHelper loggerHelper;
+        private IHttpRequestHelper httpRequestHelper;
+        private IHttpResponseMessageHelper httpResponseMessageHelper;
+        private IJsonHelper jsonHelper;
+        public GetGoalByIdHttpTrigger(IResourceHelper _resourceHelper, IHttpRequestHelper _httpRequestHelper, IGetGoalByIdHttpTriggerService _goalsGetByIdService, IHttpResponseMessageHelper _httpResponseMessageHelper, IJsonHelper _jsonHelper, ILoggerHelper _loggerHelper)
+        {
+            resourceHelper = _resourceHelper;
+            httpRequestHelper = _httpRequestHelper;
+            goalsGetByIdService = _goalsGetByIdService;
+            httpResponseMessageHelper = _httpResponseMessageHelper;
+            jsonHelper = _jsonHelper;
+            loggerHelper = _loggerHelper;
+        }
+
         [FunctionName("GetById")]
-        [ProducesResponseType(typeof(Models.Goal), 200)]
+        [ProducesResponseType(typeof(Models.Goal), (int)HttpStatusCode.OK)]
         [Response(HttpStatusCode = (int)HttpStatusCode.OK, Description = "Goals found", ShowSchema = true)]
         [Response(HttpStatusCode = (int)HttpStatusCode.NoContent, Description = "Goals does not exist", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.BadRequest, Description = "Request was malformed", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Unauthorized, Description = "API key is unknown or invalid", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
         [Display(Name = "Get", Description = "Ability to retrieve an individual Goals for the given customer")]
-        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Customers/{customerId}/Interactions/{interactionId}/ActionPlans/{actionPlanId}/Goals/{goalId}")]HttpRequest req, ILogger log, string customerId, string interactionId, string actionPlanId, string goalId,
-            [Inject]IResourceHelper resourceHelper,
-            [Inject]IGetGoalByIdHttpTriggerService goalsGetByIdService,
-            [Inject]ILoggerHelper loggerHelper,
-            [Inject]IHttpRequestHelper httpRequestHelper,
-            [Inject]IHttpResponseMessageHelper httpResponseMessageHelper,
-            [Inject]IJsonHelper jsonHelper)
+        public async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Customers/{customerId}/Interactions/{interactionId}/ActionPlans/{actionPlanId}/Goals/{goalId}")]HttpRequest req, ILogger log, string customerId, string interactionId, string actionPlanId, string goalId)
         {
             loggerHelper.LogMethodEnter(log);
 

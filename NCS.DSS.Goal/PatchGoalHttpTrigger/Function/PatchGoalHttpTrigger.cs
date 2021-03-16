@@ -22,10 +22,28 @@ using Newtonsoft.Json;
 
 namespace NCS.DSS.Goal.PatchGoalHttpTrigger.Function
 {
-    public static class PatchGoalHttpTrigger
+    public class PatchGoalHttpTrigger
     {
+        private IResourceHelper resourceHelper;
+        private readonly IPatchGoalHttpTriggerService goalsPatchService;
+        private ILoggerHelper loggerHelper;
+        private IHttpRequestHelper httpRequestHelper;
+        private IHttpResponseMessageHelper httpResponseMessageHelper;
+        private IJsonHelper jsonHelper;
+        private IValidate validate;
+        public PatchGoalHttpTrigger(IResourceHelper _resourceHelper, IHttpRequestHelper _httpRequestHelper, IPatchGoalHttpTriggerService _goalsPatchService, IHttpResponseMessageHelper _httpResponseMessageHelper, IJsonHelper _jsonHelper, ILoggerHelper _loggerHelper, IValidate _validate)
+        {
+            resourceHelper = _resourceHelper;
+            httpRequestHelper = _httpRequestHelper;
+            goalsPatchService = _goalsPatchService;
+            httpResponseMessageHelper = _httpResponseMessageHelper;
+            jsonHelper = _jsonHelper;
+            loggerHelper = _loggerHelper;
+            validate = _validate;
+        }
+
         [FunctionName("Patch")]
-        [ProducesResponseType(typeof(Models.Goal), 200)]
+        [ProducesResponseType(typeof(Models.Goal), (int)HttpStatusCode.OK)]
         [Response(HttpStatusCode = (int)HttpStatusCode.OK, Description = "Goals Updated", ShowSchema = true)]
         [Response(HttpStatusCode = (int)HttpStatusCode.NoContent, Description = "Goals does not exist", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.BadRequest, Description = "Request was malformed", ShowSchema = false)]
@@ -33,16 +51,8 @@ namespace NCS.DSS.Goal.PatchGoalHttpTrigger.Function
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
         [Response(HttpStatusCode = 422, Description = "Goals validation error(s)", ShowSchema = false)]
         [Display(Name = "Patch", Description = "Ability to modify/update a customers Goals record.")]
-        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "patch", Route = "Customers/{customerId}/Interactions/{interactionId}/ActionPlans/{actionPlanId}/Goals/{goalId}")]HttpRequest req, ILogger log, string customerId, string interactionId, string actionPlanId, string goalId,
-            [Inject]IResourceHelper resourceHelper,
-            [Inject]IPatchGoalHttpTriggerService goalsPatchService,
-            [Inject]IValidate validate,
-            [Inject]ILoggerHelper loggerHelper,
-            [Inject]IHttpRequestHelper httpRequestHelper,
-            [Inject]IHttpResponseMessageHelper httpResponseMessageHelper,
-            [Inject]IJsonHelper jsonHelper)
+        public async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "patch", Route = "Customers/{customerId}/Interactions/{interactionId}/ActionPlans/{actionPlanId}/Goals/{goalId}")]HttpRequest req, ILogger log, string customerId, string interactionId, string actionPlanId, string goalId)
         {
-
             loggerHelper.LogMethodEnter(log);
 
             var correlationId = httpRequestHelper.GetDssCorrelationId(req);
