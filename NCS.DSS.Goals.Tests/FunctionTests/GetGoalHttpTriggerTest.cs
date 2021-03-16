@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.Extensions.Logging;
 using NCS.DSS.Goal.Cosmos.Helper;
 using NCS.DSS.Goal.GetGoalHttpTrigger.Service;
-using NSubstitute;
 using NUnit.Framework;
 
 namespace NCS.DSS.Goal.Tests.FunctionTests
