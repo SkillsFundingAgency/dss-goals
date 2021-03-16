@@ -29,7 +29,9 @@ namespace NCS.DSS.Goal.PostGoalHttpTrigger.Function
         private IHttpRequestHelper httpRequestHelper;
         private IHttpResponseMessageHelper httpResponseMessageHelper;
         private IJsonHelper jsonHelper;
-        public PostGoalHttpTrigger(IResourceHelper _resourceHelper, IHttpRequestHelper _httpRequestHelper, IPostGoalHttpTriggerService _goalsPostService, IHttpResponseMessageHelper _httpResponseMessageHelper, IJsonHelper _jsonHelper, ILoggerHelper _loggerHelper)
+        private IValidate validate;
+
+        public PostGoalHttpTrigger(IResourceHelper _resourceHelper, IHttpRequestHelper _httpRequestHelper, IPostGoalHttpTriggerService _goalsPostService, IHttpResponseMessageHelper _httpResponseMessageHelper, IJsonHelper _jsonHelper, ILoggerHelper _loggerHelper, IValidate _validate)
         {
             resourceHelper = _resourceHelper;
             httpRequestHelper = _httpRequestHelper;
@@ -37,6 +39,7 @@ namespace NCS.DSS.Goal.PostGoalHttpTrigger.Function
             httpResponseMessageHelper = _httpResponseMessageHelper;
             jsonHelper = _jsonHelper;
             loggerHelper = _loggerHelper;
+            validate = _validate;
         }
 
         [FunctionName("Post")]
@@ -48,14 +51,7 @@ namespace NCS.DSS.Goal.PostGoalHttpTrigger.Function
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
         [Response(HttpStatusCode = 422, Description = "Goals validation error(s)", ShowSchema = false)]
         [Display(Name = "Post", Description = "Ability to create a new Goals for a customer.")]
-        public async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "Customers/{customerId}/Interactions/{interactionId}/ActionPlans/{actionPlanId}/Goals")]HttpRequest req, ILogger log, string customerId, string interactionId, string actionPlanId,
-           [Inject]IResourceHelper resourceHelper,
-           [Inject]IPostGoalHttpTriggerService goalsPostService,
-           [Inject]IValidate validate,
-           [Inject]ILoggerHelper loggerHelper,
-           [Inject]IHttpRequestHelper httpRequestHelper,
-           [Inject]IHttpResponseMessageHelper httpResponseMessageHelper,
-           [Inject]IJsonHelper jsonHelper)
+        public async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "Customers/{customerId}/Interactions/{interactionId}/ActionPlans/{actionPlanId}/Goals")]HttpRequest req, ILogger log, string customerId, string interactionId, string actionPlanId)
         {
 
             loggerHelper.LogMethodEnter(log);

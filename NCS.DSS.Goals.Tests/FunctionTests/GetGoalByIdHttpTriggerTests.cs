@@ -8,9 +8,9 @@ using DFC.JSON.Standard;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.Extensions.Logging;
+using Moq;
 using NCS.DSS.Goal.Cosmos.Helper;
 using NCS.DSS.Goal.GetGoalByIdHttpTrigger.Service;
-using NSubstitute;
 using NUnit.Framework;
 
 namespace NCS.DSS.Goal.Tests.FunctionTests
@@ -26,35 +26,40 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
         private const string ValidDssCorrelationId = "452d8e8c-2516-4a6b-9fc1-c85e578ac066";
         private const string InValidId = "1111111-2222-3333-4444-555555555555";
 
-        private ILogger _log;
-        private HttpRequest _request;
-        private IResourceHelper _resourceHelper;
-        private IGetGoalByIdHttpTriggerService _getGoalByIdHttpTriggerService;
-        private ILoggerHelper _loggerHelper;
-        private IHttpRequestHelper _httpRequestHelper;
+        private Mock<ILogger> _log;
+        private DefaultHttpRequest _request;
+        private Mock<IResourceHelper> _resourceHelper;
+        private Mock<IHttpRequestHelper> _httpRequestMessageHelper;
+        private Mock<IGetGoalByIdHttpTriggerService> _getGoalByIdHttpTriggerService;
+        private Models.Goal _goal;
+        private GetGoalByIdHttpTrigger.Function.GetGoalByIdHttpTrigger function;
         private IHttpResponseMessageHelper _httpResponseMessageHelper;
         private IJsonHelper _jsonHelper;
-        private Models.Goal _goal;
+        private Mock<ILoggerHelper> _loggerHelper;
+
 
         [SetUp]
         public void Setup()
         {
-            _goal = Substitute.For<Models.Goal>();
+            _goal = new Models.Goal();
 
-            _request = new DefaultHttpRequest(new DefaultHttpContext());
 
-            _log = Substitute.For<ILogger>();
-            _resourceHelper = Substitute.For<IResourceHelper>();
-            _loggerHelper = Substitute.For<ILoggerHelper>();
-            _httpRequestHelper = Substitute.For<IHttpRequestHelper>();
-            _httpResponseMessageHelper = Substitute.For<IHttpResponseMessageHelper>();
-            _jsonHelper = Substitute.For<IJsonHelper>();
-            _getGoalByIdHttpTriggerService = Substitute.For<IGetGoalByIdHttpTriggerService>();
+            _loggerHelper = new Mock<ILoggerHelper>();
+            _request = null;
 
-            _httpRequestHelper.GetDssCorrelationId(_request).Returns(ValidDssCorrelationId);
-            _httpRequestHelper.GetDssTouchpointId(_request).Returns("0000000001");
-            _resourceHelper.DoesInteractionExistAndBelongToCustomer(Arg.Any<Guid>(), Arg.Any<Guid>()).Returns(true);
-            _resourceHelper.DoesActionPlanExistAndBelongToCustomer(Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<Guid>()).Returns(true);
+            _log = new Mock<ILogger>();
+            _resourceHelper = new Mock<IResourceHelper>();
+            _httpRequestMessageHelper = new Mock<IHttpRequestHelper>();
+            _getGoalByIdHttpTriggerService = new Mock<IGetGoalByIdHttpTriggerService>();
+            _httpRequestMessageHelper = new Mock<IHttpRequestHelper>();
+            _httpResponseMessageHelper = new HttpResponseMessageHelper();
+            _jsonHelper = new JsonHelper();
+            function = new GetGoalByIdHttpTrigger.Function.GetGoalByIdHttpTrigger(_resourceHelper.Object, _httpRequestMessageHelper.Object, _getGoalByIdHttpTriggerService.Object, _httpResponseMessageHelper, _jsonHelper, _loggerHelper.Object);
+
+            //_httpRequestHelper.GetDssCorrelationId(_request).Returns(ValidDssCorrelationId);
+            //_httpRequestHelper.GetDssTouchpointId(_request).Returns("0000000001");
+            //_resourceHelper.DoesInteractionExistAndBelongToCustomer(Arg.Any<Guid>(), Arg.Any<Guid>()).Returns(true);
+            //_resourceHelper.DoesActionPlanExistAndBelongToCustomer(Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<Guid>()).Returns(true);
 
         }
 
