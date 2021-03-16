@@ -6,7 +6,6 @@ using DFC.Swagger.Standard;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using NCS.DSS.Goal.Ioc;
 
 namespace NCS.DSS.Goal.APIDefinition
 {
