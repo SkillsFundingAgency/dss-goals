@@ -127,7 +127,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
             _resourceHelper.Setup(x => x.DoesCustomerExist(It.IsAny<Guid>())).Returns(Task.FromResult(true));
 
             var listOfGoales = new List<Models.Goal>();
-            _getGoalHttpTriggerService.Setup(x => x.GetGoalsAsync(It.IsAny<Guid>(), It.IsAny<Guid>())).Returns(Task.FromResult(listOfGoales).Result);
+            _getGoalHttpTriggerService.Setup(x => x.GetGoalsAsync(It.IsAny<Guid>(), It.IsAny<Guid>())).Returns(Task.FromResult(listOfGoales));
 
             //_httpResponseMessageHelper
             //    .Ok(Arg.Any<string>()).Returns(x => new HttpResponseMessage(HttpStatusCode.OK));
@@ -144,7 +144,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
         {
             return await function.Run(
                 _request, 
-                _log, 
+                _log.Object, 
                 customerId,
                 interactionId,
                 actionplanId).ConfigureAwait(false);
