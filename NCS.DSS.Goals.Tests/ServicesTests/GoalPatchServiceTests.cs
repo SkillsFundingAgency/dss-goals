@@ -5,25 +5,25 @@ using NCS.DSS.Goal.PatchGoalHttpTrigger.Service;
 using NCS.DSS.Goal.ReferenceData;
 using Newtonsoft.Json;
 using NUnit.Framework;
-using Moq;
+using System.Threading.Tasks;
 
 namespace NCS.DSS.Goal.Tests.ServicesTests
 {
     [TestFixture]
     public class GoalPatchServiceTests
     {
-        private Mock<IJsonHelper> _jsonHelper;
-        private Mock<IGoalPatchService> _goalPatchService;
-        private Mock<GoalPatch> _goalPatch;
+        private IJsonHelper _jsonHelper;
+        private IGoalPatchService _goalPatchService;
+        private GoalPatch _goalPatch;
         private string _json;
 
 
         [SetUp]
         public void Setup()
         {
-            _jsonHelper = new Mock<IJsonHelper>();
-            _goalPatchService = new Mock<IGoalPatchService>(_jsonHelper);
-            _goalPatch = new Mock<GoalPatch>();
+            _jsonHelper = new JsonHelper();
+            _goalPatchService = new GoalPatchService(_jsonHelper);
+            _goalPatch = new GoalPatch();
 
             _json = JsonConvert.SerializeObject(_goalPatch);
         }
@@ -31,7 +31,7 @@ namespace NCS.DSS.Goal.Tests.ServicesTests
         [Test]
         public void GoalPatchServiceTests_ReturnsNull_WhenGoalPatchIsNull()
         {
-            var result = _goalPatchService.Setup(x=> x.Patch(string.Empty, It.IsAny<GoalPatch>()));
+            var result = _goalPatchService.Patch(string.Empty, _goalPatch);
 
             // Assert
             Assert.IsNull(result);
@@ -42,7 +42,7 @@ namespace NCS.DSS.Goal.Tests.ServicesTests
         {
             var goalPatch = new GoalPatch() {  DateGoalAchieved = DateTime.MaxValue };
 
-            var patchedGoal = _goalPatchService.Setup(x => x.Patch(_json, goalPatch)).Returns(goalPatch);
+            var patchedGoal = _goalPatchService.Patch(_json, goalPatch);
 
             var goal = JsonConvert.DeserializeObject<Models.Goal>(patchedGoal);
 
