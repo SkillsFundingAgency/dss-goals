@@ -51,7 +51,6 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
             _resourceHelper = new Mock<IResourceHelper>();
             _httpRequestMessageHelper = new Mock<IHttpRequestHelper>();
             _getGoalByIdHttpTriggerService = new Mock<IGetGoalByIdHttpTriggerService>();
-            _httpRequestMessageHelper = new Mock<IHttpRequestHelper>();
             _httpResponseMessageHelper = new HttpResponseMessageHelper();
             _jsonHelper = new JsonHelper();
             function = new GetGoalByIdHttpTrigger.Function.GetGoalByIdHttpTrigger(_resourceHelper.Object, _httpRequestMessageHelper.Object, _getGoalByIdHttpTriggerService.Object, _httpResponseMessageHelper, _jsonHelper, _loggerHelper.Object);

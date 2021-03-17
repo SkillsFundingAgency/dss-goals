@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using NCS.DSS.Goal.Cosmos.Helper;
 using NCS.DSS.Goal.GetGoalHttpTrigger.Service;
 using NUnit.Framework;
+using Moq;
 
 namespace NCS.DSS.Goal.Tests.FunctionTests
 {
@@ -24,42 +25,45 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
         private const string ValidActionPlanId = "b8592ff8-af97-49ad-9fb2-e5c3c717fd85";
         private const string InValidId = "1111111-2222-3333-4444-555555555555";
 
-        private ILogger _log;
-        private HttpRequest _request;
-        private IResourceHelper _resourceHelper;
-        private IGetGoalHttpTriggerService _getGoalHttpTriggerService;
-        private ILoggerHelper _loggerHelper;
-        private IHttpRequestHelper _httpRequestHelper;
+        private Mock<ILogger> _log;
+        private DefaultHttpRequest _request;
+        private Mock<IResourceHelper> _resourceHelper;
+        private Mock<IHttpRequestHelper> _httpRequestHelper;
+        private Mock<IGetGoalHttpTriggerService> _getGoalHttpTriggerService;
+        private Models.Goal _goal;
+        private GetGoalHttpTrigger.Function.GetGoalHttpTrigger function;
         private IHttpResponseMessageHelper _httpResponseMessageHelper;
         private IJsonHelper _jsonHelper;
+        private Mock<ILoggerHelper> _loggerHelper;
+
 
         [SetUp]
         public void Setup()
         {
-            _request = new DefaultHttpRequest(new DefaultHttpContext());
+            _goal = new Models.Goal();
 
-            _resourceHelper = Substitute.For<IResourceHelper>();
-            _loggerHelper = Substitute.For<ILoggerHelper>();
-            _httpRequestHelper = Substitute.For<IHttpRequestHelper>();
-            _httpResponseMessageHelper = Substitute.For<IHttpResponseMessageHelper>();
-            _jsonHelper = Substitute.For<IJsonHelper>();
-            _log = Substitute.For<ILogger>();
-            _resourceHelper = Substitute.For<IResourceHelper>();
-            _getGoalHttpTriggerService = Substitute.For<IGetGoalHttpTriggerService>();
 
-            _httpRequestHelper.GetDssCorrelationId(_request).Returns(ValidDssCorrelationId);
-            _httpRequestHelper.GetDssTouchpointId(_request).Returns("0000000001");
-            _resourceHelper.DoesInteractionExistAndBelongToCustomer(Arg.Any<Guid>(), Arg.Any<Guid>()).Returns(true);
-            _resourceHelper.DoesActionPlanExistAndBelongToCustomer(Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<Guid>()).Returns(true);
+            _loggerHelper = new Mock<ILoggerHelper>();
+            _request = null;
+
+            _log = new Mock<ILogger>();
+            _resourceHelper = new Mock<IResourceHelper>();
+            _httpRequestHelper = new Mock<IHttpRequestHelper>();
+            _getGoalHttpTriggerService = new Mock<IGetGoalHttpTriggerService>();
+            _httpResponseMessageHelper = new HttpResponseMessageHelper();
+            _jsonHelper = new JsonHelper();
+            function = new GetGoalHttpTrigger.Function.GetGoalHttpTrigger(_resourceHelper.Object, _httpRequestHelper.Object, _getGoalHttpTriggerService.Object, _httpResponseMessageHelper, _jsonHelper, _loggerHelper.Object);
+            //_resourceHelper.DoesInteractionExistAndBelongToCustomer(Arg.Any<Guid>(), Arg.Any<Guid>()).Returns(true);
+            //_resourceHelper.DoesActionPlanExistAndBelongToCustomer(Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<Guid>()).Returns(true);
         }
 
         [Test]
         public async Task GetGoalHttpTrigger_ReturnsStatusCodeBadRequest_WhenDssCorrelationIdIsInvalid()
         {
-            _httpRequestHelper.GetDssCorrelationId(_request).Returns(InValidId);
+            _httpRequestHelper.Setup(x => x.GetDssCorrelationId(_request)).Returns(InValidId);
 
-            _httpResponseMessageHelper
-                .BadRequest(Arg.Any<Guid>()).Returns(x => new HttpResponseMessage(HttpStatusCode.BadRequest));
+            //_httpResponseMessageHelper
+            //    .BadRequest(Arg.Any<Guid>()).Returns(x => new HttpResponseMessage(HttpStatusCode.BadRequest));
 
             // Act
             var result = await RunFunction(InValidId, ValidInteractionId, ValidActionPlanId);
@@ -72,8 +76,8 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
         [Test]
         public async Task GetGoalHttpTrigger_ReturnsStatusCodeBadRequest_WhenCustomerIdIsInvalid()
         {
-            _httpResponseMessageHelper
-                .BadRequest(Arg.Any<Guid>()).Returns(x => new HttpResponseMessage(HttpStatusCode.BadRequest));
+            //_httpResponseMessageHelper
+            //    .BadRequest(Arg.Any<Guid>()).Returns(x => new HttpResponseMessage(HttpStatusCode.BadRequest));
 
             // Act
             var result = await RunFunction(InValidId, ValidInteractionId, ValidActionPlanId);
@@ -86,10 +90,10 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
         [Test]
         public async Task GetGoalHttpTrigger_ReturnsStatusCodeNoContent_WhenCustomerDoesNotExist()
         {
-            _resourceHelper.DoesCustomerExist(Arg.Any<Guid>()).ReturnsForAnyArgs(false);
+            _resourceHelper.Setup(x => x.DoesCustomerExist(It.IsAny<Guid>())).Returns(Task.FromResult(false));
 
-            _httpResponseMessageHelper
-                .NoContent(Arg.Any<Guid>()).Returns(x => new HttpResponseMessage(HttpStatusCode.NoContent));
+            //_httpResponseMessageHelper
+            //    .NoContent(Arg.Any<Guid>()).Returns(x => new HttpResponseMessage(HttpStatusCode.NoContent));
 
             // Act
             var result = await RunFunction(ValidCustomerId, ValidInteractionId, ValidActionPlanId);
@@ -102,12 +106,12 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
         [Test]
         public async Task GetGoalHttpTrigger_ReturnsStatusCodeNoContent_WhenGoalDoesNotExist()
         {
-            _resourceHelper.DoesCustomerExist(Arg.Any<Guid>()).Returns(true);
+            _resourceHelper.Setup(x => x.DoesCustomerExist(It.IsAny<Guid>())).Returns(Task.FromResult(true));
 
-            _getGoalHttpTriggerService.GetGoalsAsync(Arg.Any<Guid>(), Arg.Any<Guid>()).Returns(Task.FromResult<List<Models.Goal>>(null).Result);
+            _getGoalHttpTriggerService.Setup(x => x.GetGoalsAsync(It.IsAny<Guid>(), It.IsAny<Guid>())).Returns(Task.FromResult <List<Models.Goal>>(null));
 
-            _httpResponseMessageHelper
-                .NoContent(Arg.Any<Guid>()).Returns(x => new HttpResponseMessage(HttpStatusCode.NoContent));
+           // _httpResponseMessageHelper
+           //     .NoContent(Arg.Any<Guid>()).Returns(x => new HttpResponseMessage(HttpStatusCode.NoContent));
 
             // Act
             var result = await RunFunction(ValidCustomerId, ValidInteractionId, ValidActionPlanId);
@@ -120,13 +124,13 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
         [Test]
         public async Task GetGoalHttpTrigger_ReturnsStatusCodeOk_WhenGoalExists()
         {
-            _resourceHelper.DoesCustomerExist(Arg.Any<Guid>()).Returns(true);
+            _resourceHelper.Setup(x => x.DoesCustomerExist(It.IsAny<Guid>())).Returns(Task.FromResult(true));
 
             var listOfGoales = new List<Models.Goal>();
-            _getGoalHttpTriggerService.GetGoalsAsync(Arg.Any<Guid>(), Arg.Any<Guid>()).Returns(Task.FromResult(listOfGoales).Result);
+            _getGoalHttpTriggerService.Setup(x => x.GetGoalsAsync(It.IsAny<Guid>(), It.IsAny<Guid>())).Returns(Task.FromResult(listOfGoales).Result);
 
-            _httpResponseMessageHelper
-                .Ok(Arg.Any<string>()).Returns(x => new HttpResponseMessage(HttpStatusCode.OK));
+            //_httpResponseMessageHelper
+            //    .Ok(Arg.Any<string>()).Returns(x => new HttpResponseMessage(HttpStatusCode.OK));
 
             // Act
             var result = await RunFunction(ValidCustomerId, ValidInteractionId, ValidActionPlanId);
@@ -138,18 +142,12 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
 
         private async Task<HttpResponseMessage> RunFunction(string customerId, string interactionId, string actionplanId)
         {
-            return await GetGoalHttpTrigger.Function.GetGoalHttpTrigger.Run(
+            return await function.Run(
                 _request, 
                 _log, 
                 customerId,
                 interactionId,
-                actionplanId,
-                _resourceHelper,
-                _getGoalHttpTriggerService,
-                _loggerHelper,
-                _httpRequestHelper,
-                _httpResponseMessageHelper,
-                _jsonHelper).ConfigureAwait(false);
+                actionplanId).ConfigureAwait(false);
         }
     }
 }
