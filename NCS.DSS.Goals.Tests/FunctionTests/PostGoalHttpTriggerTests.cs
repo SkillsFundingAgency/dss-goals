@@ -58,20 +58,12 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
 
             function = new PostGoalHttpTrigger.Function.PostGoalHttpTrigger(_resourceHelper.Object, _httpRequestHelper.Object, _postGoalHttpTriggerService.Object, _httpResponseMessageHelper, _jsonHelper, _loggerHelper.Object, _validate.Object);
 
-            //_httpRequestHelper.GetDssCorrelationId(_request).Returns(ValidDssCorrelationId);
-            //_httpRequestHelper.GetDssTouchpointId(_request).Returns("0000000001");
-            //_httpRequestHelper.GetDssApimUrl(_request).Returns("http://localhost:");
-            //_resourceHelper.DoesInteractionExistAndBelongToCustomer(Arg.Any<Guid>(), Arg.Any<Guid>()).Returns(true);
-            //_resourceHelper.DoesActionPlanExistAndBelongToCustomer(Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<Guid>()).Returns(true);
-
         }
 
         [Test]
         public async Task PostGoalHttpTrigger_ReturnsStatusCodeBadRequest_WhenTouchpointIdIsNotProvided()
         {
             _httpRequestHelper.Setup(x => x.GetDssTouchpointId(_request)).Returns((string)null);
-
-            //_httpResponseMessageHelper.BadRequest().Returns(x => new HttpResponseMessage(HttpStatusCode.BadRequest));
 
             // Act
             var result = await RunFunction(InValidId, ValidInteractionId, ValidActionPlanId);
@@ -86,8 +78,6 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
         {
             _httpRequestHelper.Setup(x => x.GetDssApimUrl(_request)).Returns((string)null);
 
-            //_httpResponseMessageHelper.BadRequest().Returns(x => new HttpResponseMessage(HttpStatusCode.BadRequest));
-
             // Act
             var result = await RunFunction(InValidId, ValidInteractionId, ValidActionPlanId);
 
@@ -99,9 +89,6 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
         [Test]
         public async Task PostGoalHttpTrigger_ReturnsStatusCodeBadRequest_WhenCustomerIdIsInvalid()
         {
-            //_httpResponseMessageHelper
-            //    .BadRequest(Arg.Any<Guid>()).Returns(x => new HttpResponseMessage(HttpStatusCode.BadRequest));
-
             // Act
             var result = await RunFunction(InValidId, ValidInteractionId, ValidActionPlanId);
 
@@ -113,9 +100,6 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
         [Test]
         public async Task PostGoalHttpTrigger_ReturnsStatusCodeBadRequest_WhenInteractionIdIsInvalid()
         {
-            //_httpResponseMessageHelper
-            //    .BadRequest(Arg.Any<Guid>()).Returns(x => new HttpResponseMessage(HttpStatusCode.BadRequest));
-
             // Act
             var result = await RunFunction(ValidCustomerId, InValidId, ValidActionPlanId);
 
@@ -128,13 +112,12 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
         [Test]
         public async Task PostGoalHttpTrigger_ReturnsStatusCodeUnprocessableEntity_WhenGoalHasFailedValidation()
         {
+            _httpRequestHelper.Setup(x => x.GetDssTouchpointId(_request)).Returns("0000000001");
+            _httpRequestHelper.Setup(x => x.GetDssApimUrl(_request)).Returns("http://localhost");
             _httpRequestHelper.Setup(x => x.GetResourceFromRequest<Models.Goal>(_request)).Returns(Task.FromResult(_goal));
 
             var validationResults = new List<ValidationResult> { new ValidationResult("interaction Id is Required") };
             _validate.Setup(x => x.ValidateResource(It.IsAny<Models.Goal>(),true)).Returns(validationResults);
-
-            //_httpResponseMessageHelper
-            //    .UnprocessableEntity(Arg.Any<List<ValidationResult>>()).Returns(x => new HttpResponseMessage((HttpStatusCode)422));
 
             var result = await RunFunction(ValidCustomerId, ValidInteractionId, ValidActionPlanId);
 
@@ -146,10 +129,9 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
         [Test]
         public async Task PostGoalHttpTrigger_ReturnsStatusCodeUnprocessableEntity_WhenGoalRequestIsInvalid()
         {
+            _httpRequestHelper.Setup(x => x.GetDssTouchpointId(_request)).Returns("0000000001");
+            _httpRequestHelper.Setup(x => x.GetDssApimUrl(_request)).Returns("http://localhost");
             _httpRequestHelper.Setup(x => x.GetResourceFromRequest<Models.Goal>(_request)).Throws(new JsonException());
-
-            //_httpResponseMessageHelper
-            //    .UnprocessableEntity(Arg.Any<JsonException>()).Returns(x => new HttpResponseMessage((HttpStatusCode)422));
 
             var result = await RunFunction(ValidCustomerId, ValidInteractionId, ValidActionPlanId);
 
@@ -161,12 +143,11 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
         [Test]
         public async Task PostGoalHttpTrigger_ReturnsStatusCodeNoContent_WhenCustomerDoesNotExist()
         {
+            _httpRequestHelper.Setup(x => x.GetDssTouchpointId(_request)).Returns("0000000001");
+            _httpRequestHelper.Setup(x => x.GetDssApimUrl(_request)).Returns("http://localhost");
             _httpRequestHelper.Setup(x => x.GetResourceFromRequest<Models.Goal>(_request)).Returns(Task.FromResult(_goal));
 
             _resourceHelper.Setup(x => x.DoesCustomerExist(It.IsAny<Guid>())).Returns(Task.FromResult(false));
-
-            //_httpResponseMessageHelper
-            //    .NoContent(Arg.Any<Guid>()).Returns(x => new HttpResponseMessage(HttpStatusCode.NoContent));
 
             var result = await RunFunction(ValidCustomerId, ValidInteractionId, ValidActionPlanId);
 
@@ -178,12 +159,12 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
         [Test]
         public async Task PostGoalHttpTrigger_ReturnsStatusCodeNoContent_WhenInteractionDoesNotExist()
         {
+            _httpRequestHelper.Setup(x => x.GetDssTouchpointId(_request)).Returns("0000000001");
+            _httpRequestHelper.Setup(x => x.GetDssApimUrl(_request)).Returns("http://localhost");
             _httpRequestHelper.Setup(x => x.GetResourceFromRequest<Models.Goal>(_request)).Returns(Task.FromResult(_goal));
 
             _resourceHelper.Setup(x => x.DoesCustomerExist(It.IsAny<Guid>())).Returns(Task.FromResult(true));
             _resourceHelper.Setup(x => x.DoesInteractionExistAndBelongToCustomer(It.IsAny<Guid>(), It.IsAny<Guid>())).Returns(false);
-
-            //_httpResponseMessageHelper.NoContent(Arg.Any<Guid>()).Returns(x => new HttpResponseMessage(HttpStatusCode.NoContent));
 
             var result = await RunFunction(ValidCustomerId, ValidInteractionId, ValidActionPlanId);
 
@@ -202,9 +183,6 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
 
             _postGoalHttpTriggerService.Setup(x => x.CreateAsync(It.IsAny<Models.Goal>())).Returns(Task.FromResult<Models.Goal>(null));
 
-            //_httpResponseMessageHelper
-            //    .BadRequest(Arg.Any<Guid>()).Returns(x => new HttpResponseMessage(HttpStatusCode.BadRequest));
-
             var result = await RunFunction(ValidCustomerId, ValidInteractionId, ValidActionPlanId);
 
             // Assert
@@ -212,38 +190,17 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
             Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
         }
 
-        /*[Test]
-        public async Task PostGoalHttpTrigger_ReturnsStatusCodeBadRequest_WhenRequestIsNotValid()
-        {
-            _httpRequestHelper.GetResourceFromRequest<Models.Goal>(_request).Returns(Task.FromResult(_goal).Result);
-
-            _resourceHelper.DoesCustomerExist(Arg.Any<Guid>()).ReturnsForAnyArgs(true);
-            _resourceHelper.DoesInteractionExistAndBelongToCustomer(Arg.Any<Guid>(), Arg.Any<Guid>()).Returns(true);
-
-            _postGoalHttpTriggerService.CreateAsync(Arg.Any<Models.Goal>()).Returns(Task.FromResult<Models.Goal>(null).Result);
-
-            _httpResponseMessageHelper
-                .BadRequest(Arg.Any<Guid>()).Returns(x => new HttpResponseMessage(HttpStatusCode.BadRequest));
-
-            var result = await RunFunction(ValidCustomerId, ValidInteractionId, ValidActionPlanId);
-
-            // Assert
-            Assert.IsInstanceOf<HttpResponseMessage>(result);
-            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
-        }*/
-
         [Test]
         public async Task PostGoalHttpTrigger_ReturnsStatusCodeCreated_WhenRequestIsValid()
         {
+            _httpRequestHelper.Setup(x => x.GetDssTouchpointId(_request)).Returns("0000000001");
+            _httpRequestHelper.Setup(x => x.GetDssApimUrl(_request)).Returns("http://localhost");
             _httpRequestHelper.Setup(x => x.GetResourceFromRequest<Models.Goal>(_request)).Returns(Task.FromResult(_goal));
 
             _resourceHelper.Setup(x => x.DoesCustomerExist(It.IsAny<Guid>())).Returns(Task.FromResult(true));
             _resourceHelper.Setup(x => x.DoesInteractionExistAndBelongToCustomer(It.IsAny<Guid>(), It.IsAny<Guid>())).Returns(true);
-
+            _resourceHelper.Setup(x => x.DoesActionPlanExistAndBelongToCustomer(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>())).Returns(true);
             _postGoalHttpTriggerService.Setup(x => x.CreateAsync(It.IsAny<Models.Goal>())).Returns(Task.FromResult(_goal));
-
-            //_httpResponseMessageHelper
-            //    .Created(Arg.Any<string>()).Returns(x => new HttpResponseMessage(HttpStatusCode.Created));
 
             var result = await RunFunction(ValidCustomerId, ValidInteractionId, ValidActionPlanId);
 
