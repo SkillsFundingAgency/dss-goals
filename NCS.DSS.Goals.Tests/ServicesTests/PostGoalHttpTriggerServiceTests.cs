@@ -10,7 +10,7 @@ using NCS.DSS.Goal.Cosmos.Provider;
 using NCS.DSS.Goal.Models;
 using NCS.DSS.Goal.PostGoalHttpTrigger.Service;
 using Newtonsoft.Json;
-using NSubstitute;
+using Moq;
 using NUnit.Framework;
 
 namespace NCS.DSS.Goal.Tests.ServicesTests
@@ -19,7 +19,7 @@ namespace NCS.DSS.Goal.Tests.ServicesTests
     public class PosGoalHttpTriggerServiceTests
     {
         private IPostGoalHttpTriggerService _goalHttpTriggerService;
-        private IDocumentDBProvider _documentDbProvider;
+        private new Mock<IDocumentDBProvider> _documentDbProvider;
         private string _json;
         private Models.Goal _goal;
         private readonly Guid _goalId = Guid.Parse("7E467BDB-213F-407A-B86A-1954053D3C24");
@@ -27,9 +27,9 @@ namespace NCS.DSS.Goal.Tests.ServicesTests
         [SetUp]
         public void Setup()
         {
-            _documentDbProvider = Substitute.For<IDocumentDBProvider>();
-            _goalHttpTriggerService = Substitute.For<PostGoalHttpTriggerService>(_documentDbProvider);
-            _goal = Substitute.For<Models.Goal>();
+            _documentDbProvider = new Mock<IDocumentDBProvider>();
+            _goalHttpTriggerService = new PostGoalHttpTriggerService(_documentDbProvider.Object);
+            _goal = new Models.Goal();
             _json = JsonConvert.SerializeObject(_goal);
         }
 
@@ -37,7 +37,7 @@ namespace NCS.DSS.Goal.Tests.ServicesTests
         public async Task PostActionPlanHttpTriggerServiceTests_CreateAsync_ReturnsNullWhenActionPlanJsonIsNull()
         {
             // Act
-            var result = await _goalHttpTriggerService.CreateAsync(Arg.Any<Models.Goal>());
+            var result = await _goalHttpTriggerService.CreateAsync(It.IsAny<Models.Goal>());
 
             // Assert
             Assert.IsNull(result);
@@ -68,7 +68,7 @@ namespace NCS.DSS.Goal.Tests.ServicesTests
 
             responseField?.SetValue(resourceResponse, documentServiceResponse);
 
-            _documentDbProvider.CreateGoalAsync(_goal).Returns(Task.FromResult(resourceResponse).Result);
+            _documentDbProvider.Setup(x => x.CreateGoalAsync(_goal)).Returns(Task.FromResult(resourceResponse));
 
             // Act
             var result = await _goalHttpTriggerService.CreateAsync(_goal);

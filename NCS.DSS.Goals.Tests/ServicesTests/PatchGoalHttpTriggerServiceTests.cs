@@ -10,8 +10,7 @@ using NCS.DSS.Goal.Cosmos.Provider;
 using NCS.DSS.Goal.Models;
 using NCS.DSS.Goal.PatchGoalHttpTrigger.Service;
 using Newtonsoft.Json;
-using NSubstitute;
-using NSubstitute.ReturnsExtensions;
+using Moq;
 using NUnit.Framework;
 
 namespace NCS.DSS.Goal.Tests.ServicesTests
@@ -20,8 +19,8 @@ namespace NCS.DSS.Goal.Tests.ServicesTests
     public class PatchGoalHttpTriggerServiceTests
     {
         private IPatchGoalHttpTriggerService _goalHttpTriggerService;
-        private IGoalPatchService _goalPatchService;
-        private IDocumentDBProvider _documentDbProvider;
+        private Mock<IGoalPatchService> _goalPatchService;
+        private Mock<IDocumentDBProvider> _documentDbProvider;
         private string _json;
         private Models.Goal _goal;
         private GoalPatch _goalPatch;
@@ -30,21 +29,21 @@ namespace NCS.DSS.Goal.Tests.ServicesTests
         [SetUp]
         public void Setup()
         {
-            _goalPatchService = Substitute.For<IGoalPatchService>();
-            _documentDbProvider = Substitute.For<IDocumentDBProvider>();
-            _goalHttpTriggerService = Substitute.For<PatchGoalHttpTriggerService>(_goalPatchService, _documentDbProvider);
-            _goalPatch = Substitute.For<GoalPatch>();
-            _goal = Substitute.For<Models.Goal>();
+            _goalPatchService = new Mock<IGoalPatchService>();
+            _documentDbProvider = new Mock<IDocumentDBProvider>();
+            _goalHttpTriggerService = new PatchGoalHttpTriggerService(_goalPatchService.Object, _documentDbProvider.Object);
+            _goalPatch = new GoalPatch();
+            _goal = new Models.Goal();
 
             _json = JsonConvert.SerializeObject(_goalPatch);
-            _goalPatchService.Patch(_json, _goalPatch).Returns(_goal.ToString());
+            //_goalPatchService.Patch(_json, _goalPatch).Returns(_goal.ToString());
         }
 
         [Test]
         public void PatchgoalHttpTriggerServiceTests_PatchResource_ReturnsNullWhenGoalJsonIsNullOrEmpty()
         {
             // Act
-            var result = _goalHttpTriggerService.PatchResource(null, Arg.Any<GoalPatch>());
+            var result = _goalHttpTriggerService.PatchResource(null, It.IsAny<GoalPatch>());
 
             // Assert
             Assert.IsNull(result);
@@ -54,7 +53,7 @@ namespace NCS.DSS.Goal.Tests.ServicesTests
         public void PatchgoalHttpTriggerServiceTests_PatchResource_ReturnsNullWhenGoalPatchIsNullOrEmpty()
         {
             // Act
-            var result = _goalHttpTriggerService.PatchResource(Arg.Any<string>(), null);
+            var result = _goalHttpTriggerService.PatchResource(It.IsAny<string>(), null);
 
             // Assert
             Assert.IsNull(result);
@@ -73,10 +72,10 @@ namespace NCS.DSS.Goal.Tests.ServicesTests
         [Test]
         public async Task PatchgoalHttpTriggerServiceTests_UpdateAsync_ReturnsNullWhenGoalPatchServicePatchJsonIsNullOrEmpty()
         {
-            _goalPatchService.Patch(Arg.Any<string>(), Arg.Any<GoalPatch>()).ReturnsNull();
+            _goalPatchService.Setup(x => x.Patch(It.IsAny<string>(), It.IsAny<GoalPatch>()));
 
             // Act
-            var result = await _goalHttpTriggerService.UpdateCosmosAsync(Arg.Any<string>(), _goalId);
+            var result = await _goalHttpTriggerService.UpdateCosmosAsync(It.IsAny<string>(), _goalId);
 
             // Assert
             Assert.IsNull(result);
@@ -85,10 +84,10 @@ namespace NCS.DSS.Goal.Tests.ServicesTests
         [Test]
         public async Task PatchgoalHttpTriggerServiceTests_UpdateAsync_ReturnsNullWhenResourceCannotBeUpdated()
         {
-            _documentDbProvider.UpdateGoalAsync(Arg.Any<string>(), Arg.Any<Guid>()).ReturnsNull();
+            _documentDbProvider.Setup(x => x.UpdateGoalAsync(It.IsAny<string>(), It.IsAny<Guid>())).Returns(Task.FromResult(new ResourceResponse<Document>(null)));
 
             // Act
-            var result = await _goalHttpTriggerService.UpdateCosmosAsync(Arg.Any<string>(), _goalId);
+            var result = await _goalHttpTriggerService.UpdateCosmosAsync(It.IsAny<string>(), _goalId);
 
             // Assert
             Assert.IsNull(result);
@@ -97,7 +96,7 @@ namespace NCS.DSS.Goal.Tests.ServicesTests
         [Test]
         public async Task PatchgoalHttpTriggerServiceTests_UpdateAsync_ReturnsNullWhenResourceCannotBeFound()
         {
-            _documentDbProvider.CreateGoalAsync(Arg.Any<Models.Goal>()).Returns(Task.FromResult(new ResourceResponse<Document>(null)).Result);
+            _documentDbProvider.Setup(x => x.CreateGoalAsync(It.IsAny<Models.Goal>())).Returns(Task.FromResult(new ResourceResponse<Document>(null)));
 
             // Act
             var result = await _goalHttpTriggerService.UpdateCosmosAsync(_goal.ToString(), _goalId);
@@ -131,7 +130,7 @@ namespace NCS.DSS.Goal.Tests.ServicesTests
 
             responseField?.SetValue(resourceResponse, documentServiceResponse);
 
-            _documentDbProvider.UpdateGoalAsync(Arg.Any<string>(), Arg.Any<Guid>()).Returns(Task.FromResult(resourceResponse).Result);
+            _documentDbProvider.Setup(x => x.UpdateGoalAsync(It.IsAny<string>(), It.IsAny<Guid>())).Returns(Task.FromResult(resourceResponse));
 
             // Act
             var result = await _goalHttpTriggerService.UpdateCosmosAsync(_goal.ToString(), _goalId);
@@ -145,10 +144,10 @@ namespace NCS.DSS.Goal.Tests.ServicesTests
         [Test]
         public async Task PatchgoalHttpTriggerServiceTests_GetgoalForCustomerAsync_ReturnsNullWhenResourceHasNotBeenFound()
         {
-            _documentDbProvider.GetGoalForCustomerToUpdateAsync(Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<Guid>()).ReturnsNull();
+            _documentDbProvider.Setup(x => x.GetGoalForCustomerToUpdateAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>()));
 
             // Act
-            var result = await _goalHttpTriggerService.GetGoalForCustomerAsync(Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<Guid>());
+            var result = await _goalHttpTriggerService.GetGoalForCustomerAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>());
 
             // Assert
             Assert.IsNull(result);
@@ -157,10 +156,10 @@ namespace NCS.DSS.Goal.Tests.ServicesTests
         [Test]
         public async Task PatchgoalHttpTriggerServiceTests_GetgoalForCustomerAsync_ReturnsResourceWhenResourceHasBeenFound()
         {
-            _documentDbProvider.GetGoalForCustomerToUpdateAsync(Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<Guid>()).Returns(Task.FromResult(_json).Result);
+            _documentDbProvider.Setup(x => x.GetGoalForCustomerToUpdateAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>())).Returns(Task.FromResult(_json));
 
             // Act
-            var result = await _goalHttpTriggerService.GetGoalForCustomerAsync(Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<Guid>());
+            var result = await _goalHttpTriggerService.GetGoalForCustomerAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>());
 
             // Assert
             Assert.IsNotNull(result);

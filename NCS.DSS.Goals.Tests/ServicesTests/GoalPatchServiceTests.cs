@@ -4,8 +4,8 @@ using NCS.DSS.Goal.Models;
 using NCS.DSS.Goal.PatchGoalHttpTrigger.Service;
 using NCS.DSS.Goal.ReferenceData;
 using Newtonsoft.Json;
-using NSubstitute;
 using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace NCS.DSS.Goal.Tests.ServicesTests
 {
@@ -21,9 +21,9 @@ namespace NCS.DSS.Goal.Tests.ServicesTests
         [SetUp]
         public void Setup()
         {
-            _jsonHelper = Substitute.For<JsonHelper>();
-            _goalPatchService = Substitute.For<GoalPatchService>(_jsonHelper);
-            _goalPatch = Substitute.For<GoalPatch>();
+            _jsonHelper = new JsonHelper();
+            _goalPatchService = new GoalPatchService(_jsonHelper);
+            _goalPatch = new GoalPatch();
 
             _json = JsonConvert.SerializeObject(_goalPatch);
         }
@@ -31,7 +31,7 @@ namespace NCS.DSS.Goal.Tests.ServicesTests
         [Test]
         public void GoalPatchServiceTests_ReturnsNull_WhenGoalPatchIsNull()
         {
-            var result = _goalPatchService.Patch(string.Empty, Arg.Any<GoalPatch>());
+            var result = _goalPatchService.Patch(string.Empty, _goalPatch);
 
             // Assert
             Assert.IsNull(result);

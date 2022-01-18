@@ -1,30 +1,27 @@
-﻿using DFC.Common.Standard.Logging;
-using DFC.Functions.DI.Standard;
-using DFC.HTTP.Standard;
+﻿using DFC.HTTP.Standard;
 using DFC.JSON.Standard;
 using DFC.Swagger.Standard;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Hosting;
+using DFC.Common.Standard.Logging;
+using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using NCS.DSS.Goal.Cosmos.Helper;
 using NCS.DSS.Goal.Cosmos.Provider;
 using NCS.DSS.Goal.GetGoalByIdHttpTrigger.Service;
 using NCS.DSS.Goal.GetGoalHttpTrigger.Service;
-using NCS.DSS.Goal.Ioc;
+using NCS.DSS.Goal;
 using NCS.DSS.Goal.PatchGoalHttpTrigger.Service;
 using NCS.DSS.Goal.PostGoalHttpTrigger.Service;
 using NCS.DSS.Goal.Validation;
 
-[assembly: WebJobsStartup(typeof(WebJobsExtensionStartup), "Web Jobs Extension Startup")]
 
-namespace NCS.DSS.Goal.Ioc
+[assembly: FunctionsStartup(typeof(Startup))]
+
+namespace NCS.DSS.Goal
 {
-    public class WebJobsExtensionStartup : IWebJobsStartup
+    public class Startup : FunctionsStartup
     {
-        public void Configure(IWebJobsBuilder builder)
+        public override void Configure(IFunctionsHostBuilder builder)
         {
-            builder.AddDependencyInjection();
-
             builder.Services.AddSingleton<IResourceHelper, ResourceHelper>();
             builder.Services.AddSingleton<IValidate, Validate>();
             builder.Services.AddSingleton<ILoggerHelper, LoggerHelper>();

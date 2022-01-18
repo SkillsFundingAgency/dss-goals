@@ -1,5 +1,5 @@
 ﻿using System;
-using NSubstitute;
+using Moq;
 using NUnit.Framework;
 
 namespace NCS.DSS.Goal.Tests.ModelTests
@@ -35,7 +35,7 @@ namespace NCS.DSS.Goal.Tests.ModelTests
         {
             var goal = new Models.Goal();
 
-            goal.SetIds(Arg.Any<Guid>(), Arg.Any<Guid>(), Arg.Any<string>(), Arg.Any<string>());
+            goal.SetIds(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>());
 
             // Assert
             Assert.AreNotSame(Guid.Empty, goal.GoalId);
@@ -47,7 +47,7 @@ namespace NCS.DSS.Goal.Tests.ModelTests
             var goal = new Models.Goal();
 
             var customerId = Guid.NewGuid();
-            goal.SetIds(customerId, Arg.Any<Guid>(), Arg.Any<string>(), Arg.Any<string>());
+            goal.SetIds(customerId, It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>());
 
             // Assert
             Assert.AreEqual(customerId, goal.CustomerId);
@@ -59,7 +59,7 @@ namespace NCS.DSS.Goal.Tests.ModelTests
             var goal = new Models.Goal();
 
             var actionPlanId = Guid.NewGuid();
-            goal.SetIds(Arg.Any<Guid>(), actionPlanId, Arg.Any<string>(), Arg.Any<string>());
+            goal.SetIds(It.IsAny<Guid>(), actionPlanId, It.IsAny<string>(), It.IsAny<string>());
 
             // Assert
             Assert.AreEqual(actionPlanId, goal.ActionPlanId);
@@ -70,7 +70,7 @@ namespace NCS.DSS.Goal.Tests.ModelTests
         {
             var goal = new Models.Goal();
 
-            goal.SetIds(Arg.Any<Guid>(), Arg.Any<Guid>(), "0000000000", Arg.Any<string>());
+            goal.SetIds(It.IsAny<Guid>(), It.IsAny<Guid>(), "0000000000", It.IsAny<string>());
 
             // Assert
             Assert.AreEqual("0000000000", goal.LastModifiedBy);

@@ -21,10 +21,29 @@ using Newtonsoft.Json;
 
 namespace NCS.DSS.Goal.PostGoalHttpTrigger.Function
 {
-    public static class PostGoalHttpTrigger
+    public class PostGoalHttpTrigger
     {
+        private IResourceHelper resourceHelper;
+        private readonly IPostGoalHttpTriggerService goalsPostService;
+        private ILoggerHelper loggerHelper;
+        private IHttpRequestHelper httpRequestHelper;
+        private IHttpResponseMessageHelper httpResponseMessageHelper;
+        private IJsonHelper jsonHelper;
+        private IValidate validate;
+
+        public PostGoalHttpTrigger(IResourceHelper _resourceHelper, IHttpRequestHelper _httpRequestHelper, IPostGoalHttpTriggerService _goalsPostService, IHttpResponseMessageHelper _httpResponseMessageHelper, IJsonHelper _jsonHelper, ILoggerHelper _loggerHelper, IValidate _validate)
+        {
+            resourceHelper = _resourceHelper;
+            httpRequestHelper = _httpRequestHelper;
+            goalsPostService = _goalsPostService;
+            httpResponseMessageHelper = _httpResponseMessageHelper;
+            jsonHelper = _jsonHelper;
+            loggerHelper = _loggerHelper;
+            validate = _validate;
+        }
+
         [FunctionName("Post")]
-        [ProducesResponseType(typeof(Models.Goal), 200)]
+        [ProducesResponseType(typeof(Models.Goal), (int)HttpStatusCode.OK)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Created, Description = "Goals Created", ShowSchema = true)]
         [Response(HttpStatusCode = (int)HttpStatusCode.NoContent, Description = "Goals does not exist", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.BadRequest, Description = "Request was malformed", ShowSchema = false)]
@@ -32,14 +51,7 @@ namespace NCS.DSS.Goal.PostGoalHttpTrigger.Function
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
         [Response(HttpStatusCode = 422, Description = "Goals validation error(s)", ShowSchema = false)]
         [Display(Name = "Post", Description = "Ability to create a new Goals for a customer.")]
-        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "Customers/{customerId}/Interactions/{interactionId}/ActionPlans/{actionPlanId}/Goals")]HttpRequest req, ILogger log, string customerId, string interactionId, string actionPlanId,
-           [Inject]IResourceHelper resourceHelper,
-           [Inject]IPostGoalHttpTriggerService goalsPostService,
-           [Inject]IValidate validate,
-           [Inject]ILoggerHelper loggerHelper,
-           [Inject]IHttpRequestHelper httpRequestHelper,
-           [Inject]IHttpResponseMessageHelper httpResponseMessageHelper,
-           [Inject]IJsonHelper jsonHelper)
+        public async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "Customers/{customerId}/Interactions/{interactionId}/ActionPlans/{actionPlanId}/Goals")]HttpRequest req, ILogger log, string customerId, string interactionId, string actionPlanId)
         {
 
             loggerHelper.LogMethodEnter(log);
