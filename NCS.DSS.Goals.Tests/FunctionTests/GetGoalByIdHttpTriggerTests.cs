@@ -75,6 +75,22 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
         public async Task GetGoalByIdHttpTrigger_ReturnsStatusCodeBadRequest_WhenTouchpointIdIsNotProvided()
         {
             _httpRequestMessageHelper.Setup(x => x.GetDssTouchpointId(_request)).Returns((string)null);
+            _httpRequestMessageHelper.Setup(x => x.GetDssSubcontractorId(_request)).Returns("9999999999");
+
+            // Act
+            var result = await RunFunction(InValidId, ValidInteractionId, ValidGoalId, ValidActionPlanId);
+
+            // Assert
+            Assert.IsInstanceOf<HttpResponseMessage>(result);
+            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
+        }
+
+        [Test]
+        public async Task GetGoalByIdHttpTrigger_ReturnsStatusCodeBadRequest_WhenSubcontractorIdIsNotProvided()
+        {
+            _httpRequestMessageHelper.Setup(x => x.GetDssTouchpointId(_request)).Returns("0000000001");
+            _httpRequestMessageHelper.Setup(x => x.GetDssSubcontractorId(_request)).Returns((string)null);
+
 
             // Act
             var result = await RunFunction(InValidId, ValidInteractionId, ValidGoalId, ValidActionPlanId);
@@ -121,6 +137,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
         public async Task GetGoalByIdHttpTrigger_ReturnsStatusCodeNoContent_WhenCustomerDoesNotExist()
         {
             _httpRequestMessageHelper.Setup(x => x.GetDssTouchpointId(_request)).Returns("0000000001");
+            _httpRequestMessageHelper.Setup(x => x.GetDssSubcontractorId(_request)).Returns("9999999999");
             _resourceHelper.Setup(x=> x.DoesCustomerExist(It.IsAny<Guid>())).Returns(Task.FromResult(false));
 
             // Act
@@ -135,6 +152,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
         public async Task GetGoalByIdHttpTrigger_ReturnsStatusCodeNoContent_WhenInteractionDoesNotExist()
         {
             _httpRequestMessageHelper.Setup(x => x.GetDssTouchpointId(_request)).Returns("0000000001");
+            _httpRequestMessageHelper.Setup(x => x.GetDssSubcontractorId(_request)).Returns("9999999999");
             _resourceHelper.Setup(x => x.DoesCustomerExist(It.IsAny<Guid>())).Returns(Task.FromResult(true));
             _resourceHelper.Setup(x => x.DoesInteractionExistAndBelongToCustomer(It.IsAny<Guid>(), It.IsAny<Guid>())).Returns(false);
 
@@ -150,6 +168,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
         public async Task GetGoalByIdHttpTrigger_ReturnsStatusCodeNoContent_WhenGoalDoesNotExist()
         {
             _httpRequestMessageHelper.Setup(x => x.GetDssTouchpointId(_request)).Returns("0000000001");
+            _httpRequestMessageHelper.Setup(x => x.GetDssSubcontractorId(_request)).Returns("9999999999");
             _resourceHelper.Setup(x => x.DoesCustomerExist(It.IsAny<Guid>())).Returns(Task.FromResult(true));
             _resourceHelper.Setup(x => x.DoesInteractionExistAndBelongToCustomer(It.IsAny<Guid>(), It.IsAny<Guid>())).Returns(true);
 
@@ -167,6 +186,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
         public async Task GetGoalByIdHttpTrigger_ReturnsStatusCodeOk_WhenGoalExists()
         {
             _httpRequestMessageHelper.Setup(x => x.GetDssTouchpointId(_request)).Returns("0000000001");
+            _httpRequestMessageHelper.Setup(x => x.GetDssSubcontractorId(_request)).Returns("9999999999");
             _resourceHelper.Setup(x => x.DoesCustomerExist(It.IsAny<Guid>())).Returns(Task.FromResult(true));
             _resourceHelper.Setup(x => x.DoesInteractionExistAndBelongToCustomer(It.IsAny<Guid>(), It.IsAny<Guid>())).Returns(true);
             _resourceHelper.Setup(x => x.DoesActionPlanExistAndBelongToCustomer(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>())).Returns(true);

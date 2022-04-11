@@ -128,6 +128,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
         public async Task PatchGoalHttpTrigger_ReturnsStatusCodeUnprocessableEntity_WhenGoalHasFailedValidation()
         {
             _httpRequestHelper.Setup(x => x.GetDssTouchpointId(_request)).Returns("0000000001");
+            _httpRequestHelper.Setup(x => x.GetDssSubcontractorId(_request)).Returns("9999999999");
             _httpRequestHelper.Setup(x => x.GetDssApimUrl(_request)).Returns("http://localhost");
             _httpRequestHelper.Setup(x => x.GetResourceFromRequest<GoalPatch>(_request)).Returns(Task.FromResult(_goalPatch));
 
@@ -145,6 +146,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
         public async Task PatchGoalHttpTrigger_ReturnsStatusCodeUnprocessableEntity_WhenGoalRequestIsInvalid()
         {
             _httpRequestHelper.Setup(x => x.GetDssTouchpointId(_request)).Returns("0000000001");
+            _httpRequestHelper.Setup(x => x.GetDssSubcontractorId(_request)).Returns("9999999999");
             _httpRequestHelper.Setup(x => x.GetDssApimUrl(_request)).Returns("http://localhost");
             _resourceHelper.Setup(x => x.DoesCustomerExist(It.IsAny<Guid>())).Returns(Task.FromResult(false));
             _httpRequestHelper.Setup(x => x.GetResourceFromRequest<GoalPatch>(_request)).Throws(new JsonException());
@@ -160,6 +162,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
         public async Task PatchGoalHttpTrigger_ReturnsStatusCodeNoContent_WhenCustomerDoesNotExist()
         {
             _httpRequestHelper.Setup(x => x.GetDssTouchpointId(_request)).Returns("0000000001");
+            _httpRequestHelper.Setup(x => x.GetDssSubcontractorId(_request)).Returns("9999999999");
             _httpRequestHelper.Setup(x => x.GetDssApimUrl(_request)).Returns("http://localhost");
             _resourceHelper.Setup(x => x.DoesCustomerExist(It.IsAny<Guid>())).Returns(Task.FromResult(false));
             _httpRequestHelper.Setup(x => x.GetResourceFromRequest<GoalPatch>(_request)).Returns(Task.FromResult(_goalPatch));
@@ -175,6 +178,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
         public async Task PatchGoalHttpTrigger_ReturnsStatusCodeNoContent_WhenInteractionDoesNotExist()
         {
             _httpRequestHelper.Setup(x => x.GetDssTouchpointId(_request)).Returns("0000000001");
+            _httpRequestHelper.Setup(x => x.GetDssSubcontractorId(_request)).Returns("9999999999");
             _httpRequestHelper.Setup(x => x.GetDssApimUrl(_request)).Returns("http://localhost");
             _httpRequestHelper.Setup(x => x.GetResourceFromRequest<GoalPatch>(_request)).Returns(Task.FromResult(_goalPatch));
 
@@ -193,6 +197,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
         public async Task PatchGoalHttpTrigger_ReturnsStatusCodeNoContent_WhenGoalDoesNotExist()
         {
             _httpRequestHelper.Setup(x => x.GetDssTouchpointId(_request)).Returns("0000000001");
+            _httpRequestHelper.Setup(x => x.GetDssSubcontractorId(_request)).Returns("9999999999");
             _httpRequestHelper.Setup(x => x.GetDssApimUrl(_request)).Returns("http://localhost");
             _httpRequestHelper.Setup(x => x.GetResourceFromRequest<GoalPatch>(_request)).Returns(Task.FromResult(_goalPatch));
 
@@ -212,6 +217,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
         public async Task PatchGoalHttpTrigger_ReturnsStatusCodeOk_WhenGoalDoesNotExist()
         {
             _httpRequestHelper.Setup(x => x.GetDssTouchpointId(_request)).Returns("0000000001");
+            _httpRequestHelper.Setup(x => x.GetDssSubcontractorId(_request)).Returns("9999999999");
             _httpRequestHelper.Setup(x => x.GetDssApimUrl(_request)).Returns("http://localhost");
             _httpRequestHelper.Setup(x => x.GetResourceFromRequest<GoalPatch>(_request)).Returns(Task.FromResult(_goalPatch));
 
@@ -233,6 +239,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
         public async Task PatchGoalHttpTrigger_ReturnsStatusCodeNoContent_WhenGoalCannotBeFound()
         {
             _httpRequestHelper.Setup(x => x.GetDssTouchpointId(_request)).Returns("0000000001");
+            _httpRequestHelper.Setup(x => x.GetDssSubcontractorId(_request)).Returns("9999999999");
             _httpRequestHelper.Setup(x => x.GetDssApimUrl(_request)).Returns("http://localhost");
             _httpRequestHelper.Setup(x => x.GetResourceFromRequest<GoalPatch>(_request)).Returns(Task.FromResult(_goalPatch));
 
