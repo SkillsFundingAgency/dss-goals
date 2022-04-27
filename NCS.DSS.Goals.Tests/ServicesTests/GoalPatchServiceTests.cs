@@ -145,3 +145,4 @@ namespace NCS.DSS.Goal.Tests.ServicesTests
 
     }
 }
+
