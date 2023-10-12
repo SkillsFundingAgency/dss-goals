@@ -57,70 +57,84 @@ namespace NCS.DSS.Goal.GetGoalHttpTrigger.Function
                 log.LogInformation("Unable to parse 'DssCorrelationId' to a Guid");
                 correlationGuid = Guid.NewGuid();
             }
+            
+            log.LogInformation($"DssCorrelationId: [{correlationGuid}]");
 
             var touchpointId = httpRequestHelper.GetDssTouchpointId(req);
             if (string.IsNullOrEmpty(touchpointId))
             {
-                loggerHelper.LogInformationMessage(log, correlationGuid, "Unable to locate 'TouchpointId' in request header");
-                return httpResponseMessageHelper.BadRequest();
+                var response = httpResponseMessageHelper.BadRequest();
+                log.LogWarning($"Response Status Code: [{response.StatusCode}]. Unable to locate 'TouchpointId' in request header");
+                return response;
             }
 
-            loggerHelper.LogInformationMessage(log, correlationGuid,
-                string.Format("Get Action Plan C# HTTP trigger function  processed a request. By Touchpoint: {0}",
-                    touchpointId));
+            log.LogInformation($"Get Action Plan C# HTTP trigger function  processed a request. By Touchpoint: [{touchpointId}]");
 
             if (!Guid.TryParse(customerId, out var customerGuid))
             {
-                loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Unable to parse 'customerId' to a Guid: {0}", customerId));
-                return httpResponseMessageHelper.BadRequest(customerGuid);
+                var response = httpResponseMessageHelper.BadRequest(customerGuid);
+                log.LogWarning($"Response Status Code: [{response.StatusCode}]. Unable to parse 'customerId' to a Guid: [{customerId}]");
+                return response;
             }
 
             if (!Guid.TryParse(interactionId, out var interactionGuid))
             {
-                loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Unable to parse 'interactionId' to a Guid: {0}", interactionId));
-                return httpResponseMessageHelper.BadRequest(interactionGuid);
+                var response = httpResponseMessageHelper.BadRequest(interactionGuid);
+                log.LogWarning($"Response Status Code: [{response.StatusCode}]. Unable to parse 'interactionId' to a Guid: [{interactionId}]");
+                return response;
             }
 
             if (!Guid.TryParse(actionPlanId, out var actionPlanGuid))
             {
-                loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Unable to parse 'actionplanId' to a Guid: {0}", actionPlanGuid));
-                return httpResponseMessageHelper.BadRequest(actionPlanGuid);
+                var response = httpResponseMessageHelper.BadRequest(actionPlanGuid);
+                log.LogWarning($"Response Status Code: [{response.StatusCode}]. Unable to parse 'actionplanId' to a Guid: [{actionPlanGuid}]");
+                return response;
             }
 
-            loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Attempting to see if customer exists {0}", customerGuid));
+            log.LogInformation($"Attempting to see if customer exists [{customerGuid}]");
             var doesCustomerExist = await resourceHelper.DoesCustomerExist(customerGuid);
 
             if (!doesCustomerExist)
             {
-                loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Customer does not exist {0}", customerGuid));
-                return httpResponseMessageHelper.NoContent(customerGuid);
+                var response = httpResponseMessageHelper.NoContent(customerGuid);
+                log.LogWarning($"Response Status Code: [{response.StatusCode}]. Customer does not exist [{customerGuid}]");
+                return response;
             }
 
-            loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Attempting to get Interaction {0} for customer {1}", interactionGuid, customerGuid));
+            log.LogInformation($"Attempting to get Interaction [{interactionGuid}] for customer [{customerGuid}]");
             var doesInteractionExist = resourceHelper.DoesInteractionExistAndBelongToCustomer(interactionGuid, customerGuid);
 
             if (!doesInteractionExist)
             {
-                loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Interaction does not exist {0}", interactionGuid));
-                return httpResponseMessageHelper.NoContent(interactionGuid);
+                var response = httpResponseMessageHelper.NoContent(interactionGuid);
+                log.LogWarning($"Response Status Code: [{response.StatusCode}]. Interaction does not exist [{interactionGuid}]");
+                return response;
             }
 
             var doesActionPlanExistAndBelongToCustomer = resourceHelper.DoesActionPlanExistAndBelongToCustomer(actionPlanGuid, interactionGuid, customerGuid);
 
             if (!doesActionPlanExistAndBelongToCustomer)
             {
-                loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Action Plan does not exist {0}", actionPlanGuid));
-                return httpResponseMessageHelper.NoContent(actionPlanGuid);
+                var response = httpResponseMessageHelper.NoContent(actionPlanGuid);
+                log.LogWarning($"Response Status Code: [{response.StatusCode}]. Action Plan does not exist [{actionPlanGuid}]");
+                return response;
             }
 
-            loggerHelper.LogInformationMessage(log, correlationGuid, string.Format("Attempting to get goals for customer {0}", customerGuid));
+            log.LogInformation($"Attempting to get goals for customer [{customerGuid}]");
             var goals = await goalsGetService.GetGoalsAsync(customerGuid, actionPlanGuid);
 
-            loggerHelper.LogMethodExit(log);
-
-            return goals == null ?
-                httpResponseMessageHelper.NoContent(customerGuid) :
-                httpResponseMessageHelper.Ok(jsonHelper.SerializeObjectsAndRenameIdProperty(goals, "id", "GoalId"));
+            if (goals == null)
+            {
+                var response = httpResponseMessageHelper.NoContent(customerGuid);
+                log.LogWarning($"Response Status Code: [{response.StatusCode}]. No goals found for customer [{customerGuid}]");
+                return response;
+            }
+            else
+            {
+                var response = httpResponseMessageHelper.Ok(jsonHelper.SerializeObjectsAndRenameIdProperty(goals, "id", "GoalId"));
+                log.LogInformation($"Response Status Code: [{response.StatusCode}]. Goals found for customer [{customerGuid}]");
+                return response;
+            }
 
         }
     }
