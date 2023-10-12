@@ -53,7 +53,6 @@ namespace NCS.DSS.Goal.PatchGoalHttpTrigger.Function
         [Display(Name = "Patch", Description = "Ability to modify/update a customers Goals record.")]
         public async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "patch", Route = "Customers/{customerId}/Interactions/{interactionId}/ActionPlans/{actionPlanId}/Goals/{goalId}")] HttpRequest req, ILogger log, string customerId, string interactionId, string actionPlanId, string goalId)
         {
-            loggerHelper.LogMethodEnter(log);
 
             var correlationId = httpRequestHelper.GetDssCorrelationId(req);
             if (string.IsNullOrEmpty(correlationId))

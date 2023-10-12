@@ -46,7 +46,6 @@ namespace NCS.DSS.Goal.GetGoalHttpTrigger.Function
         [Display(Name = "Get", Description = "Ability to return all Goals for the given Interactions.")]
         public async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Customers/{customerId}/Interactions/{interactionId}/ActionPlans/{actionPlanId}/Goals")]HttpRequest req, ILogger log, string customerId, string interactionId, string actionPlanId)
         {
-            loggerHelper.LogMethodEnter(log);
 
             var correlationId = httpRequestHelper.GetDssCorrelationId(req);
             if (string.IsNullOrEmpty(correlationId))
