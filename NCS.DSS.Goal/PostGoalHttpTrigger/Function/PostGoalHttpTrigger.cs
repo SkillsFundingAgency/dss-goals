@@ -140,7 +140,7 @@ namespace NCS.DSS.Goal.PostGoalHttpTrigger.Function
             if (errors != null && errors.Any())
             {
                 var response = httpResponseMessageHelper.UnprocessableEntity(errors);
-                log.LogWarning($"Response Status Code: [{response.StatusCode}]. validation errors with resource", errors);
+                log.LogWarning($"Response Status Code: [{response.StatusCode}]. Validation errors: [{errors.FirstOrDefault().ErrorMessage}]");
                 return response;
             }               
 
