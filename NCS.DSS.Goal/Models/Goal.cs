@@ -22,6 +22,7 @@ namespace NCS.DSS.Goal.Models
         public Guid? ActionPlanId { get; set; }
 
         [StringLength(50)]
+        [RegularExpression(@"^[0-9]+$")]
         [Display(Description = "Identifier supplied by the touchpoint to indicate their subcontractor")]
         [Example(Description = "01234567899876543210")]
         public string SubcontractorId { get; set; }
@@ -45,6 +46,7 @@ namespace NCS.DSS.Goal.Models
 
         [Required]
         [StringLength(2000)]
+        [RegularExpression(@"^[a-zA-Z]+([a-zA-Z0-9\s\.\-'\,\/]*)*")]
         [Display(Description = "Details of the customer goal")]
         [Example(Description = "this is some text")]
         public string GoalSummary { get; set; }
@@ -64,6 +66,7 @@ namespace NCS.DSS.Goal.Models
         public DateTime? LastModifiedDate { get; set; }
 
         [StringLength(10, MinimumLength = 10)]
+        [RegularExpression(@"^[0-9]+$")]
         [Display(Description = "Identifier of the touchpoint who made the last change to the record")]
         [Example(Description = "0000000001")]
         public string LastModifiedBy { get; set; }
