@@ -10,11 +10,11 @@ using DFC.JSON.Standard;
 using DFC.Swagger.Standard.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using NCS.DSS.Goal.Cosmos.Helper;
 using NCS.DSS.Goal.GetGoalHttpTrigger.Service;
+using Microsoft.Azure.Functions.Worker;
+using System.Text.Json;
 
 namespace NCS.DSS.Goal.GetGoalHttpTrigger.Function
 {
@@ -36,7 +36,7 @@ namespace NCS.DSS.Goal.GetGoalHttpTrigger.Function
             loggerHelper = _loggerHelper;
         }
 
-        [FunctionName("Get")]
+        [Function("Get")]
         [ProducesResponseType(typeof(Models.Goal), (int)HttpStatusCode.OK)]
         [Response(HttpStatusCode = (int)HttpStatusCode.OK, Description = "Goals found", ShowSchema = true)]
         [Response(HttpStatusCode = (int)HttpStatusCode.NoContent, Description = "Goals does not exist", ShowSchema = false)]
@@ -44,7 +44,7 @@ namespace NCS.DSS.Goal.GetGoalHttpTrigger.Function
         [Response(HttpStatusCode = (int)HttpStatusCode.Unauthorized, Description = "API key is unknown or invalid", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
         [Display(Name = "Get", Description = "Ability to return all Goals for the given Interactions.")]
-        public async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Customers/{customerId}/Interactions/{interactionId}/ActionPlans/{actionPlanId}/Goals")]HttpRequest req, ILogger log, string customerId, string interactionId, string actionPlanId)
+        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Customers/{customerId}/Interactions/{interactionId}/ActionPlans/{actionPlanId}/Goals")]HttpRequest req, ILogger log, string customerId, string interactionId, string actionPlanId)
         {
 
             var correlationId = httpRequestHelper.GetDssCorrelationId(req);
@@ -62,7 +62,7 @@ namespace NCS.DSS.Goal.GetGoalHttpTrigger.Function
             var touchpointId = httpRequestHelper.GetDssTouchpointId(req);
             if (string.IsNullOrEmpty(touchpointId))
             {
-                var response = httpResponseMessageHelper.BadRequest();
+                var response = new BadRequestObjectResult(HttpStatusCode.BadRequest);
                 log.LogWarning($"Response Status Code: [{response.StatusCode}]. Unable to locate 'TouchpointId' in request header");
                 return response;
             }
@@ -71,21 +71,21 @@ namespace NCS.DSS.Goal.GetGoalHttpTrigger.Function
 
             if (!Guid.TryParse(customerId, out var customerGuid))
             {
-                var response = httpResponseMessageHelper.BadRequest(customerGuid);
+                var response = new BadRequestObjectResult(customerGuid);
                 log.LogWarning($"Response Status Code: [{response.StatusCode}]. Unable to parse 'customerId' to a Guid: [{customerId}]");
                 return response;
             }
 
             if (!Guid.TryParse(interactionId, out var interactionGuid))
             {
-                var response = httpResponseMessageHelper.BadRequest(interactionGuid);
+                var response = new BadRequestObjectResult(interactionGuid);
                 log.LogWarning($"Response Status Code: [{response.StatusCode}]. Unable to parse 'interactionId' to a Guid: [{interactionId}]");
                 return response;
             }
 
             if (!Guid.TryParse(actionPlanId, out var actionPlanGuid))
             {
-                var response = httpResponseMessageHelper.BadRequest(actionPlanGuid);
+                var response = new BadRequestObjectResult(actionPlanGuid);
                 log.LogWarning($"Response Status Code: [{response.StatusCode}]. Unable to parse 'actionplanId' to a Guid: [{actionPlanGuid}]");
                 return response;
             }
@@ -95,7 +95,7 @@ namespace NCS.DSS.Goal.GetGoalHttpTrigger.Function
 
             if (!doesCustomerExist)
             {
-                var response = httpResponseMessageHelper.NoContent(customerGuid);
+                var response = new NoContentResult();
                 log.LogWarning($"Response Status Code: [{response.StatusCode}]. Customer does not exist [{customerGuid}]");
                 return response;
             }
@@ -105,7 +105,7 @@ namespace NCS.DSS.Goal.GetGoalHttpTrigger.Function
 
             if (!doesInteractionExist)
             {
-                var response = httpResponseMessageHelper.NoContent(interactionGuid);
+                var response = new NoContentResult();
                 log.LogWarning($"Response Status Code: [{response.StatusCode}]. Interaction does not exist [{interactionGuid}]");
                 return response;
             }
@@ -114,7 +114,7 @@ namespace NCS.DSS.Goal.GetGoalHttpTrigger.Function
 
             if (!doesActionPlanExistAndBelongToCustomer)
             {
-                var response = httpResponseMessageHelper.NoContent(actionPlanGuid);
+                var response = new NoContentResult();
                 log.LogWarning($"Response Status Code: [{response.StatusCode}]. Action Plan does not exist [{actionPlanGuid}]");
                 return response;
             }
@@ -124,13 +124,19 @@ namespace NCS.DSS.Goal.GetGoalHttpTrigger.Function
 
             if (goals == null)
             {
-                var response = httpResponseMessageHelper.NoContent(customerGuid);
+                var response = new NoContentResult();
                 log.LogWarning($"Response Status Code: [{response.StatusCode}]. No goals found for customer [{customerGuid}]");
                 return response;
             }
             else
             {
-                var response = httpResponseMessageHelper.Ok(jsonHelper.SerializeObjectsAndRenameIdProperty(goals, "id", "GoalId"));
+                var response = goals.Count == 1 ? new JsonResult(goals[0], new JsonSerializerOptions())
+                {
+                    StatusCode = (int)HttpStatusCode.OK
+                } : new JsonResult(goals, new JsonSerializerOptions())
+                {
+                    StatusCode = (int)HttpStatusCode.OK
+                };
                 log.LogInformation($"Response Status Code: [{response.StatusCode}]. Goals found for customer [{customerGuid}]");
                 return response;
             }

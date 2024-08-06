@@ -1,11 +1,11 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2018
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NCS.DSS.Goal", "NCS.DSS.Goal\NCS.DSS.Goal.csproj", "{2FA7C9A5-32EA-40BB-9344-7EF4618F9A60}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NCS.DSS.Goal.Tests", "NCS.DSS.Goals.Tests\NCS.DSS.Goal.Tests.csproj", "{FF3132CB-BA35-416C-A572-E0DD69EBCB33}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NCS.DSS.Goal.Tests", "NCS.DSS.Goals.Tests\NCS.DSS.Goal.Tests.csproj", "{FF3132CB-BA35-416C-A572-E0DD69EBCB33}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
