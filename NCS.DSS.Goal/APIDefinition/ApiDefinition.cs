@@ -15,7 +15,7 @@ namespace NCS.DSS.Goal.APIDefinition
         public const string APIDefinitionName = "API-Definition";
         public const string APIDefRoute = APITitle + "/" + APIDefinitionName;
         public const string APIDescription = "To support the Data Collections integration with DSS SubcontractorId has been added as an attribute.";
-        public const string ApiVersion = "2.0.0";
+        public const string ApiVersion = "3.0.0";
         private ISwaggerDocumentGenerator swaggerDocumentGenerator;
 
         public ApiDefinition(ISwaggerDocumentGenerator swaggerDocumentGenerator)
