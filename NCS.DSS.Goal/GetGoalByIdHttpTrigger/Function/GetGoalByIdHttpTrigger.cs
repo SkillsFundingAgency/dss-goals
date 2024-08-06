@@ -26,7 +26,8 @@ namespace NCS.DSS.Goal.GetGoalByIdHttpTrigger.Function
         private IHttpRequestHelper httpRequestHelper;
         private IHttpResponseMessageHelper httpResponseMessageHelper;
         private IJsonHelper jsonHelper;
-        public GetGoalByIdHttpTrigger(IResourceHelper _resourceHelper, IHttpRequestHelper _httpRequestHelper, IGetGoalByIdHttpTriggerService _goalsGetByIdService, IHttpResponseMessageHelper _httpResponseMessageHelper, IJsonHelper _jsonHelper, ILoggerHelper _loggerHelper)
+        private ILogger log;
+        public GetGoalByIdHttpTrigger(IResourceHelper _resourceHelper, IHttpRequestHelper _httpRequestHelper, IGetGoalByIdHttpTriggerService _goalsGetByIdService, IHttpResponseMessageHelper _httpResponseMessageHelper, IJsonHelper _jsonHelper, ILoggerHelper _loggerHelper, ILogger<GetGoalByIdHttpTrigger> log)
         {
             resourceHelper = _resourceHelper;
             httpRequestHelper = _httpRequestHelper;
@@ -34,6 +35,7 @@ namespace NCS.DSS.Goal.GetGoalByIdHttpTrigger.Function
             httpResponseMessageHelper = _httpResponseMessageHelper;
             jsonHelper = _jsonHelper;
             loggerHelper = _loggerHelper;
+            this.log = log;
         }
 
         [Function("GetById")]
@@ -44,7 +46,7 @@ namespace NCS.DSS.Goal.GetGoalByIdHttpTrigger.Function
         [Response(HttpStatusCode = (int)HttpStatusCode.Unauthorized, Description = "API key is unknown or invalid", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
         [Display(Name = "Get", Description = "Ability to retrieve an individual Goals for the given customer")]
-        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Customers/{customerId}/Interactions/{interactionId}/ActionPlans/{actionPlanId}/Goals/{goalId}")]HttpRequest req, ILogger log, string customerId, string interactionId, string actionPlanId, string goalId)
+        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Customers/{customerId}/Interactions/{interactionId}/ActionPlans/{actionPlanId}/Goals/{goalId}")]HttpRequest req, string customerId, string interactionId, string actionPlanId, string goalId)
         {
 
             var correlationId = httpRequestHelper.GetDssCorrelationId(req);

@@ -32,8 +32,9 @@ namespace NCS.DSS.Goal.PostGoalHttpTrigger.Function
         private IJsonHelper jsonHelper;
         private IValidate validate;
         private IDynamicHelper _dynamicHelper;
+        private ILogger log;
 
-        public PostGoalHttpTrigger(IResourceHelper _resourceHelper, IHttpRequestHelper _httpRequestHelper, IPostGoalHttpTriggerService _goalsPostService, IHttpResponseMessageHelper _httpResponseMessageHelper, IJsonHelper _jsonHelper, ILoggerHelper _loggerHelper, IValidate _validate, IDynamicHelper dynamicHelper)
+        public PostGoalHttpTrigger(IResourceHelper _resourceHelper, IHttpRequestHelper _httpRequestHelper, IPostGoalHttpTriggerService _goalsPostService, IHttpResponseMessageHelper _httpResponseMessageHelper, IJsonHelper _jsonHelper, ILoggerHelper _loggerHelper, IValidate _validate, IDynamicHelper dynamicHelper, ILogger<PostGoalHttpTrigger> log)
         {
             resourceHelper = _resourceHelper;
             httpRequestHelper = _httpRequestHelper;
@@ -43,6 +44,7 @@ namespace NCS.DSS.Goal.PostGoalHttpTrigger.Function
             loggerHelper = _loggerHelper;
             validate = _validate;
             _dynamicHelper = dynamicHelper;
+            this.log = log;
         }
 
         [Function("Post")]
@@ -54,7 +56,7 @@ namespace NCS.DSS.Goal.PostGoalHttpTrigger.Function
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
         [Response(HttpStatusCode = 422, Description = "Goals validation error(s)", ShowSchema = false)]
         [Display(Name = "Post", Description = "Ability to create a new Goals for a customer.")]
-        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "Customers/{customerId}/Interactions/{interactionId}/ActionPlans/{actionPlanId}/Goals")]HttpRequest req, ILogger log, string customerId, string interactionId, string actionPlanId)
+        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "Customers/{customerId}/Interactions/{interactionId}/ActionPlans/{actionPlanId}/Goals")]HttpRequest req, string customerId, string interactionId, string actionPlanId)
         {
 
 

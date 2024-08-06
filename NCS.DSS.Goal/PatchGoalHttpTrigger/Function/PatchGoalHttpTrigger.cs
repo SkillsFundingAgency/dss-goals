@@ -33,7 +33,8 @@ namespace NCS.DSS.Goal.PatchGoalHttpTrigger.Function
         private IJsonHelper jsonHelper;
         private IValidate validate;
         private IDynamicHelper _dynamicHelper;
-        public PatchGoalHttpTrigger(IResourceHelper _resourceHelper, IHttpRequestHelper _httpRequestHelper, IPatchGoalHttpTriggerService _goalsPatchService, IHttpResponseMessageHelper _httpResponseMessageHelper, IJsonHelper _jsonHelper, ILoggerHelper _loggerHelper, IValidate _validate, IDynamicHelper dynamicHelper)
+        private ILogger log;
+        public PatchGoalHttpTrigger(IResourceHelper _resourceHelper, IHttpRequestHelper _httpRequestHelper, IPatchGoalHttpTriggerService _goalsPatchService, IHttpResponseMessageHelper _httpResponseMessageHelper, IJsonHelper _jsonHelper, ILoggerHelper _loggerHelper, IValidate _validate, IDynamicHelper dynamicHelper, ILogger<PatchGoalHttpTrigger> log)
         {
             resourceHelper = _resourceHelper;
             httpRequestHelper = _httpRequestHelper;
@@ -43,6 +44,7 @@ namespace NCS.DSS.Goal.PatchGoalHttpTrigger.Function
             loggerHelper = _loggerHelper;
             validate = _validate;
             _dynamicHelper = dynamicHelper;
+            this.log = log;
         }
 
         [Function("Patch")]
@@ -54,7 +56,7 @@ namespace NCS.DSS.Goal.PatchGoalHttpTrigger.Function
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
         [Response(HttpStatusCode = 422, Description = "Goals validation error(s)", ShowSchema = false)]
         [Display(Name = "Patch", Description = "Ability to modify/update a customers Goals record.")]
-        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "patch", Route = "Customers/{customerId}/Interactions/{interactionId}/ActionPlans/{actionPlanId}/Goals/{goalId}")] HttpRequest req, ILogger log, string customerId, string interactionId, string actionPlanId, string goalId)
+        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "patch", Route = "Customers/{customerId}/Interactions/{interactionId}/ActionPlans/{actionPlanId}/Goals/{goalId}")] HttpRequest req, string customerId, string interactionId, string actionPlanId, string goalId)
         {
 
             var correlationId = httpRequestHelper.GetDssCorrelationId(req);
