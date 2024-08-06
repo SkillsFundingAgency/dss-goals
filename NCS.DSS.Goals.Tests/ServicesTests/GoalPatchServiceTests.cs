@@ -34,7 +34,7 @@ namespace NCS.DSS.Goal.Tests.ServicesTests
             var result = _goalPatchService.Patch(string.Empty, _goalPatch);
 
             // Assert
-            Assert.IsNull(result);
+            Assert.That(result, Is.Null);
         }
 
         [Test]
@@ -47,7 +47,7 @@ namespace NCS.DSS.Goal.Tests.ServicesTests
             var goal = JsonConvert.DeserializeObject<Models.Goal>(patchedGoal);
 
             // Assert
-            Assert.AreEqual(DateTime.MaxValue, goal.DateGoalAchieved);
+            Assert.That(goal.DateGoalAchieved, Is.EqualTo(DateTime.MaxValue));
         }
 
 
@@ -61,7 +61,7 @@ namespace NCS.DSS.Goal.Tests.ServicesTests
             var goal = JsonConvert.DeserializeObject<Models.Goal>(patchedGoal);
 
             // Assert
-            Assert.AreEqual(DateTime.MaxValue, goal.DateGoalCaptured);
+            Assert.That(goal.DateGoalCaptured, Is.EqualTo(DateTime.MaxValue));
         }
 
         [Test]
@@ -74,7 +74,7 @@ namespace NCS.DSS.Goal.Tests.ServicesTests
             var goal = JsonConvert.DeserializeObject<Models.Goal>(patchedGoal);
 
             // Assert
-            Assert.AreEqual(DateTime.MaxValue, goal.DateGoalShouldBeCompletedBy);
+            Assert.That(goal.DateGoalShouldBeCompletedBy, Is.EqualTo(DateTime.MaxValue));
         }
 
         [Test]
@@ -87,7 +87,7 @@ namespace NCS.DSS.Goal.Tests.ServicesTests
             var goal = JsonConvert.DeserializeObject<Models.Goal>(patchedGoal);
 
             // Assert
-            Assert.AreEqual(GoalStatus.Achieved, goal.GoalStatus);
+            Assert.That(goal.GoalStatus, Is.EqualTo(GoalStatus.Achieved));
         }
 
         [Test]
@@ -100,7 +100,7 @@ namespace NCS.DSS.Goal.Tests.ServicesTests
             var goal = JsonConvert.DeserializeObject<Models.Goal>(patchedGoal);
 
             // Assert
-            Assert.AreEqual("Summary", goal.GoalSummary);
+            Assert.That(goal.GoalSummary, Is.EqualTo("Summary"));
         }
 
         [Test]
@@ -113,7 +113,7 @@ namespace NCS.DSS.Goal.Tests.ServicesTests
             var goal = JsonConvert.DeserializeObject<Models.Goal>(patchedGoal);
 
             // Assert
-            Assert.AreEqual(GoalType.Other, goal.GoalType);
+            Assert.That(goal.GoalType, Is.EqualTo(GoalType.Other));
         }
 
 
@@ -127,7 +127,7 @@ namespace NCS.DSS.Goal.Tests.ServicesTests
             var goal = JsonConvert.DeserializeObject<Models.Goal>(patchedGoal);
 
             // Assert
-            Assert.AreEqual(DateTime.MaxValue, goal.LastModifiedDate);
+            Assert.That(goal.LastModifiedDate, Is.EqualTo(DateTime.MaxValue));
         }
 
         [Test]
@@ -140,7 +140,7 @@ namespace NCS.DSS.Goal.Tests.ServicesTests
             var goal = JsonConvert.DeserializeObject<Models.Goal>(patchedGoal);
    
             // Assert
-            Assert.AreEqual("0000000111", goal.LastModifiedBy);
+            Assert.That(goal.LastModifiedBy, Is.EqualTo("0000000111"));
         }
 
     }

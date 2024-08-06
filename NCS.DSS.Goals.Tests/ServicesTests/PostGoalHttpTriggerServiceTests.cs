@@ -40,7 +40,7 @@ namespace NCS.DSS.Goal.Tests.ServicesTests
             var result = await _goalHttpTriggerService.CreateAsync(It.IsAny<Models.Goal>());
 
             // Assert
-            Assert.IsNull(result);
+            Assert.That(result, Is.Null);
         }
 
         [Test]
@@ -74,8 +74,8 @@ namespace NCS.DSS.Goal.Tests.ServicesTests
             var result = await _goalHttpTriggerService.CreateAsync(_goal);
 
             // Assert
-            Assert.IsNotNull(result);
-            Assert.IsInstanceOf<Models.Goal>(result);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.InstanceOf<Models.Goal>());
 
         }
     }

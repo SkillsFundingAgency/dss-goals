@@ -32,9 +32,9 @@ namespace NCS.DSS.Goal.Tests.ValidationTests
 
             var result = _validate.ValidateResource(goal, false);
 
-            Assert.IsInstanceOf<List<ValidationResult>>(result);
-            Assert.IsNotNull(result);
-            Assert.AreEqual(0, result.Count);
+            Assert.That(result, Is.InstanceOf<List<ValidationResult>>());
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Count, Is.EqualTo(0));
         }
 
         [Test]
@@ -51,9 +51,9 @@ namespace NCS.DSS.Goal.Tests.ValidationTests
 
             var result = _validate.ValidateResource(goal, false);
 
-            Assert.IsInstanceOf<List<ValidationResult>>(result);
-            Assert.IsNotNull(result);
-            Assert.AreEqual(1, result.Count);
+            Assert.That(result, Is.InstanceOf<List<ValidationResult>>());
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Count, Is.EqualTo(1));
         }
 
 
@@ -71,9 +71,9 @@ namespace NCS.DSS.Goal.Tests.ValidationTests
 
             var result = _validate.ValidateResource(goal, false);
 
-            Assert.IsInstanceOf<List<ValidationResult>>(result);
-            Assert.IsNotNull(result);
-            Assert.AreEqual(0, result.Count);
+            Assert.That(result, Is.InstanceOf<List<ValidationResult>>());
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Count, Is.EqualTo(0));
         }
 
         [Test]
@@ -90,9 +90,9 @@ namespace NCS.DSS.Goal.Tests.ValidationTests
 
             var result = _validate.ValidateResource(goal, false);
 
-            Assert.IsInstanceOf<List<ValidationResult>>(result);
-            Assert.IsNotNull(result);
-            Assert.AreEqual(1, result.Count);
+            Assert.That(result, Is.InstanceOf<List<ValidationResult>>());
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Count, Is.EqualTo(1));
         }
 
         [Test]
@@ -110,9 +110,9 @@ namespace NCS.DSS.Goal.Tests.ValidationTests
 
             var result = _validate.ValidateResource(goal, false);
 
-            Assert.IsInstanceOf<List<ValidationResult>>(result);
-            Assert.IsNotNull(result);
-            Assert.AreEqual(0, result.Count);
+            Assert.That(result, Is.InstanceOf<List<ValidationResult>>());
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Count, Is.EqualTo(0));
         }
 
         [Test]
@@ -130,9 +130,9 @@ namespace NCS.DSS.Goal.Tests.ValidationTests
 
             var result = _validate.ValidateResource(goal, false);
 
-            Assert.IsInstanceOf<List<ValidationResult>>(result);
-            Assert.IsNotNull(result);
-            Assert.AreEqual(1, result.Count);
+            Assert.That(result, Is.InstanceOf<List<ValidationResult>>());
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Count, Is.EqualTo(1));
         }
     }
 }

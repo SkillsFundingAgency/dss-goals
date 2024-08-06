@@ -8,7 +8,6 @@ using DFC.Common.Standard.Logging;
 using DFC.HTTP.Standard;
 using DFC.JSON.Standard;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.Extensions.Logging;
 using NCS.DSS.Goal.Cosmos.Helper;
 using NCS.DSS.Goal.Models;
@@ -17,6 +16,8 @@ using NCS.DSS.Goal.Validation;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using Moq;
+using Microsoft.AspNetCore.Mvc;
+using NCS.DSS.Goal.Helpers;
 
 namespace NCS.DSS.Goal.Tests.FunctionTests
 {
@@ -31,8 +32,8 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
         private const string ValidActionPlanId = "b8592ff8-af97-49ad-9fb2-e5c3c717fd85";
         private const string InValidId = "1111111-2222-3333-4444-555555555555";
 
-        private Mock<ILogger> _log;
-        private DefaultHttpRequest _request;
+        private Mock<ILogger<PatchGoalHttpTrigger.Function.PatchGoalHttpTrigger>> _log;
+        private HttpRequest _request;
         private Mock<IResourceHelper> _resourceHelper;
         private Mock<IHttpRequestHelper> _httpRequestHelper;
         private Mock<IPatchGoalHttpTriggerService> _patchGoalHttpTriggerService;
@@ -43,6 +44,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
         private Models.Goal _goal;
         private GoalPatch _goalPatch;
         private Mock<IValidate> _validate;
+        private Mock<IDynamicHelper> _dynamicHelper;
 
         [SetUp]
         public void Setup()
@@ -51,17 +53,18 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
             _goalPatch = new Models.GoalPatch();
 
             _loggerHelper = new Mock<ILoggerHelper>();
-            _request = null;
+            _request = new DefaultHttpContext().Request;
 
-            _log = new Mock<ILogger>();
+            _log = new Mock<ILogger<PatchGoalHttpTrigger.Function.PatchGoalHttpTrigger>>();
             _resourceHelper = new Mock<IResourceHelper>();
             _httpRequestHelper = new Mock<IHttpRequestHelper>();
             _patchGoalHttpTriggerService = new Mock<IPatchGoalHttpTriggerService>();
             _httpResponseMessageHelper = new HttpResponseMessageHelper();
             _jsonHelper = new JsonHelper();
             _validate = new Mock<IValidate>();
+            _dynamicHelper = new Mock<IDynamicHelper>();
 
-            function = new PatchGoalHttpTrigger.Function.PatchGoalHttpTrigger(_resourceHelper.Object, _httpRequestHelper.Object, _patchGoalHttpTriggerService.Object, _httpResponseMessageHelper, _jsonHelper, _loggerHelper.Object, _validate.Object);
+            function = new PatchGoalHttpTrigger.Function.PatchGoalHttpTrigger(_resourceHelper.Object, _httpRequestHelper.Object, _patchGoalHttpTriggerService.Object, _httpResponseMessageHelper, _jsonHelper, _loggerHelper.Object, _validate.Object, _dynamicHelper.Object, _log.Object);
         }
 
         [Test]
@@ -73,8 +76,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
             var result = await RunFunction(InValidId, ValidInteractionId, ValidActionPlanId, ValidGoalId);
 
             // Assert
-            Assert.IsInstanceOf<HttpResponseMessage>(result);
-            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
+            Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
         }
 
         [Test]
@@ -86,8 +88,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
             var result = await RunFunction(InValidId, ValidInteractionId, ValidActionPlanId, ValidGoalId);
 
             // Assert
-            Assert.IsInstanceOf<HttpResponseMessage>(result);
-            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
+            Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
         }
 
         [Test]
@@ -97,8 +98,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
             var result = await RunFunction(InValidId, ValidInteractionId, ValidActionPlanId, ValidGoalId);
 
             // Assert
-            Assert.IsInstanceOf<HttpResponseMessage>(result);
-            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
+            Assert.That(result, Is.InstanceOf<BadRequestObjectResult>()); ;
         }
 
         [Test]
@@ -108,8 +108,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
             var result = await RunFunction(ValidCustomerId, InValidId, ValidActionPlanId, ValidGoalId);
 
             // Assert
-            Assert.IsInstanceOf<HttpResponseMessage>(result);
-            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
+            Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
         }
 
                
@@ -120,8 +119,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
             var result = await RunFunction(ValidCustomerId, ValidInteractionId, ValidActionPlanId, InValidId);
 
             // Assert
-            Assert.IsInstanceOf<HttpResponseMessage>(result);
-            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
+            Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
         }
 
         [Test]
@@ -137,8 +135,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
             var result = await RunFunction(ValidCustomerId, ValidInteractionId, ValidActionPlanId, ValidGoalId);
 
             // Assert
-            Assert.IsInstanceOf<HttpResponseMessage>(result);
-            Assert.AreEqual((HttpStatusCode)422, result.StatusCode);
+            Assert.That(result, Is.InstanceOf<UnprocessableEntityObjectResult>());
         }
 
         [Test]
@@ -152,8 +149,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
             var result = await RunFunction(ValidCustomerId, ValidInteractionId, ValidActionPlanId, ValidGoalId);
 
             // Assert
-            Assert.IsInstanceOf<HttpResponseMessage>(result);
-            Assert.AreEqual((HttpStatusCode)422, result.StatusCode);
+            Assert.That(result, Is.InstanceOf<UnprocessableEntityObjectResult>());
         }
 
         [Test]
@@ -167,8 +163,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
             var result = await RunFunction(ValidCustomerId, ValidInteractionId, ValidActionPlanId, ValidGoalId);
 
             // Assert
-            Assert.IsInstanceOf<HttpResponseMessage>(result);
-            Assert.AreEqual(HttpStatusCode.NoContent, result.StatusCode);
+            Assert.That(result, Is.InstanceOf<NoContentResult>());
         }
 
         [Test]
@@ -185,8 +180,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
             var result = await RunFunction(ValidCustomerId, ValidInteractionId, ValidActionPlanId, ValidGoalId);
 
             // Assert
-            Assert.IsInstanceOf<HttpResponseMessage>(result);
-            Assert.AreEqual(HttpStatusCode.NoContent, result.StatusCode);
+            Assert.That(result, Is.InstanceOf<NoContentResult>());
         }
 
         [Test]
@@ -204,8 +198,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
             var result = await RunFunction(ValidCustomerId, ValidInteractionId, ValidActionPlanId, ValidGoalId);
 
             // Assert
-            Assert.IsInstanceOf<HttpResponseMessage>(result);
-            Assert.AreEqual(HttpStatusCode.NoContent, result.StatusCode);
+            Assert.That(result, Is.InstanceOf<NoContentResult>());
         }
         
         [Test]
@@ -224,8 +217,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
             var result = await RunFunction(ValidCustomerId, ValidInteractionId, ValidActionPlanId, ValidGoalId);
 
             // Assert
-            Assert.IsInstanceOf<HttpResponseMessage>(result);
-            Assert.AreEqual(HttpStatusCode.NoContent, result.StatusCode);
+            Assert.That(result, Is.InstanceOf<NoContentResult>());
         }
 
 
@@ -246,16 +238,14 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
             var result = await RunFunction(ValidCustomerId, ValidInteractionId, ValidActionPlanId, ValidGoalId);
 
             // Assert
-            Assert.IsInstanceOf<HttpResponseMessage>(result);
-            Assert.AreEqual(HttpStatusCode.NoContent, result.StatusCode);
+            Assert.That(result, Is.InstanceOf<NoContentResult>());
         }
 
         
-        private async Task<HttpResponseMessage> RunFunction(string customerId, string interactionId, string actionplanId, string goalId)
+        private async Task<IActionResult> RunFunction(string customerId, string interactionId, string actionplanId, string goalId)
         {
             return await function.Run(
                 _request,
-                _log.Object,
                 customerId,
                 interactionId,
                 actionplanId,
