@@ -2,7 +2,6 @@
   <PropertyGroup>
     <TargetFrameworks>net8.0</TargetFrameworks>
     <AzureFunctionsVersion>v4</AzureFunctionsVersion>
-    <RuntimeFrameworkVersion>3.1</RuntimeFrameworkVersion>
     <OutputType>Exe</OutputType>
     <ImplicitUsings>enabled</ImplicitUsings>
   </PropertyGroup>
