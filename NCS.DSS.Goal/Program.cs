@@ -11,6 +11,7 @@ using NCS.DSS.Goal.GetGoalHttpTrigger.Service;
 using NCS.DSS.Goal.PatchGoalHttpTrigger.Service;
 using NCS.DSS.Goal.PostGoalHttpTrigger.Service;
 using NCS.DSS.Goal.Validation;
+using NCS.DSS.Goal.Helpers;
 
 var host = new HostBuilder()
     .ConfigureFunctionsWebApplication()
@@ -30,6 +31,7 @@ var host = new HostBuilder()
         services.AddScoped<IGetGoalByIdHttpTriggerService, GetGoalByIdHttpTriggerService>();
         services.AddScoped<IPostGoalHttpTriggerService, PostGoalHttpTriggerService>();
         services.AddScoped<IPatchGoalHttpTriggerService, PatchGoalHttpTriggerService>();
+        services.AddSingleton<IDynamicHelper, DynamicHelper>();
     })
     .Build();
 
