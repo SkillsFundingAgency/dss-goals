@@ -1,5 +1,5 @@
-﻿using System;
-using NCS.DSS.Goal.ReferenceData;
+﻿using NCS.DSS.Goal.ReferenceData;
+using System;
 
 namespace NCS.DSS.Goal.Models
 {

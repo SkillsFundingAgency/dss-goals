@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using NCS.DSS.Goal.Models;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using NCS.DSS.Goal.Models;
 
 namespace NCS.DSS.Goal.Validation
 {

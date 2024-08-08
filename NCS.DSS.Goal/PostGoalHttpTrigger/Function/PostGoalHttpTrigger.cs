@@ -1,21 +1,21 @@
-using System;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
 using DFC.Common.Standard.Logging;
 using DFC.HTTP.Standard;
 using DFC.JSON.Standard;
 using DFC.Swagger.Standard.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using NCS.DSS.Goal.Cosmos.Helper;
+using NCS.DSS.Goal.Helpers;
 using NCS.DSS.Goal.PostGoalHttpTrigger.Service;
 using NCS.DSS.Goal.Validation;
-using Microsoft.Azure.Functions.Worker;
-using NCS.DSS.Goal.Helpers;
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Net;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace NCS.DSS.Goal.PostGoalHttpTrigger.Function
 {
@@ -53,7 +53,7 @@ namespace NCS.DSS.Goal.PostGoalHttpTrigger.Function
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
         [Response(HttpStatusCode = 422, Description = "Goals validation error(s)", ShowSchema = false)]
         [Display(Name = "Post", Description = "Ability to create a new Goals for a customer.")]
-        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "Customers/{customerId}/Interactions/{interactionId}/ActionPlans/{actionPlanId}/Goals")]HttpRequest req, string customerId, string interactionId, string actionPlanId)
+        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "Customers/{customerId}/Interactions/{interactionId}/ActionPlans/{actionPlanId}/Goals")] HttpRequest req, string customerId, string interactionId, string actionPlanId)
         {
 
 
@@ -66,7 +66,7 @@ namespace NCS.DSS.Goal.PostGoalHttpTrigger.Function
                 log.LogInformation("Unable to parse 'DssCorrelationId' to a Guid");
                 correlationGuid = Guid.NewGuid();
             }
-            
+
             log.LogInformation($"DssCorrelationId: [{correlationGuid}]");
 
             var touchpointId = httpRequestHelper.GetDssTouchpointId(req);
@@ -75,7 +75,7 @@ namespace NCS.DSS.Goal.PostGoalHttpTrigger.Function
                 var response = new BadRequestObjectResult(HttpStatusCode.BadRequest);
                 log.LogWarning($"Response Status Code: [{response.StatusCode}]. Unable to locate 'TouchpointId' in request header");
                 return response;
-            }               
+            }
 
             var apimUrl = httpRequestHelper.GetDssApimUrl(req);
             if (string.IsNullOrEmpty(apimUrl))
@@ -83,7 +83,7 @@ namespace NCS.DSS.Goal.PostGoalHttpTrigger.Function
                 var response = new BadRequestObjectResult(HttpStatusCode.BadRequest);
                 log.LogWarning($"Response Status Code: [{response.StatusCode}]. Unable to locate 'apimurl' in request header");
                 return response;
-            }               
+            }
 
             var subcontractorId = httpRequestHelper.GetDssSubcontractorId(req);
             if (string.IsNullOrEmpty(subcontractorId))
@@ -96,21 +96,21 @@ namespace NCS.DSS.Goal.PostGoalHttpTrigger.Function
                 var response = new BadRequestObjectResult(customerGuid);
                 log.LogWarning($"Response Status Code: [{response.StatusCode}]. Unable to parse 'customerId' to a Guid: [{customerId}]");
                 return response;
-            }               
+            }
 
             if (!Guid.TryParse(interactionId, out var interactionGuid))
             {
                 var response = new BadRequestObjectResult(interactionGuid);
                 log.LogWarning($"Response Status Code: [{response.StatusCode}]. Unable to parse 'interactionId' to a Guid: [{interactionId}]");
                 return response;
-            }               
+            }
 
             if (!Guid.TryParse(actionPlanId, out var actionPlanGuid))
             {
                 var response = new BadRequestObjectResult(actionPlanGuid);
                 log.LogWarning($"Response Status Code: [{response.StatusCode}]. Unable to parse 'actionPlanId' to a Guid: [{actionPlanId}]");
                 return response;
-            }               
+            }
 
             Models.Goal goalRequest;
 
@@ -124,14 +124,14 @@ namespace NCS.DSS.Goal.PostGoalHttpTrigger.Function
                 var response = new UnprocessableEntityObjectResult(_dynamicHelper.ExcludeProperty(ex, ["TargetSite"]));
                 log.LogError($"Response Status Code: [{response.StatusCode}]. Unable to retrieve body from req", ex);
                 return response;
-            }               
+            }
 
             if (goalRequest == null)
             {
                 var response = new UnprocessableEntityObjectResult(req);
                 log.LogWarning($"Response Status Code: [{response.StatusCode}]. Goal request is null");
                 return response;
-            }               
+            }
 
             log.LogInformation($"Attempt to set id's for Goal");
             goalRequest.SetIds(customerGuid, actionPlanGuid, touchpointId, subcontractorId);
@@ -144,7 +144,7 @@ namespace NCS.DSS.Goal.PostGoalHttpTrigger.Function
                 var response = new UnprocessableEntityObjectResult(errors);
                 log.LogWarning($"Response Status Code: [{response.StatusCode}]. Validation errors: [{errors.FirstOrDefault().ErrorMessage}]");
                 return response;
-            }               
+            }
 
             log.LogInformation($"Attempting to see if customer exists [{customerGuid}]");
             var doesCustomerExist = await resourceHelper.DoesCustomerExist(customerGuid);
@@ -154,7 +154,7 @@ namespace NCS.DSS.Goal.PostGoalHttpTrigger.Function
                 var response = new NoContentResult();
                 log.LogWarning($"Response Status Code: [{response.StatusCode}]. Customer does not exist [{customerGuid}]");
                 return response;
-            }               
+            }
 
             log.LogInformation($"Attempting to see if this is a read only customer [{customerGuid}]");
             var isCustomerReadOnly = await resourceHelper.IsCustomerReadOnly(customerGuid);
@@ -167,7 +167,7 @@ namespace NCS.DSS.Goal.PostGoalHttpTrigger.Function
                 };
                 log.LogWarning($"Response Status Code: [{response.StatusCode}]. Customer is read only [{customerGuid}]");
                 return response;
-            }               
+            }
 
             log.LogInformation($"Attempting to get Interaction [{interactionGuid}] for customer [{customerGuid}]");
             var doesInteractionExist = resourceHelper.DoesInteractionExistAndBelongToCustomer(interactionGuid, customerGuid);
@@ -177,7 +177,7 @@ namespace NCS.DSS.Goal.PostGoalHttpTrigger.Function
                 var response = new NoContentResult();
                 log.LogWarning($"Response Status Code: [{response.StatusCode}]. Interaction does not exist [{interactionGuid}]");
                 return response;
-            }               
+            }
 
             var doesActionPlanExistAndBelongToCustomer = resourceHelper.DoesActionPlanExistAndBelongToCustomer(actionPlanGuid, interactionGuid, customerGuid);
 
@@ -186,7 +186,7 @@ namespace NCS.DSS.Goal.PostGoalHttpTrigger.Function
                 var response = new NoContentResult();
                 log.LogWarning($"Response Status Code: [{response.StatusCode}]. Action Plan does not exist [{actionPlanGuid}]");
                 return response;
-            }               
+            }
 
             log.LogInformation($"Attempting to Create Goal for customer [{customerGuid}]");
             var goal = await goalsPostService.CreateAsync(goalRequest);
@@ -207,7 +207,7 @@ namespace NCS.DSS.Goal.PostGoalHttpTrigger.Function
                 log.LogWarning($"Response Status Code: [{response.StatusCode}]. Failed to create Goal for customer [{customerGuid}]");
                 return response;
             }
-            
+
         }
     }
 }

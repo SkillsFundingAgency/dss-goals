@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using NCS.DSS.Goal.ReferenceData;
+﻿using NCS.DSS.Goal.ReferenceData;
 using NCS.DSS.Goal.Validation;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace NCS.DSS.Goal.Tests.ValidationTests
 {

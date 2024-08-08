@@ -1,6 +1,6 @@
-﻿using System;
-using Moq;
+﻿using Moq;
 using NUnit.Framework;
+using System;
 
 namespace NCS.DSS.Goal.Tests.ModelTests
 {

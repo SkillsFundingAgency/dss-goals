@@ -1,6 +1,6 @@
-﻿using System;
+﻿using NCS.DSS.Goal.Models;
+using System;
 using System.Threading.Tasks;
-using NCS.DSS.Goal.Models;
 
 namespace NCS.DSS.Goal.PatchGoalHttpTrigger.Service
 {

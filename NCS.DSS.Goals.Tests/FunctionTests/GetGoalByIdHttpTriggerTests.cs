@@ -1,8 +1,4 @@
-﻿using System;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
-using DFC.Common.Standard.Logging;
+﻿using DFC.Common.Standard.Logging;
 using DFC.HTTP.Standard;
 using DFC.JSON.Standard;
 using Microsoft.AspNetCore.Http;
@@ -12,6 +8,9 @@ using Moq;
 using NCS.DSS.Goal.Cosmos.Helper;
 using NCS.DSS.Goal.GetGoalByIdHttpTrigger.Service;
 using NUnit.Framework;
+using System;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace NCS.DSS.Goal.Tests.FunctionTests
 {
@@ -97,7 +96,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
         {
             // Act
             var result = await RunFunction(ValidCustomerId, InValidId, ValidGoalId, ValidActionPlanId);
-            
+
             // Assert
             Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
         }
@@ -116,7 +115,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
         public async Task GetGoalByIdHttpTrigger_ReturnsStatusCodeNoContent_WhenCustomerDoesNotExist()
         {
             _httpRequestMessageHelper.Setup(x => x.GetDssTouchpointId(_request)).Returns("0000000001");
-            _resourceHelper.Setup(x=> x.DoesCustomerExist(It.IsAny<Guid>())).Returns(Task.FromResult(false));
+            _resourceHelper.Setup(x => x.DoesCustomerExist(It.IsAny<Guid>())).Returns(Task.FromResult(false));
 
             // Act
             var result = await RunFunction(ValidCustomerId, ValidInteractionId, ValidGoalId, ValidActionPlanId);
@@ -176,7 +175,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
         {
             return await function.Run(
                 _request,
-                customerId, 
+                customerId,
                 interactionId,
                 actionplanId,
                 goalId).ConfigureAwait(false);

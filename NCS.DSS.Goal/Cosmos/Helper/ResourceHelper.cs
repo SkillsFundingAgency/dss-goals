@@ -1,6 +1,6 @@
-﻿using System;
+﻿using NCS.DSS.Goal.Cosmos.Provider;
+using System;
 using System.Threading.Tasks;
-using NCS.DSS.Goal.Cosmos.Provider;
 
 namespace NCS.DSS.Goal.Cosmos.Helper
 {
@@ -30,7 +30,7 @@ namespace NCS.DSS.Goal.Cosmos.Helper
 
         public bool DoesActionPlanExistAndBelongToCustomer(Guid actionPlanId, Guid interactionId, Guid customerId)
         {
-            return _documentDbProvider.DoesActionPlanExistAndBelongToCustomer(actionPlanId, interactionId, customerId); 
+            return _documentDbProvider.DoesActionPlanExistAndBelongToCustomer(actionPlanId, interactionId, customerId);
         }
     }
 }

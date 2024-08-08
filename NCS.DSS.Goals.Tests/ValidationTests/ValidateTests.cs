@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using NCS.DSS.Goal.ReferenceData;
+﻿using NCS.DSS.Goal.ReferenceData;
 using NCS.DSS.Goal.Validation;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace NCS.DSS.Goal.Tests.ValidationTests
 {
@@ -22,7 +22,8 @@ namespace NCS.DSS.Goal.Tests.ValidationTests
         [Test]
         public void ValidateTests_ReturnValidationResult_DateGoalCapturedMustBeLessThanDateGoalCompletedByAndCurrentDate()
         {
-            var goal = new Models.Goal {
+            var goal = new Models.Goal
+            {
                 DateGoalCaptured = DateTime.Today.AddDays(-4),
                 DateGoalShouldBeCompletedBy = DateTime.Today.AddDays(-5),
                 GoalSummary = "Summary",
@@ -88,7 +89,7 @@ namespace NCS.DSS.Goal.Tests.ValidationTests
                 DateGoalShouldBeCompletedBy = DateTime.Today.AddDays(-3),
                 GoalSummary = "Summary",
                 GoalType = GoalType.Other,
-                GoalStatus= (GoalStatus)1000,
+                GoalStatus = (GoalStatus)1000,
                 LastModifiedDate = DateTime.UtcNow
             };
 
@@ -207,7 +208,7 @@ namespace NCS.DSS.Goal.Tests.ValidationTests
                 DateGoalShouldBeCompletedBy = DateTime.Today.AddDays(-3),
                 GoalSummary = "Summary",
                 GoalType = GoalType.Learning,
-                LastModifiedBy = "0000000001", 
+                LastModifiedBy = "0000000001",
                 SubcontractorId = "123456"
             };
 

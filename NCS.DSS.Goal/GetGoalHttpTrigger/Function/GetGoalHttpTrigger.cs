@@ -1,18 +1,18 @@
-using System;
-using System.ComponentModel.DataAnnotations;
-using System.Net;
-using System.Threading.Tasks;
 using DFC.Common.Standard.Logging;
 using DFC.HTTP.Standard;
 using DFC.JSON.Standard;
 using DFC.Swagger.Standard.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using NCS.DSS.Goal.Cosmos.Helper;
 using NCS.DSS.Goal.GetGoalHttpTrigger.Service;
-using Microsoft.Azure.Functions.Worker;
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.Net;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace NCS.DSS.Goal.GetGoalHttpTrigger.Function
 {
@@ -44,7 +44,7 @@ namespace NCS.DSS.Goal.GetGoalHttpTrigger.Function
         [Response(HttpStatusCode = (int)HttpStatusCode.Unauthorized, Description = "API key is unknown or invalid", ShowSchema = false)]
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
         [Display(Name = "Get", Description = "Ability to return all Goals for the given Interactions.")]
-        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Customers/{customerId}/Interactions/{interactionId}/ActionPlans/{actionPlanId}/Goals")]HttpRequest req, string customerId, string interactionId, string actionPlanId)
+        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Customers/{customerId}/Interactions/{interactionId}/ActionPlans/{actionPlanId}/Goals")] HttpRequest req, string customerId, string interactionId, string actionPlanId)
         {
 
             var correlationId = httpRequestHelper.GetDssCorrelationId(req);
@@ -56,7 +56,7 @@ namespace NCS.DSS.Goal.GetGoalHttpTrigger.Function
                 log.LogInformation("Unable to parse 'DssCorrelationId' to a Guid");
                 correlationGuid = Guid.NewGuid();
             }
-            
+
             log.LogInformation($"DssCorrelationId: [{correlationGuid}]");
 
             var touchpointId = httpRequestHelper.GetDssTouchpointId(req);

@@ -1,16 +1,16 @@
-﻿using System;
+﻿using Microsoft.Azure.Documents;
+using Microsoft.Azure.Documents.Client;
+using Moq;
+using NCS.DSS.Goal.Cosmos.Provider;
+using NCS.DSS.Goal.PostGoalHttpTrigger.Service;
+using Newtonsoft.Json;
+using NUnit.Framework;
+using System;
 using System.Collections.Specialized;
 using System.IO;
 using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
-using Microsoft.Azure.Documents;
-using Microsoft.Azure.Documents.Client;
-using NCS.DSS.Goal.Cosmos.Provider;
-using NCS.DSS.Goal.PostGoalHttpTrigger.Service;
-using Newtonsoft.Json;
-using Moq;
-using NUnit.Framework;
 
 namespace NCS.DSS.Goal.Tests.ServicesTests
 {

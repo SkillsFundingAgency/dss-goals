@@ -1,6 +1,5 @@
-﻿using System;
-using System.Configuration;
-using Microsoft.Azure.Documents.Client;
+﻿using Microsoft.Azure.Documents.Client;
+using System;
 
 namespace NCS.DSS.Goal.Cosmos.Client
 {

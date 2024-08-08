@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
-using DFC.Common.Standard.Logging;
+﻿using DFC.Common.Standard.Logging;
 using DFC.HTTP.Standard;
 using DFC.JSON.Standard;
 using Microsoft.AspNetCore.Http;
@@ -17,6 +11,11 @@ using NCS.DSS.Goal.PostGoalHttpTrigger.Service;
 using NCS.DSS.Goal.Validation;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace NCS.DSS.Goal.Tests.FunctionTests
 {
@@ -107,7 +106,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
             Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
         }
 
-       
+
         [Test]
         public async Task PostGoalHttpTrigger_ReturnsStatusCodeUnprocessableEntity_WhenGoalHasFailedValidation()
         {
@@ -116,7 +115,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
             _httpRequestHelper.Setup(x => x.GetResourceFromRequest<Models.Goal>(_request)).Returns(Task.FromResult(_goal));
 
             var validationResults = new List<ValidationResult> { new ValidationResult("interaction Id is Required") };
-            _validate.Setup(x => x.ValidateResource(It.IsAny<Models.Goal>(),true)).Returns(validationResults);
+            _validate.Setup(x => x.ValidateResource(It.IsAny<Models.Goal>(), true)).Returns(validationResults);
 
             var result = await RunFunction(ValidCustomerId, ValidInteractionId, ValidActionPlanId);
 

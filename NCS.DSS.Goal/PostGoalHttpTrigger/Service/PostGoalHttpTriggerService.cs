@@ -1,7 +1,7 @@
-﻿using System.Net;
-using System.Threading.Tasks;
-using NCS.DSS.Goal.Cosmos.Provider;
+﻿using NCS.DSS.Goal.Cosmos.Provider;
 using NCS.DSS.Goal.ServiceBus;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace NCS.DSS.Goal.PostGoalHttpTrigger.Service
 {
@@ -19,7 +19,7 @@ namespace NCS.DSS.Goal.PostGoalHttpTrigger.Service
         {
             if (goal == null)
                 return null;
-            
+
             goal.SetDefaultValues();
 
             var response = await _documentDbProvider.CreateGoalAsync(goal);

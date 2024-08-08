@@ -1,23 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
-using DFC.Common.Standard.Logging;
+﻿using DFC.Common.Standard.Logging;
 using DFC.HTTP.Standard;
 using DFC.JSON.Standard;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Moq;
 using NCS.DSS.Goal.Cosmos.Helper;
+using NCS.DSS.Goal.Helpers;
 using NCS.DSS.Goal.Models;
 using NCS.DSS.Goal.PatchGoalHttpTrigger.Service;
 using NCS.DSS.Goal.Validation;
 using Newtonsoft.Json;
 using NUnit.Framework;
-using Moq;
-using Microsoft.AspNetCore.Mvc;
-using NCS.DSS.Goal.Helpers;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 
 namespace NCS.DSS.Goal.Tests.FunctionTests
 {
@@ -111,7 +109,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
             Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
         }
 
-               
+
         [Test]
         public async Task PatchGoalHttpTrigger_ReturnsStatusCodeBadRequest_WhenGoalIdIsInvalid()
         {
@@ -200,7 +198,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
             // Assert
             Assert.That(result, Is.InstanceOf<NoContentResult>());
         }
-        
+
         [Test]
         public async Task PatchGoalHttpTrigger_ReturnsStatusCodeOk_WhenGoalDoesNotExist()
         {
@@ -241,7 +239,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
             Assert.That(result, Is.InstanceOf<NoContentResult>());
         }
 
-        
+
         private async Task<IActionResult> RunFunction(string customerId, string interactionId, string actionplanId, string goalId)
         {
             return await function.Run(
