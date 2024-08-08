@@ -13,10 +13,10 @@ resources:
     endpoint: 'GitHub (CDH)'
 
 pool:
-  name: NCS - CI and CD
-  demands:
-    - msbuild
-    - visualstudio
+  vmImage: windows-latest
+  # demands:
+  #   - msbuild
+  #   - visualstudio
 
 jobs:
 # Test the branch name, the output of this job will satisfy the condition of one or neither of the subsequent jobs
