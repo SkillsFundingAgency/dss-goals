@@ -2,6 +2,8 @@ variables:
     SolutionBaseName: 'NCS.DSS.Goal'
     BuildPlatform: 'any cpu'
     BuildConfiguration: 'release'
+    GitVersionVersion: 5.12.x
+    DotNetCoreVersion: 8.x
 
 resources:
   repositories:
@@ -67,8 +69,6 @@ jobs:
       SolutionBaseName: $(SolutionBaseName)
       BuildPlatform: $(BuildPlatform)
       BuildConfiguration: $(BuildConfiguration)
-      GitVersionVersion: 5.12.x
-      DotNetCoreVersion: 8.x
 
 
 
