@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using NCS.DSS.Goal.Cosmos.Provider;
-using NCS.DSS.Goal.Models;
 using NCS.DSS.Goal.PostGoalHttpTrigger.Service;
 using Newtonsoft.Json;
 using Moq;
@@ -16,10 +15,10 @@ using NUnit.Framework;
 namespace NCS.DSS.Goal.Tests.ServicesTests
 {
     [TestFixture]
-    public class PosGoalHttpTriggerServiceTests
+    public class PostGoalHttpTriggerServiceTests
     {
         private IPostGoalHttpTriggerService _goalHttpTriggerService;
-        private new Mock<IDocumentDBProvider> _documentDbProvider;
+        private Mock<IDocumentDBProvider> _documentDbProvider;
         private string _json;
         private Models.Goal _goal;
         private readonly Guid _goalId = Guid.Parse("7E467BDB-213F-407A-B86A-1954053D3C24");

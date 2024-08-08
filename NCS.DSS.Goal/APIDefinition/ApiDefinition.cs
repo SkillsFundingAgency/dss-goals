@@ -1,7 +1,4 @@
-﻿using System.Net;
-using System.Net.Http;
-using System.Reflection;
-using DFC.Functions.DI.Standard.Attributes;
+﻿using System.Reflection;
 using DFC.Swagger.Standard;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.Functions.Worker;
