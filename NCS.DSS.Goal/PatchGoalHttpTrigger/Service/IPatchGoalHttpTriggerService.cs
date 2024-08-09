@@ -1,6 +1,4 @@
 ﻿using NCS.DSS.Goal.Models;
-using System;
-using System.Threading.Tasks;
 
 namespace NCS.DSS.Goal.PatchGoalHttpTrigger.Service
 {

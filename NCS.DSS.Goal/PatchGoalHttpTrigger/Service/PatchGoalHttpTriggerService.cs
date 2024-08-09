@@ -1,9 +1,7 @@
 ﻿using NCS.DSS.Goal.Cosmos.Provider;
 using NCS.DSS.Goal.Models;
 using NCS.DSS.Goal.ServiceBus;
-using System;
 using System.Net;
-using System.Threading.Tasks;
 
 namespace NCS.DSS.Goal.PatchGoalHttpTrigger.Service
 {

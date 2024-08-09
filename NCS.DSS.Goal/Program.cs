@@ -8,10 +8,10 @@ using NCS.DSS.Goal.Cosmos.Helper;
 using NCS.DSS.Goal.Cosmos.Provider;
 using NCS.DSS.Goal.GetGoalByIdHttpTrigger.Service;
 using NCS.DSS.Goal.GetGoalHttpTrigger.Service;
+using NCS.DSS.Goal.Helpers;
 using NCS.DSS.Goal.PatchGoalHttpTrigger.Service;
 using NCS.DSS.Goal.PostGoalHttpTrigger.Service;
 using NCS.DSS.Goal.Validation;
-using NCS.DSS.Goal.Helpers;
 
 var host = new HostBuilder()
     .ConfigureFunctionsWebApplication()

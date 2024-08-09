@@ -10,12 +10,9 @@ using NCS.DSS.Goal.Cosmos.Helper;
 using NCS.DSS.Goal.Helpers;
 using NCS.DSS.Goal.PostGoalHttpTrigger.Service;
 using NCS.DSS.Goal.Validation;
-using System;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Net;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace NCS.DSS.Goal.PostGoalHttpTrigger.Function
 {

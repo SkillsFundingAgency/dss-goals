@@ -1,7 +1,5 @@
 ﻿using NCS.DSS.Goal.Models;
 using NCS.DSS.Goal.ReferenceData;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace NCS.DSS.Goal.Validation

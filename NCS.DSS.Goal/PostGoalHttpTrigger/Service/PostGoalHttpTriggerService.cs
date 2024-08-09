@@ -1,7 +1,6 @@
 ﻿using NCS.DSS.Goal.Cosmos.Provider;
 using NCS.DSS.Goal.ServiceBus;
 using System.Net;
-using System.Threading.Tasks;
 
 namespace NCS.DSS.Goal.PostGoalHttpTrigger.Service
 {
