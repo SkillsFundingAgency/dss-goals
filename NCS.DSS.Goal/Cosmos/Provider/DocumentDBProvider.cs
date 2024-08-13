@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Azure.Documents;
+﻿using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
 using NCS.DSS.Goal.Cosmos.Client;
@@ -66,7 +62,7 @@ namespace NCS.DSS.Goal.Cosmos.Provider
             {
                 return false;
             }
-           
+
         }
 
         public bool DoesActionPlanExistAndBelongToCustomer(Guid actionPlanId, Guid interactionId, Guid customerId)
@@ -101,7 +97,7 @@ namespace NCS.DSS.Goal.Cosmos.Provider
             {
                 return false;
             }
-           
+
         }
 
         public async Task<bool> DoesCustomerHaveATerminationDate(Guid customerId)
@@ -180,7 +176,7 @@ namespace NCS.DSS.Goal.Cosmos.Provider
 
             var goalForCustomerQuery = client
                 ?.CreateDocumentQuery<Models.Goal>(collectionUri, new FeedOptions { MaxItemCount = 1 })
-                .Where(x => x.CustomerId == customerId && 
+                .Where(x => x.CustomerId == customerId &&
                             x.GoalId == goalId &&
                             x.ActionPlanId == actionPlanId)
                 .AsDocumentQuery();

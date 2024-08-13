@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
-using DFC.Common.Standard.Logging;
+﻿using DFC.Common.Standard.Logging;
 using DFC.HTTP.Standard;
 using DFC.JSON.Standard;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Internal;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Moq;
 using NCS.DSS.Goal.Cosmos.Helper;
 using NCS.DSS.Goal.GetGoalHttpTrigger.Service;
 using NUnit.Framework;
-using Moq;
+using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace NCS.DSS.Goal.Tests.FunctionTests
 {
@@ -25,8 +24,8 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
         private const string ValidActionPlanId = "b8592ff8-af97-49ad-9fb2-e5c3c717fd85";
         private const string InValidId = "1111111-2222-3333-4444-555555555555";
 
-        private Mock<ILogger> _log;
-        private DefaultHttpRequest _request;
+        private Mock<ILogger<GetGoalHttpTrigger.Function.GetGoalHttpTrigger>> _log;
+        private HttpRequest _request;
         private Mock<IResourceHelper> _resourceHelper;
         private Mock<IHttpRequestHelper> _httpRequestHelper;
         private Mock<IGetGoalHttpTriggerService> _getGoalHttpTriggerService;
@@ -44,15 +43,15 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
 
 
             _loggerHelper = new Mock<ILoggerHelper>();
-            _request = null;
+            _request = new DefaultHttpContext().Request;
 
-            _log = new Mock<ILogger>();
+            _log = new Mock<ILogger<GetGoalHttpTrigger.Function.GetGoalHttpTrigger>>();
             _resourceHelper = new Mock<IResourceHelper>();
             _httpRequestHelper = new Mock<IHttpRequestHelper>();
             _getGoalHttpTriggerService = new Mock<IGetGoalHttpTriggerService>();
             _httpResponseMessageHelper = new HttpResponseMessageHelper();
             _jsonHelper = new JsonHelper();
-            function = new GetGoalHttpTrigger.Function.GetGoalHttpTrigger(_resourceHelper.Object, _httpRequestHelper.Object, _getGoalHttpTriggerService.Object, _httpResponseMessageHelper, _jsonHelper, _loggerHelper.Object);
+            function = new GetGoalHttpTrigger.Function.GetGoalHttpTrigger(_resourceHelper.Object, _httpRequestHelper.Object, _getGoalHttpTriggerService.Object, _httpResponseMessageHelper, _jsonHelper, _loggerHelper.Object, _log.Object);
         }
 
         [Test]
@@ -64,8 +63,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
             var result = await RunFunction(InValidId, ValidInteractionId, ValidActionPlanId);
 
             // Assert
-            Assert.IsInstanceOf<HttpResponseMessage>(result);
-            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
+            Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
         }
 
         [Test]
@@ -75,8 +73,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
             var result = await RunFunction(InValidId, ValidInteractionId, ValidActionPlanId);
 
             // Assert
-            Assert.IsInstanceOf<HttpResponseMessage>(result);
-            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
+            Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
         }
 
         [Test]
@@ -89,24 +86,22 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
             var result = await RunFunction(ValidCustomerId, ValidInteractionId, ValidActionPlanId);
 
             // Assert
-            Assert.IsInstanceOf<HttpResponseMessage>(result);
-            Assert.AreEqual(HttpStatusCode.NoContent, result.StatusCode);
+            Assert.That(result, Is.InstanceOf<NoContentResult>());
         }
-        
+
         [Test]
         public async Task GetGoalHttpTrigger_ReturnsStatusCodeNoContent_WhenGoalDoesNotExist()
         {
             _httpRequestHelper.Setup(x => x.GetDssTouchpointId(_request)).Returns("0000000001");
             _resourceHelper.Setup(x => x.DoesCustomerExist(It.IsAny<Guid>())).Returns(Task.FromResult(true));
 
-            _getGoalHttpTriggerService.Setup(x => x.GetGoalsAsync(It.IsAny<Guid>(), It.IsAny<Guid>())).Returns(Task.FromResult <List<Models.Goal>>(null));
+            _getGoalHttpTriggerService.Setup(x => x.GetGoalsAsync(It.IsAny<Guid>(), It.IsAny<Guid>())).Returns(Task.FromResult<List<Models.Goal>>(null));
 
             // Act
             var result = await RunFunction(ValidCustomerId, ValidInteractionId, ValidActionPlanId);
 
             // Assert
-            Assert.IsInstanceOf<HttpResponseMessage>(result);
-            Assert.AreEqual(HttpStatusCode.NoContent, result.StatusCode);
+            Assert.That(result, Is.InstanceOf<NoContentResult>());
         }
 
         [Test]
@@ -122,17 +117,16 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
 
             // Act
             var result = await RunFunction(ValidCustomerId, ValidInteractionId, ValidActionPlanId);
-
-            // Assert
-            Assert.IsInstanceOf<HttpResponseMessage>(result);
-            Assert.AreEqual(HttpStatusCode.OK, result.StatusCode);
+            var responseResult = result as JsonResult;
+            //Assert
+            Assert.That(result, Is.InstanceOf<JsonResult>());
+            Assert.That(responseResult.StatusCode, Is.EqualTo((int)HttpStatusCode.OK));
         }
 
-        private async Task<HttpResponseMessage> RunFunction(string customerId, string interactionId, string actionplanId)
+        private async Task<IActionResult> RunFunction(string customerId, string interactionId, string actionplanId)
         {
             return await function.Run(
-                _request, 
-                _log.Object, 
+                _request,
                 customerId,
                 interactionId,
                 actionplanId).ConfigureAwait(false);

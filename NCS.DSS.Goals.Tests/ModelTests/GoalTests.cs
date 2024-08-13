@@ -1,6 +1,6 @@
-﻿using System;
-using Moq;
+﻿using Moq;
 using NUnit.Framework;
+using System;
 
 namespace NCS.DSS.Goal.Tests.ModelTests
 {
@@ -16,7 +16,7 @@ namespace NCS.DSS.Goal.Tests.ModelTests
             goal.SetDefaultValues();
 
             // Assert
-            Assert.IsNotNull(goal.LastModifiedDate);
+            Assert.That(goal.LastModifiedDate, Is.Not.Null);
         }
 
         [Test]
@@ -27,7 +27,7 @@ namespace NCS.DSS.Goal.Tests.ModelTests
             goal.SetDefaultValues();
 
             // Assert
-            Assert.AreEqual(DateTime.MaxValue, goal.LastModifiedDate);
+            Assert.That(goal.LastModifiedDate, Is.EqualTo(DateTime.MaxValue));
         }
 
         [Test]
@@ -38,7 +38,7 @@ namespace NCS.DSS.Goal.Tests.ModelTests
             goal.SetIds(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>());
 
             // Assert
-            Assert.AreNotSame(Guid.Empty, goal.GoalId);
+            Assert.That(goal.GoalId, Is.Not.EqualTo(Guid.Empty));
         }
 
         [Test]
@@ -50,7 +50,7 @@ namespace NCS.DSS.Goal.Tests.ModelTests
             goal.SetIds(customerId, It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>());
 
             // Assert
-            Assert.AreEqual(customerId, goal.CustomerId);
+            Assert.That(goal.CustomerId, Is.EqualTo(customerId));
         }
 
         [Test]
@@ -62,7 +62,7 @@ namespace NCS.DSS.Goal.Tests.ModelTests
             goal.SetIds(It.IsAny<Guid>(), actionPlanId, It.IsAny<string>(), It.IsAny<string>());
 
             // Assert
-            Assert.AreEqual(actionPlanId, goal.ActionPlanId);
+            Assert.That(goal.ActionPlanId, Is.EqualTo(actionPlanId));
         }
 
         [Test]
@@ -73,7 +73,7 @@ namespace NCS.DSS.Goal.Tests.ModelTests
             goal.SetIds(It.IsAny<Guid>(), It.IsAny<Guid>(), "0000000000", It.IsAny<string>());
 
             // Assert
-            Assert.AreEqual("0000000000", goal.LastModifiedBy);
+            Assert.That(goal.LastModifiedBy, Is.EqualTo("0000000000"));
         }
 
     }

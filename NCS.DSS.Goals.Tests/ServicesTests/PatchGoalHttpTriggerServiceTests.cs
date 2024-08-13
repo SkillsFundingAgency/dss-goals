@@ -1,17 +1,17 @@
-﻿using System;
+﻿using Microsoft.Azure.Documents;
+using Microsoft.Azure.Documents.Client;
+using Moq;
+using NCS.DSS.Goal.Cosmos.Provider;
+using NCS.DSS.Goal.Models;
+using NCS.DSS.Goal.PatchGoalHttpTrigger.Service;
+using Newtonsoft.Json;
+using NUnit.Framework;
+using System;
 using System.Collections.Specialized;
 using System.IO;
 using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
-using Microsoft.Azure.Documents;
-using Microsoft.Azure.Documents.Client;
-using NCS.DSS.Goal.Cosmos.Provider;
-using NCS.DSS.Goal.Models;
-using NCS.DSS.Goal.PatchGoalHttpTrigger.Service;
-using Newtonsoft.Json;
-using Moq;
-using NUnit.Framework;
 
 namespace NCS.DSS.Goal.Tests.ServicesTests
 {
@@ -46,7 +46,7 @@ namespace NCS.DSS.Goal.Tests.ServicesTests
             var result = _goalHttpTriggerService.PatchResource(null, It.IsAny<GoalPatch>());
 
             // Assert
-            Assert.IsNull(result);
+            Assert.That(result, Is.Null);
         }
 
         [Test]
@@ -56,7 +56,7 @@ namespace NCS.DSS.Goal.Tests.ServicesTests
             var result = _goalHttpTriggerService.PatchResource(It.IsAny<string>(), null);
 
             // Assert
-            Assert.IsNull(result);
+            Assert.That(result, Is.Null);
         }
 
         [Test]
@@ -66,7 +66,7 @@ namespace NCS.DSS.Goal.Tests.ServicesTests
             var result = await _goalHttpTriggerService.UpdateCosmosAsync(null, _goalId);
 
             // Assert
-            Assert.IsNull(result);
+            Assert.That(result, Is.Null);
         }
 
         [Test]
@@ -78,7 +78,7 @@ namespace NCS.DSS.Goal.Tests.ServicesTests
             var result = await _goalHttpTriggerService.UpdateCosmosAsync(It.IsAny<string>(), _goalId);
 
             // Assert
-            Assert.IsNull(result);
+            Assert.That(result, Is.Null);
         }
 
         [Test]
@@ -90,7 +90,7 @@ namespace NCS.DSS.Goal.Tests.ServicesTests
             var result = await _goalHttpTriggerService.UpdateCosmosAsync(It.IsAny<string>(), _goalId);
 
             // Assert
-            Assert.IsNull(result);
+            Assert.That(result, Is.Null);
         }
 
         [Test]
@@ -102,7 +102,7 @@ namespace NCS.DSS.Goal.Tests.ServicesTests
             var result = await _goalHttpTriggerService.UpdateCosmosAsync(_goal.ToString(), _goalId);
 
             // Assert
-            Assert.IsNull(result);
+            Assert.That(result, Is.Null);
         }
 
         [Test]
@@ -136,8 +136,8 @@ namespace NCS.DSS.Goal.Tests.ServicesTests
             var result = await _goalHttpTriggerService.UpdateCosmosAsync(_goal.ToString(), _goalId);
 
             // Assert
-            Assert.IsNotNull(result);
-            Assert.IsInstanceOf<Models.Goal>(result);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.InstanceOf<Models.Goal>());
 
         }
 
@@ -150,7 +150,7 @@ namespace NCS.DSS.Goal.Tests.ServicesTests
             var result = await _goalHttpTriggerService.GetGoalForCustomerAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>());
 
             // Assert
-            Assert.IsNull(result);
+            Assert.That(result, Is.Null);
         }
 
         [Test]
@@ -162,8 +162,8 @@ namespace NCS.DSS.Goal.Tests.ServicesTests
             var result = await _goalHttpTriggerService.GetGoalForCustomerAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>());
 
             // Assert
-            Assert.IsNotNull(result);
-            Assert.IsInstanceOf<string>(result);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.InstanceOf<string>());
         }
     }
 }

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using NCS.DSS.Goal.Cosmos.Provider;
+﻿using NCS.DSS.Goal.Cosmos.Provider;
 
 namespace NCS.DSS.Goal.GetGoalHttpTrigger.Service
 {
@@ -16,7 +13,7 @@ namespace NCS.DSS.Goal.GetGoalHttpTrigger.Service
 
         public async Task<List<Models.Goal>> GetGoalsAsync(Guid customerId, Guid actionPlanId)
         {
-            return await _documentDbProvider.GetAllGoalsForCustomerAsync(customerId, actionPlanId); 
+            return await _documentDbProvider.GetAllGoalsForCustomerAsync(customerId, actionPlanId);
         }
     }
 }

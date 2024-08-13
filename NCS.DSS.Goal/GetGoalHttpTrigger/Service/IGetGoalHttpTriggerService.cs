@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-
-namespace NCS.DSS.Goal.GetGoalHttpTrigger.Service
+﻿namespace NCS.DSS.Goal.GetGoalHttpTrigger.Service
 {
     public interface IGetGoalHttpTriggerService
     {

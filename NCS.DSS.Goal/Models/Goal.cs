@@ -1,8 +1,7 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using DFC.JSON.Standard.Attributes;
+﻿using DFC.JSON.Standard.Attributes;
 using DFC.Swagger.Standard.Annotations;
 using NCS.DSS.Goal.ReferenceData;
+using System.ComponentModel.DataAnnotations;
 
 namespace NCS.DSS.Goal.Models
 {
