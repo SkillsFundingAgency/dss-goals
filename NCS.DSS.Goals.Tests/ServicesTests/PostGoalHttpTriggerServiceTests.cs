@@ -1,25 +1,24 @@
-﻿using System;
+﻿using Microsoft.Azure.Documents;
+using Microsoft.Azure.Documents.Client;
+using Moq;
+using NCS.DSS.Goal.Cosmos.Provider;
+using NCS.DSS.Goal.PostGoalHttpTrigger.Service;
+using Newtonsoft.Json;
+using NUnit.Framework;
+using System;
 using System.Collections.Specialized;
 using System.IO;
 using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
-using Microsoft.Azure.Documents;
-using Microsoft.Azure.Documents.Client;
-using NCS.DSS.Goal.Cosmos.Provider;
-using NCS.DSS.Goal.Models;
-using NCS.DSS.Goal.PostGoalHttpTrigger.Service;
-using Newtonsoft.Json;
-using Moq;
-using NUnit.Framework;
 
 namespace NCS.DSS.Goal.Tests.ServicesTests
 {
     [TestFixture]
-    public class PosGoalHttpTriggerServiceTests
+    public class PostGoalHttpTriggerServiceTests
     {
         private IPostGoalHttpTriggerService _goalHttpTriggerService;
-        private new Mock<IDocumentDBProvider> _documentDbProvider;
+        private Mock<IDocumentDBProvider> _documentDbProvider;
         private string _json;
         private Models.Goal _goal;
         private readonly Guid _goalId = Guid.Parse("7E467BDB-213F-407A-B86A-1954053D3C24");
@@ -40,7 +39,7 @@ namespace NCS.DSS.Goal.Tests.ServicesTests
             var result = await _goalHttpTriggerService.CreateAsync(It.IsAny<Models.Goal>());
 
             // Assert
-            Assert.IsNull(result);
+            Assert.That(result, Is.Null);
         }
 
         [Test]
@@ -74,8 +73,8 @@ namespace NCS.DSS.Goal.Tests.ServicesTests
             var result = await _goalHttpTriggerService.CreateAsync(_goal);
 
             // Assert
-            Assert.IsNotNull(result);
-            Assert.IsInstanceOf<Models.Goal>(result);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.InstanceOf<Models.Goal>());
 
         }
     }

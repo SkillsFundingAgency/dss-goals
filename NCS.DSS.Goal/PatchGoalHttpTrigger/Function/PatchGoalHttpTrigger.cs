@@ -1,24 +1,19 @@
-using System;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
 using DFC.Common.Standard.Logging;
-using DFC.Functions.DI.Standard.Attributes;
 using DFC.HTTP.Standard;
 using DFC.JSON.Standard;
 using DFC.Swagger.Standard.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using NCS.DSS.Goal.Cosmos.Helper;
+using NCS.DSS.Goal.Helpers;
 using NCS.DSS.Goal.Models;
 using NCS.DSS.Goal.PatchGoalHttpTrigger.Service;
 using NCS.DSS.Goal.Validation;
-using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
+using System.Net;
+using System.Text.Json;
 
 namespace NCS.DSS.Goal.PatchGoalHttpTrigger.Function
 {
@@ -31,7 +26,9 @@ namespace NCS.DSS.Goal.PatchGoalHttpTrigger.Function
         private IHttpResponseMessageHelper httpResponseMessageHelper;
         private IJsonHelper jsonHelper;
         private IValidate validate;
-        public PatchGoalHttpTrigger(IResourceHelper _resourceHelper, IHttpRequestHelper _httpRequestHelper, IPatchGoalHttpTriggerService _goalsPatchService, IHttpResponseMessageHelper _httpResponseMessageHelper, IJsonHelper _jsonHelper, ILoggerHelper _loggerHelper, IValidate _validate)
+        private IDynamicHelper _dynamicHelper;
+        private ILogger log;
+        public PatchGoalHttpTrigger(IResourceHelper _resourceHelper, IHttpRequestHelper _httpRequestHelper, IPatchGoalHttpTriggerService _goalsPatchService, IHttpResponseMessageHelper _httpResponseMessageHelper, IJsonHelper _jsonHelper, ILoggerHelper _loggerHelper, IValidate _validate, IDynamicHelper dynamicHelper, ILogger<PatchGoalHttpTrigger> log)
         {
             resourceHelper = _resourceHelper;
             httpRequestHelper = _httpRequestHelper;
@@ -40,9 +37,11 @@ namespace NCS.DSS.Goal.PatchGoalHttpTrigger.Function
             jsonHelper = _jsonHelper;
             loggerHelper = _loggerHelper;
             validate = _validate;
+            _dynamicHelper = dynamicHelper;
+            this.log = log;
         }
 
-        [FunctionName("Patch")]
+        [Function("Patch")]
         [ProducesResponseType(typeof(Models.Goal), (int)HttpStatusCode.OK)]
         [Response(HttpStatusCode = (int)HttpStatusCode.OK, Description = "Goals Updated", ShowSchema = true)]
         [Response(HttpStatusCode = (int)HttpStatusCode.NoContent, Description = "Goals does not exist", ShowSchema = false)]
@@ -51,7 +50,7 @@ namespace NCS.DSS.Goal.PatchGoalHttpTrigger.Function
         [Response(HttpStatusCode = (int)HttpStatusCode.Forbidden, Description = "Insufficient access", ShowSchema = false)]
         [Response(HttpStatusCode = 422, Description = "Goals validation error(s)", ShowSchema = false)]
         [Display(Name = "Patch", Description = "Ability to modify/update a customers Goals record.")]
-        public async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Anonymous, "patch", Route = "Customers/{customerId}/Interactions/{interactionId}/ActionPlans/{actionPlanId}/Goals/{goalId}")] HttpRequest req, ILogger log, string customerId, string interactionId, string actionPlanId, string goalId)
+        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "patch", Route = "Customers/{customerId}/Interactions/{interactionId}/ActionPlans/{actionPlanId}/Goals/{goalId}")] HttpRequest req, string customerId, string interactionId, string actionPlanId, string goalId)
         {
 
             var correlationId = httpRequestHelper.GetDssCorrelationId(req);
@@ -69,7 +68,7 @@ namespace NCS.DSS.Goal.PatchGoalHttpTrigger.Function
             var touchpointId = httpRequestHelper.GetDssTouchpointId(req);
             if (string.IsNullOrEmpty(touchpointId))
             {
-                var response = httpResponseMessageHelper.BadRequest();
+                var response = new BadRequestObjectResult(HttpStatusCode.BadRequest);
                 log.LogWarning($"Response Status Code: [{response.StatusCode}]. Unable to locate 'TouchpointId' in request header");
                 return response;
             }
@@ -77,7 +76,7 @@ namespace NCS.DSS.Goal.PatchGoalHttpTrigger.Function
             var apimUrl = httpRequestHelper.GetDssApimUrl(req);
             if (string.IsNullOrEmpty(apimUrl))
             {
-                var response = httpResponseMessageHelper.BadRequest();
+                var response = new BadRequestObjectResult(HttpStatusCode.BadRequest);
                 log.LogWarning($"Response Status Code: [{response.StatusCode}]. Unable to locate 'apimurl' in request header");
                 return response;
             }
@@ -90,28 +89,28 @@ namespace NCS.DSS.Goal.PatchGoalHttpTrigger.Function
 
             if (!Guid.TryParse(customerId, out var customerGuid))
             {
-                var response = httpResponseMessageHelper.BadRequest(customerGuid);
+                var response = new BadRequestObjectResult(customerGuid);
                 log.LogWarning($"Response Status Code: [{response.StatusCode}]. Unable to parse 'customerId' to a Guid: [{customerId}]");
                 return response;
             }
 
             if (!Guid.TryParse(interactionId, out var interactionGuid))
             {
-                var response = httpResponseMessageHelper.BadRequest(interactionGuid);
+                var response = new BadRequestObjectResult(interactionGuid);
                 log.LogWarning($"Response Status Code: [{response.StatusCode}]. Unable to parse 'interactionId' to a Guid: [{interactionId}]");
                 return response;
             }
 
             if (!Guid.TryParse(actionPlanId, out var actionPlanGuid))
             {
-                var response = httpResponseMessageHelper.BadRequest(actionPlanGuid);
+                var response = new BadRequestObjectResult(actionPlanGuid);
                 log.LogWarning($"Response Status Code: [{response.StatusCode}]. Unable to parse 'actionPlanId' to a Guid: [{actionPlanId}]");
                 return response;
             }
 
             if (!Guid.TryParse(goalId, out var goalGuid))
             {
-                var response = httpResponseMessageHelper.BadRequest(goalGuid);
+                var response = new BadRequestObjectResult(goalGuid);
                 log.LogWarning($"Response Status Code: [{response.StatusCode}]. Unable to parse 'GoalId' to a Guid: [{goalId}]");
                 return response;
             }
@@ -123,16 +122,16 @@ namespace NCS.DSS.Goal.PatchGoalHttpTrigger.Function
                 log.LogInformation($"Attempt to get resource from body of the request");
                 goalPatchRequest = await httpRequestHelper.GetResourceFromRequest<GoalPatch>(req);
             }
-            catch (JsonException ex)
+            catch (Exception ex)
             {
-                var response = httpResponseMessageHelper.UnprocessableEntity(ex);
+                var response = new UnprocessableEntityObjectResult(_dynamicHelper.ExcludeProperty(ex, ["TargetSite"]));
                 log.LogError($"Response Status Code: [{response.StatusCode}]. Unable to retrieve body from req", ex);
                 return response;
             }
 
             if (goalPatchRequest == null)
             {
-                var response = httpResponseMessageHelper.UnprocessableEntity(req);
+                var response = new UnprocessableEntityObjectResult(req);
                 log.LogWarning($"Response Status Code: [{response.StatusCode}]. Goal patch request is null");
                 return response;
             }
@@ -145,7 +144,7 @@ namespace NCS.DSS.Goal.PatchGoalHttpTrigger.Function
 
             if (errors != null && errors.Any())
             {
-                var response = httpResponseMessageHelper.UnprocessableEntity(errors);
+                var response = new UnprocessableEntityObjectResult(errors);
                 log.LogWarning($"Response Status Code: [{response.StatusCode}]. Validation errors: [{errors.FirstOrDefault().ErrorMessage}]");
                 return response;
             }
@@ -155,7 +154,7 @@ namespace NCS.DSS.Goal.PatchGoalHttpTrigger.Function
 
             if (!doesCustomerExist)
             {
-                var response = httpResponseMessageHelper.NoContent(customerGuid);
+                var response = new NoContentResult();
                 log.LogWarning($"Response Status Code: [{response.StatusCode}]. Customer does not exist [{customerGuid}]");
                 return response;
             }
@@ -165,7 +164,10 @@ namespace NCS.DSS.Goal.PatchGoalHttpTrigger.Function
 
             if (isCustomerReadOnly)
             {
-                var response = httpResponseMessageHelper.Forbidden(customerGuid);
+                var response = new ObjectResult(customerGuid.ToString())
+                {
+                    StatusCode = (int)HttpStatusCode.Forbidden
+                };
                 log.LogWarning($"Response Status Code: [{response.StatusCode}]. Customer is read only [{customerGuid}]");
                 return response;
             }
@@ -175,7 +177,7 @@ namespace NCS.DSS.Goal.PatchGoalHttpTrigger.Function
 
             if (!doesInteractionExist)
             {
-                var response = httpResponseMessageHelper.NoContent(interactionGuid);
+                var response = new NoContentResult();
                 log.LogWarning($"Response Status Code: [{response.StatusCode}]. Interaction does not exist [{interactionGuid}]");
                 return response;
             }
@@ -184,7 +186,7 @@ namespace NCS.DSS.Goal.PatchGoalHttpTrigger.Function
 
             if (!doesActionPlanExistAndBelongToCustomer)
             {
-                var response = httpResponseMessageHelper.NoContent(actionPlanGuid);
+                var response = new NoContentResult();
                 log.LogWarning($"Response Status Code: [{response.StatusCode}]. Action Plan does not exist [{actionPlanGuid}]");
                 return response;
             }
@@ -194,7 +196,7 @@ namespace NCS.DSS.Goal.PatchGoalHttpTrigger.Function
 
             if (goalForCustomer == null)
             {
-                var response = httpResponseMessageHelper.NoContent(goalGuid);
+                var response = new NoContentResult();
                 log.LogWarning($"Response Status Code: [{response.StatusCode}]. Goal does not exist [{goalGuid}]");
                 return response;
             }
@@ -203,7 +205,7 @@ namespace NCS.DSS.Goal.PatchGoalHttpTrigger.Function
 
             if (patchedGoal == null)
             {
-                var response = httpResponseMessageHelper.NoContent(actionPlanGuid);
+                var response = new NoContentResult();
                 log.LogWarning($"Response Status Code: [{response.StatusCode}]. Unable to patch Goal [{goalGuid}]");
                 return response;
             }
@@ -213,14 +215,17 @@ namespace NCS.DSS.Goal.PatchGoalHttpTrigger.Function
 
             if (updatedGoal != null)
             {
-                var response = httpResponseMessageHelper.Ok(jsonHelper.SerializeObjectAndRenameIdProperty(updatedGoal, "id", "GoalId"));
+                var response = new JsonResult(updatedGoal, new JsonSerializerOptions())
+                {
+                    StatusCode = (int)HttpStatusCode.OK
+                };
                 log.LogInformation($"Response Status Code: [{response.StatusCode}]. Goal updated, sending to service bus [{goalGuid}]");
                 await goalsPatchService.SendToServiceBusQueueAsync(updatedGoal, customerGuid, apimUrl);
                 return response;
             }
             else
             {
-                var response = httpResponseMessageHelper.BadRequest(goalGuid);
+                var response = new BadRequestObjectResult(goalGuid);
                 log.LogWarning($"Response Status Code: [{response.StatusCode}]. Failed to update goal [{goalGuid}]");
                 return response;
             }

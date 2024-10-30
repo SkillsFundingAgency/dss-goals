@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using NCS.DSS.Goal.Cosmos.Provider;
+﻿using NCS.DSS.Goal.Cosmos.Provider;
 
 namespace NCS.DSS.Goal.GetGoalByIdHttpTrigger.Service
 {

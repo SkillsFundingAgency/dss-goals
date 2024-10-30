@@ -1,7 +1,6 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using DFC.Swagger.Standard.Annotations;
+﻿using DFC.Swagger.Standard.Annotations;
 using NCS.DSS.Goal.ReferenceData;
+using System.ComponentModel.DataAnnotations;
 
 namespace NCS.DSS.Goal.Models
 {
