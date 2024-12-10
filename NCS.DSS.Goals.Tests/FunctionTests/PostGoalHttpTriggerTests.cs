@@ -34,9 +34,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
         private Mock<IHttpRequestHelper> _httpRequestHelper;
         private Mock<IPostGoalHttpTriggerService> _postGoalHttpTriggerService;
         private PostGoalHttpTrigger.Function.PostGoalHttpTrigger function;
-        private IHttpResponseMessageHelper _httpResponseMessageHelper;
-        private IJsonHelper _jsonHelper;
-        private Mock<ILoggerHelper> _loggerHelper;
+        private IHttpResponseMessageHelper _httpResponseMessageHelper;        
         private Models.Goal _goal;
         private Mock<IValidate> _validate;
         private Mock<IDynamicHelper> _dynamicHelper;
@@ -45,21 +43,17 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
         public void Setup()
         {
             _goal = new Models.Goal();
-
-            _loggerHelper = new Mock<ILoggerHelper>();
+                        
             _request = new DefaultHttpContext().Request;
-
             _log = new Mock<ILogger<PostGoalHttpTrigger.Function.PostGoalHttpTrigger>>();
             _resourceHelper = new Mock<IResourceHelper>();
             _httpRequestHelper = new Mock<IHttpRequestHelper>();
             _postGoalHttpTriggerService = new Mock<IPostGoalHttpTriggerService>();
-            _httpResponseMessageHelper = new HttpResponseMessageHelper();
-            _jsonHelper = new JsonHelper();
+            _httpResponseMessageHelper = new HttpResponseMessageHelper();            
             _validate = new Mock<IValidate>();
             _dynamicHelper = new Mock<IDynamicHelper>();
 
-            function = new PostGoalHttpTrigger.Function.PostGoalHttpTrigger(_resourceHelper.Object, _httpRequestHelper.Object, _postGoalHttpTriggerService.Object, _httpResponseMessageHelper, _jsonHelper, _loggerHelper.Object, _validate.Object, _dynamicHelper.Object, _log.Object);
-
+            function = new PostGoalHttpTrigger.Function.PostGoalHttpTrigger(_resourceHelper.Object, _httpRequestHelper.Object, _postGoalHttpTriggerService.Object, _httpResponseMessageHelper, _validate.Object, _dynamicHelper.Object, _log.Object);
         }
 
         [Test]

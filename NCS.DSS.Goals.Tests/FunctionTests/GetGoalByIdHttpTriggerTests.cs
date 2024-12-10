@@ -33,26 +33,20 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
         private Models.Goal _goal;
         private GetGoalByIdHttpTrigger.Function.GetGoalByIdHttpTrigger function;
         private IHttpResponseMessageHelper _httpResponseMessageHelper;
-        private IJsonHelper _jsonHelper;
-        private Mock<ILoggerHelper> _loggerHelper;
-
 
         [SetUp]
         public void Setup()
         {
             _goal = new Models.Goal();
-
-
-            _loggerHelper = new Mock<ILoggerHelper>();
+            
             _request = new DefaultHttpContext().Request;
 
             _log = new Mock<ILogger<GetGoalByIdHttpTrigger.Function.GetGoalByIdHttpTrigger>>();
             _resourceHelper = new Mock<IResourceHelper>();
             _httpRequestMessageHelper = new Mock<IHttpRequestHelper>();
             _getGoalByIdHttpTriggerService = new Mock<IGetGoalByIdHttpTriggerService>();
-            _httpResponseMessageHelper = new HttpResponseMessageHelper();
-            _jsonHelper = new JsonHelper();
-            function = new GetGoalByIdHttpTrigger.Function.GetGoalByIdHttpTrigger(_resourceHelper.Object, _httpRequestMessageHelper.Object, _getGoalByIdHttpTriggerService.Object, _httpResponseMessageHelper, _jsonHelper, _loggerHelper.Object, _log.Object);
+            _httpResponseMessageHelper = new HttpResponseMessageHelper();            
+            function = new GetGoalByIdHttpTrigger.Function.GetGoalByIdHttpTrigger(_resourceHelper.Object, _httpRequestMessageHelper.Object, _getGoalByIdHttpTriggerService.Object, _httpResponseMessageHelper, _log.Object);
 
         }
 

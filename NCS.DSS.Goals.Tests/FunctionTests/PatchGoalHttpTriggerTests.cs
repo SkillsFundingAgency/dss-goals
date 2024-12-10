@@ -37,8 +37,6 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
         private Mock<IPatchGoalHttpTriggerService> _patchGoalHttpTriggerService;
         private PatchGoalHttpTrigger.Function.PatchGoalHttpTrigger function;
         private IHttpResponseMessageHelper _httpResponseMessageHelper;
-        private IJsonHelper _jsonHelper;
-        private Mock<ILoggerHelper> _loggerHelper;
         private Models.Goal _goal;
         private GoalPatch _goalPatch;
         private Mock<IValidate> _validate;
@@ -48,21 +46,19 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
         public void Setup()
         {
             _goal = new Models.Goal();
-            _goalPatch = new Models.GoalPatch();
-
-            _loggerHelper = new Mock<ILoggerHelper>();
+            _goalPatch = new GoalPatch();
+            
             _request = new DefaultHttpContext().Request;
 
             _log = new Mock<ILogger<PatchGoalHttpTrigger.Function.PatchGoalHttpTrigger>>();
             _resourceHelper = new Mock<IResourceHelper>();
             _httpRequestHelper = new Mock<IHttpRequestHelper>();
             _patchGoalHttpTriggerService = new Mock<IPatchGoalHttpTriggerService>();
-            _httpResponseMessageHelper = new HttpResponseMessageHelper();
-            _jsonHelper = new JsonHelper();
+            _httpResponseMessageHelper = new HttpResponseMessageHelper();            
             _validate = new Mock<IValidate>();
             _dynamicHelper = new Mock<IDynamicHelper>();
 
-            function = new PatchGoalHttpTrigger.Function.PatchGoalHttpTrigger(_resourceHelper.Object, _httpRequestHelper.Object, _patchGoalHttpTriggerService.Object, _httpResponseMessageHelper, _jsonHelper, _loggerHelper.Object, _validate.Object, _dynamicHelper.Object, _log.Object);
+            function = new PatchGoalHttpTrigger.Function.PatchGoalHttpTrigger(_resourceHelper.Object, _httpRequestHelper.Object, _patchGoalHttpTriggerService.Object, _httpResponseMessageHelper, _validate.Object, _dynamicHelper.Object, _log.Object);
         }
 
         [Test]
