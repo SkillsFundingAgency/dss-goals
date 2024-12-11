@@ -1,6 +1,4 @@
-﻿using DFC.Common.Standard.Logging;
-using DFC.HTTP.Standard;
-using DFC.JSON.Standard;
+﻿using DFC.HTTP.Standard;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -31,7 +29,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
         private Mock<IGetGoalHttpTriggerService> _getGoalHttpTriggerService;
         private Models.Goal _goal;
         private GetGoalHttpTrigger.Function.GetGoalHttpTrigger function;
-        private IHttpResponseMessageHelper _httpResponseMessageHelper;        
+        private IHttpResponseMessageHelper _httpResponseMessageHelper;
 
         [SetUp]
         public void Setup()
@@ -45,7 +43,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
             _httpRequestHelper = new Mock<IHttpRequestHelper>();
             _getGoalHttpTriggerService = new Mock<IGetGoalHttpTriggerService>();
             _httpResponseMessageHelper = new HttpResponseMessageHelper();
-            
+
             function = new GetGoalHttpTrigger.Function.GetGoalHttpTrigger(_resourceHelper.Object, _httpRequestHelper.Object, _getGoalHttpTriggerService.Object, _httpResponseMessageHelper, _log.Object);
         }
 
@@ -104,8 +102,8 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
         {
             _httpRequestHelper.Setup(x => x.GetDssTouchpointId(_request)).Returns("0000000001");
             _resourceHelper.Setup(x => x.DoesCustomerExist(It.IsAny<Guid>())).Returns(Task.FromResult(true));
-            _resourceHelper.Setup(x => x.DoesInteractionExistAndBelongToCustomer(It.IsAny<Guid>(), It.IsAny<Guid>())).Returns(true);
-            _resourceHelper.Setup(x => x.DoesActionPlanExistAndBelongToCustomer(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>())).Returns(true);
+            _resourceHelper.Setup(x => x.DoesInteractionExistAndBelongToCustomer(It.IsAny<Guid>(), It.IsAny<Guid>())).Returns(Task.FromResult(true));
+            _resourceHelper.Setup(x => x.DoesActionPlanExistAndBelongToCustomer(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>())).Returns(Task.FromResult(true));
 
             var listOfGoales = new List<Models.Goal>();
             _getGoalHttpTriggerService.Setup(x => x.GetGoalsAsync(It.IsAny<Guid>(), It.IsAny<Guid>())).Returns(Task.FromResult(listOfGoales));

@@ -94,7 +94,7 @@ namespace NCS.DSS.Goal.GetGoalHttpTrigger.Function
             }
 
             _logger.LogInformation($"Attempting to get Interaction [{interactionGuid}] for customer [{customerGuid}]");
-            var doesInteractionExist = resourceHelper.DoesInteractionExistAndBelongToCustomer(interactionGuid, customerGuid);
+            var doesInteractionExist = await resourceHelper.DoesInteractionExistAndBelongToCustomer(interactionGuid, customerGuid);
 
             if (!doesInteractionExist)
             {
@@ -103,7 +103,7 @@ namespace NCS.DSS.Goal.GetGoalHttpTrigger.Function
                 return response;
             }
 
-            var doesActionPlanExistAndBelongToCustomer = resourceHelper.DoesActionPlanExistAndBelongToCustomer(actionPlanGuid, interactionGuid, customerGuid);
+            var doesActionPlanExistAndBelongToCustomer = await resourceHelper.DoesActionPlanExistAndBelongToCustomer(actionPlanGuid, interactionGuid, customerGuid);
 
             if (!doesActionPlanExistAndBelongToCustomer)
             {

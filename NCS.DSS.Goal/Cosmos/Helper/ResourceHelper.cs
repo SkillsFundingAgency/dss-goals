@@ -4,31 +4,31 @@ namespace NCS.DSS.Goal.Cosmos.Helper
 {
     public class ResourceHelper : IResourceHelper
     {
-        private readonly IDocumentDBProvider _documentDbProvider;
+        private readonly ICosmosDbProvider _cosmosDbProvider;
 
-        public ResourceHelper(IDocumentDBProvider documentDbProvider)
+        public ResourceHelper(ICosmosDbProvider cosmosDbProvider)
         {
-            _documentDbProvider = documentDbProvider;
+            _cosmosDbProvider = cosmosDbProvider;
         }
 
         public async Task<bool> DoesCustomerExist(Guid customerId)
         {
-            return await _documentDbProvider.DoesCustomerResourceExist(customerId);
+            return await _cosmosDbProvider.DoesCustomerResourceExist(customerId);
         }
 
         public async Task<bool> IsCustomerReadOnly(Guid customerId)
         {
-            return await _documentDbProvider.DoesCustomerHaveATerminationDate(customerId);
+            return await _cosmosDbProvider.DoesCustomerHaveATerminationDate(customerId);
         }
 
-        public bool DoesInteractionExistAndBelongToCustomer(Guid interactionId, Guid customerId)
+        public Task<bool> DoesInteractionExistAndBelongToCustomer(Guid interactionId, Guid customerId)
         {
-            return _documentDbProvider.DoesInteractionExistAndBelongToCustomer(interactionId, customerId);
+            return _cosmosDbProvider.DoesInteractionExistAndBelongToCustomer(interactionId, customerId);
         }
 
-        public bool DoesActionPlanExistAndBelongToCustomer(Guid actionPlanId, Guid interactionId, Guid customerId)
+        public Task<bool> DoesActionPlanExistAndBelongToCustomer(Guid actionPlanId, Guid interactionId, Guid customerId)
         {
-            return _documentDbProvider.DoesActionPlanExistAndBelongToCustomer(actionPlanId, interactionId, customerId);
+            return _cosmosDbProvider.DoesActionPlanExistAndBelongToCustomer(actionPlanId, interactionId, customerId);
         }
     }
 }

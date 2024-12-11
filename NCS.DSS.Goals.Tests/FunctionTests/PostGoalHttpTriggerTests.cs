@@ -1,6 +1,4 @@
-﻿using DFC.Common.Standard.Logging;
-using DFC.HTTP.Standard;
-using DFC.JSON.Standard;
+﻿using DFC.HTTP.Standard;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -34,7 +32,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
         private Mock<IHttpRequestHelper> _httpRequestHelper;
         private Mock<IPostGoalHttpTriggerService> _postGoalHttpTriggerService;
         private PostGoalHttpTrigger.Function.PostGoalHttpTrigger function;
-        private IHttpResponseMessageHelper _httpResponseMessageHelper;        
+        private IHttpResponseMessageHelper _httpResponseMessageHelper;
         private Models.Goal _goal;
         private Mock<IValidate> _validate;
         private Mock<IDynamicHelper> _dynamicHelper;
@@ -43,13 +41,13 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
         public void Setup()
         {
             _goal = new Models.Goal();
-                        
+
             _request = new DefaultHttpContext().Request;
             _log = new Mock<ILogger<PostGoalHttpTrigger.Function.PostGoalHttpTrigger>>();
             _resourceHelper = new Mock<IResourceHelper>();
             _httpRequestHelper = new Mock<IHttpRequestHelper>();
             _postGoalHttpTriggerService = new Mock<IPostGoalHttpTriggerService>();
-            _httpResponseMessageHelper = new HttpResponseMessageHelper();            
+            _httpResponseMessageHelper = new HttpResponseMessageHelper();
             _validate = new Mock<IValidate>();
             _dynamicHelper = new Mock<IDynamicHelper>();
 
@@ -153,7 +151,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
             _httpRequestHelper.Setup(x => x.GetResourceFromRequest<Models.Goal>(_request)).Returns(Task.FromResult(_goal));
 
             _resourceHelper.Setup(x => x.DoesCustomerExist(It.IsAny<Guid>())).Returns(Task.FromResult(true));
-            _resourceHelper.Setup(x => x.DoesInteractionExistAndBelongToCustomer(It.IsAny<Guid>(), It.IsAny<Guid>())).Returns(false);
+            _resourceHelper.Setup(x => x.DoesInteractionExistAndBelongToCustomer(It.IsAny<Guid>(), It.IsAny<Guid>())).Returns(Task.FromResult(false));
 
             var result = await RunFunction(ValidCustomerId, ValidInteractionId, ValidActionPlanId);
 
@@ -167,7 +165,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
             _httpRequestHelper.Setup(x => x.GetResourceFromRequest<Models.Goal>(_request)).Returns(Task.FromResult(_goal));
 
             _resourceHelper.Setup(x => x.DoesCustomerExist(It.IsAny<Guid>())).Returns(Task.FromResult(true));
-            _resourceHelper.Setup(x => x.DoesInteractionExistAndBelongToCustomer(It.IsAny<Guid>(), It.IsAny<Guid>())).Returns(true);
+            _resourceHelper.Setup(x => x.DoesInteractionExistAndBelongToCustomer(It.IsAny<Guid>(), It.IsAny<Guid>())).Returns(Task.FromResult(true));
 
             _postGoalHttpTriggerService.Setup(x => x.CreateAsync(It.IsAny<Models.Goal>())).Returns(Task.FromResult<Models.Goal>(null));
 
@@ -185,8 +183,8 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
             _httpRequestHelper.Setup(x => x.GetResourceFromRequest<Models.Goal>(_request)).Returns(Task.FromResult(_goal));
 
             _resourceHelper.Setup(x => x.DoesCustomerExist(It.IsAny<Guid>())).Returns(Task.FromResult(true));
-            _resourceHelper.Setup(x => x.DoesInteractionExistAndBelongToCustomer(It.IsAny<Guid>(), It.IsAny<Guid>())).Returns(true);
-            _resourceHelper.Setup(x => x.DoesActionPlanExistAndBelongToCustomer(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>())).Returns(true);
+            _resourceHelper.Setup(x => x.DoesInteractionExistAndBelongToCustomer(It.IsAny<Guid>(), It.IsAny<Guid>())).Returns(Task.FromResult(true));
+            _resourceHelper.Setup(x => x.DoesActionPlanExistAndBelongToCustomer(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>())).Returns(Task.FromResult(true));
             _postGoalHttpTriggerService.Setup(x => x.CreateAsync(It.IsAny<Models.Goal>())).Returns(Task.FromResult(_goal));
 
             var result = await RunFunction(ValidCustomerId, ValidInteractionId, ValidActionPlanId);

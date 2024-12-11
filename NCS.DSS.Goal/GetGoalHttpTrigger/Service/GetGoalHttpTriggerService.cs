@@ -4,16 +4,16 @@ namespace NCS.DSS.Goal.GetGoalHttpTrigger.Service
 {
     public class GetGoalHttpTriggerService : IGetGoalHttpTriggerService
     {
-        private readonly IDocumentDBProvider _documentDbProvider;
+        private readonly ICosmosDbProvider _cosmosDbProvider;
 
-        public GetGoalHttpTriggerService(IDocumentDBProvider documentDbProvider)
+        public GetGoalHttpTriggerService(ICosmosDbProvider cosmosDbProvider)
         {
-            _documentDbProvider = documentDbProvider;
+            _cosmosDbProvider = cosmosDbProvider;
         }
 
         public async Task<List<Models.Goal>> GetGoalsAsync(Guid customerId, Guid actionPlanId)
         {
-            return await _documentDbProvider.GetAllGoalsForCustomerAsync(customerId, actionPlanId);
+            return await _cosmosDbProvider.GetAllGoalsForCustomerAsync(customerId, actionPlanId);
         }
     }
 }

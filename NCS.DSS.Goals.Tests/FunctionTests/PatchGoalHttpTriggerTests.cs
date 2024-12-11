@@ -1,6 +1,4 @@
-﻿using DFC.Common.Standard.Logging;
-using DFC.HTTP.Standard;
-using DFC.JSON.Standard;
+﻿using DFC.HTTP.Standard;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -47,14 +45,14 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
         {
             _goal = new Models.Goal();
             _goalPatch = new GoalPatch();
-            
+
             _request = new DefaultHttpContext().Request;
 
             _log = new Mock<ILogger<PatchGoalHttpTrigger.Function.PatchGoalHttpTrigger>>();
             _resourceHelper = new Mock<IResourceHelper>();
             _httpRequestHelper = new Mock<IHttpRequestHelper>();
             _patchGoalHttpTriggerService = new Mock<IPatchGoalHttpTriggerService>();
-            _httpResponseMessageHelper = new HttpResponseMessageHelper();            
+            _httpResponseMessageHelper = new HttpResponseMessageHelper();
             _validate = new Mock<IValidate>();
             _dynamicHelper = new Mock<IDynamicHelper>();
 
@@ -168,7 +166,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
             _httpRequestHelper.Setup(x => x.GetResourceFromRequest<GoalPatch>(_request)).Returns(Task.FromResult(_goalPatch));
 
             _resourceHelper.Setup(x => x.DoesCustomerExist(It.IsAny<Guid>())).Returns(Task.FromResult(true));
-            _resourceHelper.Setup(x => x.DoesInteractionExistAndBelongToCustomer(It.IsAny<Guid>(), It.IsAny<Guid>())).Returns(false);
+            _resourceHelper.Setup(x => x.DoesInteractionExistAndBelongToCustomer(It.IsAny<Guid>(), It.IsAny<Guid>())).Returns(Task.FromResult(false));
 
             // Act
             var result = await RunFunction(ValidCustomerId, ValidInteractionId, ValidActionPlanId, ValidGoalId);
@@ -203,7 +201,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
             _httpRequestHelper.Setup(x => x.GetResourceFromRequest<GoalPatch>(_request)).Returns(Task.FromResult(_goalPatch));
 
             _resourceHelper.Setup(x => x.DoesCustomerExist(It.IsAny<Guid>())).Returns(Task.FromResult(true));
-            _resourceHelper.Setup(x => x.DoesInteractionExistAndBelongToCustomer(It.IsAny<Guid>(), It.IsAny<Guid>())).Returns(true);
+            _resourceHelper.Setup(x => x.DoesInteractionExistAndBelongToCustomer(It.IsAny<Guid>(), It.IsAny<Guid>())).Returns(Task.FromResult(true));
 
             _patchGoalHttpTriggerService.Setup(x => x.GetGoalForCustomerAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>())).Returns(Task.FromResult<string>(null));
 
@@ -223,7 +221,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
             _httpRequestHelper.Setup(x => x.GetResourceFromRequest<GoalPatch>(_request)).Returns(Task.FromResult(_goalPatch));
 
             _resourceHelper.Setup(x => x.DoesCustomerExist(It.IsAny<Guid>())).Returns(Task.FromResult(true));
-            _resourceHelper.Setup(x => x.DoesInteractionExistAndBelongToCustomer(It.IsAny<Guid>(), It.IsAny<Guid>())).Returns(true);
+            _resourceHelper.Setup(x => x.DoesInteractionExistAndBelongToCustomer(It.IsAny<Guid>(), It.IsAny<Guid>())).Returns(Task.FromResult(true));
 
             _patchGoalHttpTriggerService.Setup(x => x.GetGoalForCustomerAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>())).Returns(Task.FromResult<string>(null));
 
