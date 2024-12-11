@@ -105,7 +105,7 @@ namespace NCS.DSS.Goal.Tests.FunctionTests
             _resourceHelper.Setup(x => x.DoesInteractionExistAndBelongToCustomer(It.IsAny<Guid>(), It.IsAny<Guid>())).Returns(Task.FromResult(true));
             _resourceHelper.Setup(x => x.DoesActionPlanExistAndBelongToCustomer(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>())).Returns(Task.FromResult(true));
 
-            var listOfGoales = new List<Models.Goal>();
+            var listOfGoales = new List<Models.Goal> { new Models.Goal { GoalId = Guid.NewGuid() } };
             _getGoalHttpTriggerService.Setup(x => x.GetGoalsAsync(It.IsAny<Guid>(), It.IsAny<Guid>())).Returns(Task.FromResult(listOfGoales));
 
             // Act

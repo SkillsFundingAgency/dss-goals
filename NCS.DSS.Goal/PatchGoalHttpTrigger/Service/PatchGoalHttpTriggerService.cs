@@ -22,7 +22,6 @@ namespace NCS.DSS.Goal.PatchGoalHttpTrigger.Service
             _logger = logger;
         }
 
-
         public string PatchResource(string goalJson, GoalPatch goalPatch)
         {
             if (string.IsNullOrEmpty(goalJson))
