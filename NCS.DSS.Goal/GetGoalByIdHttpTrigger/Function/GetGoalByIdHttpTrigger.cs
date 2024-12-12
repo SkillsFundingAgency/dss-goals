@@ -58,9 +58,7 @@ namespace NCS.DSS.Goal.GetGoalByIdHttpTrigger.Function
             {
                 _logger.LogInformation("Unable to locate 'TouchpointId' in request header.");
                 return new BadRequestObjectResult(HttpStatusCode.BadRequest);
-            }
-
-            _logger.LogInformation("Header validation has succeeded. Touchpoint ID: {TouchpointId}. Correlation GUID: {CorrelationGuid}", touchpointId, correlationGuid);
+            }            
 
             if (!Guid.TryParse(customerId, out var customerGuid))
             {
@@ -85,6 +83,8 @@ namespace NCS.DSS.Goal.GetGoalByIdHttpTrigger.Function
                 _logger.LogWarning("Unable to parse 'goalId' to a GUID. GoalId ID: {GoalId}", goalId);
                 return new BadRequestObjectResult(goalGuid);
             }
+
+            _logger.LogInformation("Input validation has succeeded. Touchpoint ID: {TouchpointId}. Correlation GUID: {CorrelationGuid}", touchpointId, correlationGuid);
 
             _logger.LogInformation("Attempting to check if customer exists. Customer GUID: {CustomerId}. Correlation GUID: {CorrelationGuid}", customerGuid, correlationGuid);
             var doesCustomerExist = await _resourceHelper.DoesCustomerExist(customerGuid);
