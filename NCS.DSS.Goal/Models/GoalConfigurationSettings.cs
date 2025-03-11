@@ -2,6 +2,7 @@
 {
     public class GoalConfigurationSettings
     {
+        public required string CosmosDbEndpoint { get; set; }
         public required string ActionPlanCollectionId { get; set; }
         public required string ActionPlanDatabaseId { get; set; }
         public required string CollectionId { get; set; }
