@@ -133,7 +133,7 @@ namespace NCS.DSS.Goal.PatchGoalHttpTrigger.Function
 
             if (errors != null && errors.Any())
             {
-                _logger.LogWarning("Falied to validate {goalPatchRequest} object", nameof(goalPatchRequest));
+                _logger.LogWarning("Failed to validate {goalPatchRequest} object", nameof(goalPatchRequest));
                 return new UnprocessableEntityObjectResult(errors);
             }
             _logger.LogInformation("Successfully validated {goalPatchRequest} object", nameof(goalPatchRequest));
