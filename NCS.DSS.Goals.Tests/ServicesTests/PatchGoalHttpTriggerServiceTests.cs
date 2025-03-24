@@ -1,16 +1,14 @@
-﻿using Microsoft.Azure.Documents;
-using Microsoft.Azure.Documents.Client;
+﻿using Microsoft.Azure.Cosmos;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NCS.DSS.Goal.Cosmos.Provider;
 using NCS.DSS.Goal.Models;
 using NCS.DSS.Goal.PatchGoalHttpTrigger.Service;
+using NCS.DSS.Goal.ServiceBus;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using System;
-using System.Collections.Specialized;
-using System.IO;
 using System.Net;
-using System.Reflection;
 using System.Threading.Tasks;
 
 namespace NCS.DSS.Goal.Tests.ServicesTests
@@ -20,7 +18,9 @@ namespace NCS.DSS.Goal.Tests.ServicesTests
     {
         private IPatchGoalHttpTriggerService _goalHttpTriggerService;
         private Mock<IGoalPatchService> _goalPatchService;
-        private Mock<IDocumentDBProvider> _documentDbProvider;
+        private Mock<ICosmosDbProvider> _cosmosDbProvider;
+        private Mock<IGoalServiceBusClient> _goalServiceBusClient;
+        private Mock<ILogger<PatchGoalHttpTriggerService>> _logger;
         private string _json;
         private Models.Goal _goal;
         private GoalPatch _goalPatch;
@@ -30,13 +30,13 @@ namespace NCS.DSS.Goal.Tests.ServicesTests
         public void Setup()
         {
             _goalPatchService = new Mock<IGoalPatchService>();
-            _documentDbProvider = new Mock<IDocumentDBProvider>();
-            _goalHttpTriggerService = new PatchGoalHttpTriggerService(_goalPatchService.Object, _documentDbProvider.Object);
+            _cosmosDbProvider = new Mock<ICosmosDbProvider>();
+            _goalServiceBusClient = new Mock<IGoalServiceBusClient>();
+            _logger = new Mock<ILogger<PatchGoalHttpTriggerService>>();
+            _goalHttpTriggerService = new PatchGoalHttpTriggerService(_goalPatchService.Object, _cosmosDbProvider.Object, _goalServiceBusClient.Object, _logger.Object);
             _goalPatch = new GoalPatch();
             _goal = new Models.Goal();
-
             _json = JsonConvert.SerializeObject(_goalPatch);
-            //_goalPatchService.Patch(_json, _goalPatch).Returns(_goal.ToString());
         }
 
         [Test]
@@ -84,7 +84,13 @@ namespace NCS.DSS.Goal.Tests.ServicesTests
         [Test]
         public async Task PatchgoalHttpTriggerServiceTests_UpdateAsync_ReturnsNullWhenResourceCannotBeUpdated()
         {
-            _documentDbProvider.Setup(x => x.UpdateGoalAsync(It.IsAny<string>(), It.IsAny<Guid>())).Returns(Task.FromResult(new ResourceResponse<Document>(null)));
+            var mockItemResponse = new Mock<ItemResponse<Models.Goal>>();
+
+            mockItemResponse
+            .Setup(response => response.StatusCode)
+            .Returns(HttpStatusCode.OK);
+
+            _cosmosDbProvider.Setup(x => x.UpdateGoalAsync(It.IsAny<string>(), It.IsAny<Guid>())).Returns(Task.FromResult(mockItemResponse.Object));
 
             // Act
             var result = await _goalHttpTriggerService.UpdateCosmosAsync(It.IsAny<string>(), _goalId);
@@ -96,7 +102,13 @@ namespace NCS.DSS.Goal.Tests.ServicesTests
         [Test]
         public async Task PatchgoalHttpTriggerServiceTests_UpdateAsync_ReturnsNullWhenResourceCannotBeFound()
         {
-            _documentDbProvider.Setup(x => x.CreateGoalAsync(It.IsAny<Models.Goal>())).Returns(Task.FromResult(new ResourceResponse<Document>(null)));
+            var mockItemResponse = new Mock<ItemResponse<Models.Goal>>();
+
+            mockItemResponse
+            .Setup(response => response.StatusCode)
+            .Returns(HttpStatusCode.OK);
+
+            _cosmosDbProvider.Setup(x => x.CreateGoalAsync(It.IsAny<Models.Goal>())).Returns(Task.FromResult(mockItemResponse.Object));
 
             // Act
             var result = await _goalHttpTriggerService.UpdateCosmosAsync(_goal.ToString(), _goalId);
@@ -108,29 +120,26 @@ namespace NCS.DSS.Goal.Tests.ServicesTests
         [Test]
         public async Task PatchgoalHttpTriggerServiceTests_UpdateAsync_ReturnsResourceWhenUpdated()
         {
-            const string documentServiceResponseClass = "Microsoft.Azure.Documents.DocumentServiceResponse, Microsoft.Azure.DocumentDB.Core, Version=2.2.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35";
-            const string dictionaryNameValueCollectionClass = "Microsoft.Azure.Documents.Collections.DictionaryNameValueCollection, Microsoft.Azure.DocumentDB.Core, Version=2.2.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35";
+            // Arrange
+            var mockItemResponse = new Mock<ItemResponse<Models.Goal>>();
 
-            var resourceResponse = new ResourceResponse<Document>(new Document());
-            var documentServiceResponseType = Type.GetType(documentServiceResponseClass);
+            var mockGoal = new Models.Goal
+            {
+                GoalId = Guid.NewGuid(),
+                CustomerId = Guid.NewGuid(),
+                ActionPlanId = Guid.NewGuid()
+            };
 
-            const BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Instance;
+            mockItemResponse
+            .Setup(response => response.Resource)
+            .Returns(mockGoal);
 
-            var headers = new NameValueCollection { { "x-ms-request-charge", "0" } };
+            mockItemResponse
+            .Setup(response => response.StatusCode)
+            .Returns(HttpStatusCode.OK);
 
-            var headersDictionaryType = Type.GetType(dictionaryNameValueCollectionClass);
 
-            var headersDictionaryInstance = Activator.CreateInstance(headersDictionaryType, headers);
-
-            var arguments = new[] { Stream.Null, headersDictionaryInstance, HttpStatusCode.OK, null };
-
-            var documentServiceResponse = documentServiceResponseType.GetTypeInfo().GetConstructors(flags)[0].Invoke(arguments);
-
-            var responseField = typeof(ResourceResponse<Document>).GetTypeInfo().GetField("response", flags);
-
-            responseField?.SetValue(resourceResponse, documentServiceResponse);
-
-            _documentDbProvider.Setup(x => x.UpdateGoalAsync(It.IsAny<string>(), It.IsAny<Guid>())).Returns(Task.FromResult(resourceResponse));
+            _cosmosDbProvider.Setup(x => x.UpdateGoalAsync(It.IsAny<string>(), It.IsAny<Guid>())).Returns(Task.FromResult(mockItemResponse.Object));
 
             // Act
             var result = await _goalHttpTriggerService.UpdateCosmosAsync(_goal.ToString(), _goalId);
@@ -144,7 +153,7 @@ namespace NCS.DSS.Goal.Tests.ServicesTests
         [Test]
         public async Task PatchgoalHttpTriggerServiceTests_GetgoalForCustomerAsync_ReturnsNullWhenResourceHasNotBeenFound()
         {
-            _documentDbProvider.Setup(x => x.GetGoalForCustomerToUpdateAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>()));
+            _cosmosDbProvider.Setup(x => x.GetGoalForCustomerToUpdateAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>()));
 
             // Act
             var result = await _goalHttpTriggerService.GetGoalForCustomerAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>());
@@ -156,7 +165,7 @@ namespace NCS.DSS.Goal.Tests.ServicesTests
         [Test]
         public async Task PatchgoalHttpTriggerServiceTests_GetgoalForCustomerAsync_ReturnsResourceWhenResourceHasBeenFound()
         {
-            _documentDbProvider.Setup(x => x.GetGoalForCustomerToUpdateAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>())).Returns(Task.FromResult(_json));
+            _cosmosDbProvider.Setup(x => x.GetGoalForCustomerToUpdateAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>())).Returns(Task.FromResult(_json));
 
             // Act
             var result = await _goalHttpTriggerService.GetGoalForCustomerAsync(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>());
