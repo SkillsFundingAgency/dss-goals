@@ -180,6 +180,25 @@ namespace NCS.DSS.Goal.Tests.ValidationTests
         }
 
         [Test]
+        public void ValidateTests_ReturnValidationResult_WhenGoalSummarySpecialCharactersAreValid()
+        {
+            var goal = new Models.Goal
+            {
+                DateGoalCaptured = DateTime.Today.AddDays(-4),
+                DateGoalShouldBeCompletedBy = DateTime.Today.AddDays(-3),
+                GoalSummary = "This is a goal summary (field), & it contains a few 'special characters' such as: \"%\"; Can you also enter URLs like https://www.google.com? You can!",
+                GoalType = GoalType.Learning,
+                LastModifiedBy = "0000000001"
+            };
+
+            var result = _validate.ValidateResource(goal, false);
+
+            Assert.That(result, Is.InstanceOf<List<ValidationResult>>());
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Count, Is.EqualTo(0));
+        }
+
+        [Test]
         public void ValidateTests_ReturnValidationResult_WhenGoalSummaryIsInvalid()
         {
             var goal = new Models.Goal
