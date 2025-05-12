@@ -1,19 +1,17 @@
-﻿using Microsoft.Azure.Documents;
-using Microsoft.Azure.Documents.Client;
+﻿using Microsoft.Azure.Cosmos;
 
 namespace NCS.DSS.Goal.Cosmos.Provider
 {
-    public interface IDocumentDBProvider
+    public interface ICosmosDbProvider
     {
         Task<bool> DoesCustomerResourceExist(Guid customerId);
-        bool DoesInteractionExistAndBelongToCustomer(Guid interactionId, Guid customerId);
-        bool DoesActionPlanExistAndBelongToCustomer(Guid actionPlanId, Guid interactionId, Guid customerId);
+        Task<bool> DoesInteractionExistAndBelongToCustomer(Guid interactionId, Guid customerId);
+        Task<bool> DoesActionPlanExistAndBelongToCustomer(Guid actionPlanId, Guid interactionId, Guid customerId);
         Task<bool> DoesCustomerHaveATerminationDate(Guid customerId);
         Task<string> GetGoalForCustomerToUpdateAsync(Guid customerId, Guid goalId, Guid actionPlanId);
         Task<List<Models.Goal>> GetAllGoalsForCustomerAsync(Guid customerId, Guid actionPlanId);
         Task<Models.Goal> GetGoalForCustomerAsync(Guid customerId, Guid goalId, Guid actionPlanId);
-        Task<ResourceResponse<Document>> CreateGoalAsync(Models.Goal goal);
-        Task<ResourceResponse<Document>> UpdateGoalAsync(string goalJson, Guid goalId);
-
+        Task<ItemResponse<Models.Goal>> CreateGoalAsync(Models.Goal goal);
+        Task<ItemResponse<Models.Goal>> UpdateGoalAsync(string goalJson, Guid goalId);
     }
 }
