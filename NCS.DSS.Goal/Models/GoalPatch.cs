@@ -22,7 +22,7 @@ namespace NCS.DSS.Goal.Models
         public DateTime? DateGoalAchieved { get; set; }
 
         [StringLength(2000)]
-        [RegularExpression(@"^[a-zA-Z]+([a-zA-Z0-9\s\.\-'\,\/]*)*")]
+        [RegularExpression(@"^[a-zA-Z]+([a-zA-Z0-9\s\.\-'\,\/:;\)\(&%?!""]*)*")]
         [Display(Description = "Details of the customer goal.")]
         [Example(Description = "this is some text")]
         public string GoalSummary { get; set; }
