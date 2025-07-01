@@ -125,7 +125,7 @@ namespace NCS.DSS.Goal.PostGoalHttpTrigger.Function
 
             if (errors != null && errors.Any())
             {
-                _logger.LogWarning("Falied to validate {goalRequest} object", nameof(goalRequest));
+                _logger.LogWarning("Failed to validate {goalRequest} object", nameof(goalRequest));
                 return new UnprocessableEntityObjectResult(errors);
             }
             _logger.LogInformation("Successfully validated {goalRequest} object", nameof(goalRequest));
