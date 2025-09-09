@@ -17,9 +17,6 @@
     "functionAppNames": {
       "type": "array"
     },
-    "serviceBusConnectionString": {
-      "type": "string"
-    },
     "serviceBusQueueName": {
       "type": "string"
     },
@@ -27,12 +24,6 @@
       "type": "string"
     },
     "sharedAppServicePlanResourceGroup": {
-      "type": "string"
-    },
-    "storageAccountName": {
-      "type": "string"
-    },
-    "storageAccountKey": {
       "type": "string"
     },
     "templateBaseUrl": {
@@ -71,7 +62,7 @@
         "InteractionDatabaseId": "interactions",
         "ActionPlanCollectionId": "actionplans",
         "ActionPlanDatabaseId": "actionplans",
-        "ServiceBusConnectionString": "[parameters('serviceBusConnectionString')]",
+        "ServiceBusConnectionString": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=ServiceBusConnectionString)', parameters('keyVaultName'))]",
         "QueueName": "[parameters('serviceBusQueueName')]",
         "CosmosDbEndpoint": "[parameters('CosmosDbEndpoint')]"
       },

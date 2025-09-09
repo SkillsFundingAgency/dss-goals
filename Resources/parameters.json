@@ -17,9 +17,6 @@
         "functionAppNames": {
             "value": "__NotTokenised__"
         },
-        "serviceBusConnectionString": {
-            "value": "__serviceBusConnectionString__"
-        },
         "serviceBusQueueName": {
             "value": "__serviceBusQueueName__"
         },
@@ -28,12 +25,6 @@
         },
         "sharedAppServicePlanResourceGroup": {
             "value": "__SharedAppServicePlanResourceGroup__"
-        },
-        "storageAccountName": {
-            "value": "__storageAccountName__"
-        },
-        "storageAccountKey": {
-            "value": "__storageAccountKey__"
         },
         "templateBaseUrl": {
             "value": "__NestedArmTemplateBaseUrl__"
