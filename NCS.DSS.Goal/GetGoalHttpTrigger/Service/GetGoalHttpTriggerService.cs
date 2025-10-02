@@ -16,17 +16,17 @@ namespace NCS.DSS.Goal.GetGoalHttpTrigger.Service
 
         public async Task<List<Models.Goal>> GetGoalsAsync(Guid customerId, Guid actionPlanId)
         {
-            _logger.LogInformation("Retrieving goals for customer ID: {CustomerId} and action plan ID: {ActionPlanId}.", customerId, actionPlanId);
+            _logger.LogTrace("Retrieving goals for customer ID: {CustomerId} and action plan ID: {ActionPlanId}.", customerId, actionPlanId);
 
             if (customerId == Guid.Empty)
             {
-                _logger.LogWarning("Invalid customer ID provided: {CustomerId}.", customerId);
+                _logger.LogInformation("Invalid customer ID provided: {CustomerId}.", customerId);
                 return null;
             }
 
             if (actionPlanId == Guid.Empty)
             {
-                _logger.LogWarning("Invalid action plan ID provided: {ActionPlanId}.", actionPlanId);
+                _logger.LogInformation("Invalid action plan ID provided: {ActionPlanId}.", actionPlanId);
                 return null;
             }
 
@@ -38,7 +38,7 @@ namespace NCS.DSS.Goal.GetGoalHttpTrigger.Service
             }
             else
             {
-                _logger.LogInformation("Successfully retrieved goal(s) for customer ID: {CustomerId} and action plan ID: {ActionPlanId}.", customerId, actionPlanId);
+                _logger.LogTrace("Successfully retrieved goal(s) for customer ID: {CustomerId} and action plan ID: {ActionPlanId}.", customerId, actionPlanId);
             }
 
             return goals;

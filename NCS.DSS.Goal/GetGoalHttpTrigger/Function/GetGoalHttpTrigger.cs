@@ -39,12 +39,9 @@ namespace NCS.DSS.Goal.GetGoalHttpTrigger.Function
         [Display(Name = "Get", Description = "Ability to return all Goals for the given Interactions.")]
         public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Customers/{customerId}/Interactions/{interactionId}/ActionPlans/{actionPlanId}/Goals")] HttpRequest req, string customerId, string interactionId, string actionPlanId)
         {
-            _logger.LogInformation("Function {FunctionName} has been invoked", nameof(GetGoalHttpTrigger));
+            _logger.LogTrace("Function {FunctionName} has been invoked", nameof(GetGoalHttpTrigger));
 
             var correlationId = httpRequestHelper.GetDssCorrelationId(req);
-            if (string.IsNullOrEmpty(correlationId))
-                _logger.LogInformation("Unable to locate 'DssCorrelationId' in request header");
-
             if (!Guid.TryParse(correlationId, out var correlationGuid))
             {
                 _logger.LogInformation("Unable to parse 'DssCorrelationId' to a Guid. CorrelationId: {CorrelationId}", correlationId);
@@ -60,77 +57,77 @@ namespace NCS.DSS.Goal.GetGoalHttpTrigger.Function
 
             if (!Guid.TryParse(customerId, out var customerGuid))
             {
-                _logger.LogWarning("Unable to parse 'customerId' to a GUID. Customer GUID: {CustomerID}", customerId);
+                _logger.LogInformation("Unable to parse 'customerId' to a GUID. Customer GUID: {CustomerID}", customerId);
                 return new BadRequestObjectResult(customerGuid);
             }
 
             if (!Guid.TryParse(interactionId, out var interactionGuid))
             {
-                _logger.LogWarning("Unable to parse 'interactionId' to a GUID. Interaction ID: {InteractionId}", interactionId);
+                _logger.LogInformation("Unable to parse 'interactionId' to a GUID. Interaction ID: {InteractionId}", interactionId);
                 return new BadRequestObjectResult(interactionGuid);
             }
 
             if (!Guid.TryParse(actionPlanId, out var actionPlanGuid))
             {
-                _logger.LogWarning("Unable to parse 'actionPlanId' to a GUID. Action Plan ID: {ActionplanId}", actionPlanId);
+                _logger.LogInformation("Unable to parse 'actionPlanId' to a GUID. Action Plan ID: {ActionplanId}", actionPlanId);
                 return new BadRequestObjectResult(actionPlanGuid);
             }
 
-            _logger.LogInformation("Input validation has succeeded. Touchpoint ID: {TouchpointId}. Correlation GUID: {CorrelationGuid}", touchpointId, correlationGuid);
+            _logger.LogTrace("Input validation has succeeded. Touchpoint ID: {TouchpointId}. Correlation GUID: {CorrelationGuid}", touchpointId, correlationGuid);
 
-            _logger.LogInformation("Attempting to check if customer exists. Customer GUID: {CustomerId}. Correlation GUID: {CorrelationGuid}", customerGuid, correlationGuid);
+            _logger.LogTrace("Attempting to check if customer exists. Customer GUID: {CustomerId}. Correlation GUID: {CorrelationGuid}", customerGuid, correlationGuid);
             var doesCustomerExist = await _resourceHelper.DoesCustomerExist(customerGuid);
 
             if (!doesCustomerExist)
             {
-                _logger.LogWarning("Customer does not exist. Customer GUID: {CustomerGuid}. Correlation GUID: {CorrelationGuid}", customerGuid, correlationGuid);
+                _logger.LogInformation("Customer does not exist. Customer GUID: {CustomerGuid}. Correlation GUID: {CorrelationGuid}", customerGuid, correlationGuid);
                 return new NoContentResult();
             }
-            _logger.LogInformation("Customer exists. Customer GUID: {CustomerGuid}. Correlation GUID: {CorrelationGuid}", customerGuid, correlationGuid);
+            _logger.LogTrace("Customer exists. Customer GUID: {CustomerGuid}. Correlation GUID: {CorrelationGuid}", customerGuid, correlationGuid);
 
 
-            _logger.LogInformation("Attempting to get Interaction for Customer. Customer GUID: {CustomerId}. Interaction GUID: {InteractionGuid}. Correlation GUID: {CorrelationGuid}", customerGuid, interactionGuid, correlationGuid);
+            _logger.LogTrace("Attempting to get Interaction for Customer. Customer GUID: {CustomerId}. Interaction GUID: {InteractionGuid}. Correlation GUID: {CorrelationGuid}", customerGuid, interactionGuid, correlationGuid);
             var doesInteractionExist = await _resourceHelper.DoesInteractionExistAndBelongToCustomer(interactionGuid, customerGuid);
 
             if (!doesInteractionExist)
             {
-                _logger.LogWarning("Interaction does not exist. Customer GUID: {CustomerId}. Interaction GUID: {InteractionGuid}. Correlation GUID: {CorrelationGuid}", customerGuid, interactionGuid, correlationGuid);
+                _logger.LogInformation("Interaction does not exist. Customer GUID: {CustomerId}. Interaction GUID: {InteractionGuid}. Correlation GUID: {CorrelationGuid}", customerGuid, interactionGuid, correlationGuid);
                 return new NoContentResult();
             }
-            _logger.LogInformation("Interaction exists. Customer GUID: {CustomerId}. Interaction GUID: {InteractionGuid}. Correlation GUID: {CorrelationGuid}", customerGuid, interactionGuid, correlationGuid);
+            _logger.LogTrace("Interaction exists. Customer GUID: {CustomerId}. Interaction GUID: {InteractionGuid}. Correlation GUID: {CorrelationGuid}", customerGuid, interactionGuid, correlationGuid);
 
 
-            _logger.LogInformation("Attempting to get Action Plan for Customer. Customer GUID: {CustomerId}. Action Plan GUID: {ActionPlanGuid}. Correlation GUID: {CorrelationGuid}", customerGuid, actionPlanGuid, correlationGuid);
+            _logger.LogTrace("Attempting to get Action Plan for Customer. Customer GUID: {CustomerId}. Action Plan GUID: {ActionPlanGuid}. Correlation GUID: {CorrelationGuid}", customerGuid, actionPlanGuid, correlationGuid);
             var doesActionPlanExist = await _resourceHelper.DoesActionPlanExistAndBelongToCustomer(actionPlanGuid, interactionGuid, customerGuid);
 
             if (!doesActionPlanExist)
             {
-                _logger.LogWarning("Action Plan does not exist. Customer GUID: {CustomerId}. Action Plan GUID: {ActionPlanGuid}. Correlation GUID: {CorrelationGuid}", customerGuid, actionPlanGuid, correlationGuid);
+                _logger.LogInformation("Action Plan does not exist. Customer GUID: {CustomerId}. Action Plan GUID: {ActionPlanGuid}. Correlation GUID: {CorrelationGuid}", customerGuid, actionPlanGuid, correlationGuid);
                 return new NoContentResult();
             }
-            _logger.LogInformation("Action Plan exists. Customer GUID: {CustomerId}. Action Plan GUID: {ActionPlanGuid}. Correlation GUID: {CorrelationGuid}", customerGuid, actionPlanGuid, correlationGuid);
+            _logger.LogTrace("Action Plan exists. Customer GUID: {CustomerId}. Action Plan GUID: {ActionPlanGuid}. Correlation GUID: {CorrelationGuid}", customerGuid, actionPlanGuid, correlationGuid);
 
 
-            _logger.LogInformation("Attempting to get Goals for Customer. Customer GUID: {CustomerId}. Action Plan GUID: {ActionPlanGuid}. Correlation GUID: {CorrelationGuid}", customerGuid, actionPlanGuid, correlationGuid);
+            _logger.LogTrace("Attempting to get Goals for Customer. Customer GUID: {CustomerId}. Action Plan GUID: {ActionPlanGuid}. Correlation GUID: {CorrelationGuid}", customerGuid, actionPlanGuid, correlationGuid);
             var goals = await goalsGetService.GetGoalsAsync(customerGuid, actionPlanGuid);
 
             if (goals == null || goals.Count == 0)
             {
-                _logger.LogWarning("No Goals found for Customer GUID: {CustomerId}. Action Plan GUID: {ActionPlanGuid}.", customerGuid, actionPlanGuid);
+                _logger.LogInformation("No Goals found for Customer GUID: {CustomerId}. Action Plan GUID: {ActionPlanGuid}.", customerGuid, actionPlanGuid);
                 return new NoContentResult();
             }
 
             if (goals.Count == 1)
             {
-                _logger.LogInformation("Single Goal found for Customer GUID: {CustomerId}. Action Plan GUID: {ActionPlanGuid}.", customerGuid, actionPlanGuid);
+                _logger.LogTrace("Single Goal found for Customer GUID: {CustomerId}. Action Plan GUID: {ActionPlanGuid}.", customerGuid, actionPlanGuid);
                 return new JsonResult(goals[0], new JsonSerializerOptions())
                 {
                     StatusCode = (int)HttpStatusCode.OK
                 };
             }
 
-            _logger.LogInformation("Multiple Goals retrieved for Customer GUID: {CustomerId}. Count: {Count}.", customerGuid, goals.Count);
-            _logger.LogInformation("Function {FunctionName} has finished invoking", nameof(GetGoalHttpTrigger));
+            _logger.LogTrace("Multiple Goals retrieved for Customer GUID: {CustomerId}. Count: {Count}.", customerGuid, goals.Count);
+            _logger.LogTrace("Function {FunctionName} has finished invoking", nameof(GetGoalHttpTrigger));
 
             return new JsonResult(goals, new JsonSerializerOptions())
             {
