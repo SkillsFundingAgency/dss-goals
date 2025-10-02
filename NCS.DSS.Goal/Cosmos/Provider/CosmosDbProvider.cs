@@ -35,7 +35,7 @@ namespace NCS.DSS.Goal.Cosmos.Provider
         {
             try
             {
-                _logger.LogInformation("Checking for customer resource. Customer ID: {CustomerId}", customerId);
+                _logger.LogTrace("Checking for customer resource. Customer ID: {CustomerId}", customerId);
 
                 var response = await _customerContainer.ReadItemAsync<Customer>(
                     customerId.ToString(),
@@ -43,11 +43,11 @@ namespace NCS.DSS.Goal.Cosmos.Provider
 
                 if (response.Resource != null)
                 {
-                    _logger.LogInformation("Customer exists. Customer ID: {CustomerId}", customerId);
+                    _logger.LogTrace("Customer exists. Customer ID: {CustomerId}", customerId);
                     return true;
                 }
 
-                _logger.LogInformation("Customer does not exist. Customer ID: {CustomerId}", customerId);
+                _logger.LogTrace("Customer does not exist. Customer ID: {CustomerId}", customerId);
                 return false;
             }
             catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
@@ -66,7 +66,7 @@ namespace NCS.DSS.Goal.Cosmos.Provider
         {
             try
             {
-                _logger.LogInformation("Checking for interaction resource for a customer. Customer ID: {CustomerId} Interaction ID: {InteractionId}", customerId, interactionId);
+                _logger.LogTrace("Checking for interaction resource for a customer. Customer ID: {CustomerId} Interaction ID: {InteractionId}", customerId, interactionId);
 
                 string queryText = "SELECT VALUE COUNT(1) FROM interactions i WHERE i.id = @interactionId AND i.CustomerId = @customerId";
                 var queryDefinition = new QueryDefinition(queryText)
@@ -82,7 +82,7 @@ namespace NCS.DSS.Goal.Cosmos.Provider
 
                     if (interactionFound)
                     {
-                        _logger.LogInformation("Interaction for customer exists. Customer ID: {CustomerId} Interaction ID: {InteractionId}", customerId, interactionId);
+                        _logger.LogTrace("Interaction for customer exists. Customer ID: {CustomerId} Interaction ID: {InteractionId}", customerId, interactionId);
                     }
                     return interactionFound;
                 }
@@ -103,7 +103,7 @@ namespace NCS.DSS.Goal.Cosmos.Provider
 
         public async Task<bool> DoesActionPlanExistAndBelongToCustomer(Guid actionPlanId, Guid interactionId, Guid customerId)
         {
-            _logger.LogInformation("Checking for action plan resource for a customer. Customer ID: {CustomerId} Interaction ID: {InteractionId} ActionPlan ID: {ActionPlanId}", customerId, interactionId, actionPlanId);
+            _logger.LogTrace("Checking for action plan resource for a customer. Customer ID: {CustomerId} Interaction ID: {InteractionId} ActionPlan ID: {ActionPlanId}", customerId, interactionId, actionPlanId);
             try
             {
                 string queryText = "SELECT VALUE COUNT(1) FROM actionplans a WHERE a.id = @actionPlanId AND a.InteractionId = @interactionId AND a.CustomerId = @customerId";
@@ -120,7 +120,7 @@ namespace NCS.DSS.Goal.Cosmos.Provider
                     var actionPlanExists = response.FirstOrDefault() > 0;
                     if (actionPlanExists)
                     {
-                        _logger.LogInformation("Action plan for customer exists. Customer ID: {CustomerId} Interaction ID: {InteractionId} ActionPlan ID: {ActionPlanId}", customerId, interactionId, actionPlanId);
+                        _logger.LogTrace("Action plan for customer exists. Customer ID: {CustomerId} Interaction ID: {InteractionId} ActionPlan ID: {ActionPlanId}", customerId, interactionId, actionPlanId);
                     }
                     return actionPlanExists;
                 }
@@ -141,7 +141,7 @@ namespace NCS.DSS.Goal.Cosmos.Provider
 
         public async Task<bool> DoesCustomerHaveATerminationDate(Guid customerId)
         {
-            _logger.LogInformation("Checking for termination date. Customer ID: {CustomerId}", customerId);
+            _logger.LogTrace("Checking for termination date. Customer ID: {CustomerId}", customerId);
 
             try
             {
@@ -152,7 +152,7 @@ namespace NCS.DSS.Goal.Cosmos.Provider
                 var dateOfTermination = response.Resource?.DateOfTermination;
                 var hasTerminationDate = dateOfTermination != null;
 
-                _logger.LogInformation("Termination date check completed. CustomerId: {CustomerId}. HasTerminationDate: {HasTerminationDate}", customerId, hasTerminationDate);
+                _logger.LogTrace("Termination date check completed. CustomerId: {CustomerId}. HasTerminationDate: {HasTerminationDate}", customerId, hasTerminationDate);
                 return hasTerminationDate;
             }
             catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
@@ -176,7 +176,7 @@ namespace NCS.DSS.Goal.Cosmos.Provider
 
         public async Task<List<Models.Goal>> GetAllGoalsForCustomerAsync(Guid customerId, Guid actionPlanId)
         {
-            _logger.LogInformation("Retrieving Goals for Customer. Customer ID: {CustomerId}. ActionPlan ID: {ActionPlanId}.", customerId, actionPlanId);
+            _logger.LogTrace("Retrieving Goals for Customer. Customer ID: {CustomerId}. ActionPlan ID: {ActionPlanId}.", customerId, actionPlanId);
 
             try
             {
@@ -191,7 +191,7 @@ namespace NCS.DSS.Goal.Cosmos.Provider
                     goals.AddRange(response);
                 }
 
-                _logger.LogInformation("Retrieved {Count} Goal(s) for Customer with ID: {CustomerId}. ActionPlan ID: {ActionPlanId}", goals.Count, customerId, actionPlanId);
+                _logger.LogTrace("Retrieved {Count} Goal(s) for Customer with ID: {CustomerId}. ActionPlan ID: {ActionPlanId}", goals.Count, customerId, actionPlanId);
                 return goals;
             }
             catch (Exception ex)
@@ -203,7 +203,7 @@ namespace NCS.DSS.Goal.Cosmos.Provider
 
         public async Task<Models.Goal> GetGoalForCustomerAsync(Guid customerId, Guid goalId, Guid actionPlanId)
         {
-            _logger.LogInformation("Retrieving Goal for Customer. Customer ID: {CustomerId}. Goal ID: {GoalId}. ActionPlan ID: {ActionPlanId}", customerId, goalId, actionPlanId);
+            _logger.LogTrace("Retrieving Goal for Customer. Customer ID: {CustomerId}. Goal ID: {GoalId}. ActionPlan ID: {ActionPlanId}", customerId, goalId, actionPlanId);
 
             try
             {
@@ -214,11 +214,11 @@ namespace NCS.DSS.Goal.Cosmos.Provider
                 var response = await query.ReadNextAsync();
                 if (response.Any())
                 {
-                    _logger.LogInformation("Goal retrieved successfully. Customer ID: {CustomerId}. Goal ID: {GoalId}. ActionPlan ID: {ActionPlanId}", customerId, goalId, actionPlanId);
+                    _logger.LogTrace("Goal retrieved successfully. Customer ID: {CustomerId}. Goal ID: {GoalId}. ActionPlan ID: {ActionPlanId}", customerId, goalId, actionPlanId);
                     return response?.FirstOrDefault();
                 }
 
-                _logger.LogWarning("Goal not found. Customer ID: {CustomerId}. Goal ID: {GoalId}. ActionPlan ID: {ActionPlanId}", customerId, goalId, actionPlanId);
+                _logger.LogInformation("Goal not found. Customer ID: {CustomerId}. Goal ID: {GoalId}. ActionPlan ID: {ActionPlanId}", customerId, goalId, actionPlanId);
                 return null;
             }
             catch (Exception ex)
@@ -232,16 +232,16 @@ namespace NCS.DSS.Goal.Cosmos.Provider
         {
             if (goal == null)
             {
-                _logger.LogError("Goal object is null. Creation aborted.");
+                _logger.LogWarning("Goal object is null. Creation aborted.");
                 throw new ArgumentNullException(nameof(goal), "Goal cannot be null.");
             }
 
-            _logger.LogInformation("Creating Goal with ID: {GoalId}", goal.GoalId);
+            _logger.LogTrace("Creating Goal with ID: {GoalId}", goal.GoalId);
 
             try
             {
                 var response = await _goalContainer.CreateItemAsync(goal, PartitionKey.None);
-                _logger.LogInformation("Successfully created Goal with ID: {GoalID}", goal.GoalId);
+                _logger.LogTrace("Successfully created Goal with ID: {GoalID}", goal.GoalId);
                 return response;
             }
             catch (Exception ex)
@@ -255,18 +255,18 @@ namespace NCS.DSS.Goal.Cosmos.Provider
         {
             if (string.IsNullOrEmpty(goalJson))
             {
-                _logger.LogError("goalJson object is null. Update aborted.");
+                _logger.LogWarning("goalJson object is null. Update aborted.");
                 throw new ArgumentNullException(nameof(goalJson), "Interaction cannot be null.");
             }
 
             var goal = JsonConvert.DeserializeObject<Models.Goal>(goalJson);
 
-            _logger.LogInformation("Updating Goal with ID: {GoalId}", goalId);
+            _logger.LogTrace("Updating Goal with ID: {GoalId}", goalId);
 
             try
             {
                 var response = await _goalContainer.ReplaceItemAsync(goal, goalId.ToString());
-                _logger.LogInformation("Successfully updated Goal with ID: {GoalId}", goalId);
+                _logger.LogTrace("Successfully updated Goal with ID: {GoalId}", goalId);
                 return response;
             }
             catch (Exception ex)
