@@ -36,15 +36,15 @@ namespace NCS.DSS.Goal.PatchGoalHttpTrigger.Service
                 return null;
             }
 
-            _logger.LogInformation("Setting default values for GoalPatch object.");
+            _logger.LogTrace("Setting default values for GoalPatch object.");
             goalPatch.SetDefaultValues();
 
-            _logger.LogInformation("Attempting to patch the Goal resource.");
+            _logger.LogTrace("Attempting to patch the Goal resource.");
             var updatedGoal = _goalPatchService.Patch(goalJson, goalPatch);
 
             if (updatedGoal != null)
             {
-                _logger.LogInformation("Successfully patched the Goal resource.");
+                _logger.LogTrace("Successfully patched the Goal resource.");
             }
 
             return updatedGoal;
@@ -58,12 +58,12 @@ namespace NCS.DSS.Goal.PatchGoalHttpTrigger.Service
                 return null;
             }
 
-            _logger.LogInformation("Patching goal with ID: {GoalId}.", goalId);
+            _logger.LogTrace("Patching goal with ID: {GoalId}.", goalId);
             var response = await _cosmosDbProvider.UpdateGoalAsync(goalJson, goalId);
 
             if (response?.StatusCode == HttpStatusCode.OK)
             {
-                _logger.LogInformation("Successfully updated goal with ID: {GoalId}.", goalId);
+                _logger.LogTrace("Successfully updated goal with ID: {GoalId}.", goalId);
                 return response.Resource;
             }
 
@@ -73,17 +73,17 @@ namespace NCS.DSS.Goal.PatchGoalHttpTrigger.Service
 
         public async Task<string> GetGoalForCustomerAsync(Guid customerId, Guid goalId, Guid actionPlanId)
         {
-            _logger.LogInformation("Retrieving goal with ID: {GoalId} for customer ID: {CustomerId} and actionPlan ID: {ActionPlanId}.", goalId, customerId, actionPlanId);
+            _logger.LogTrace("Retrieving goal with ID: {GoalId} for customer ID: {CustomerId} and actionPlan ID: {ActionPlanId}.", goalId, customerId, actionPlanId);
 
             var goal = await _cosmosDbProvider.GetGoalForCustomerToUpdateAsync(customerId, goalId, actionPlanId);
 
             if (goal == null)
             {
-                _logger.LogWarning("No goal found with ID: {GoalId} for customer ID: {CustomerId}.", goalId, customerId);
+                _logger.LogInformation("No goal found with ID: {GoalId} for customer ID: {CustomerId}.", goalId, customerId);
             }
             else
             {
-                _logger.LogInformation("Successfully retrieved goal with ID: {GoalId} for customer ID: {CustomerId} and actionPlan ID: {ActionPlanId}.", goalId, customerId, actionPlanId);
+                _logger.LogTrace("Successfully retrieved goal with ID: {GoalId} for customer ID: {CustomerId} and actionPlan ID: {ActionPlanId}.", goalId, customerId, actionPlanId);
             }
 
             return goal;
@@ -93,11 +93,11 @@ namespace NCS.DSS.Goal.PatchGoalHttpTrigger.Service
         {
             try
             {
-                _logger.LogInformation("Sending goal with ID: {GoalId} to Service Bus for customer ID: {CustomerId}.", goal.GoalId, customerId);
+                _logger.LogTrace("Sending goal with ID: {GoalId} to Service Bus for customer ID: {CustomerId}.", goal.GoalId, customerId);
 
                 await _goalServiceBusClient.SendPatchMessageAsync(goal, customerId, reqUrl);
 
-                _logger.LogInformation("Successfully sent goal with ID: {GoalId} to Service Bus for customer ID: {CustomerId}.", goal.GoalId, customerId);
+                _logger.LogTrace("Successfully sent goal with ID: {GoalId} to Service Bus for customer ID: {CustomerId}.", goal.GoalId, customerId);
             }
             catch (Exception ex)
             {
