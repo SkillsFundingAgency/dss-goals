@@ -29,12 +29,12 @@ namespace NCS.DSS.Goal.PostGoalHttpTrigger.Service
 
             goal.SetDefaultValues();
 
-            _logger.LogInformation("Attempting to create goal with ID: {GoalId}.", goal.GoalId);
+            _logger.LogTrace("Attempting to create goal with ID: {GoalId}.", goal.GoalId);
             var response = await _cosmosDbProvider.CreateGoalAsync(goal);
 
             if (response?.StatusCode == HttpStatusCode.Created)
             {
-                _logger.LogInformation("Successfully created goal with ID: {GoalId}.", goal.GoalId);
+                _logger.LogTrace("Successfully created goal with ID: {GoalId}.", goal.GoalId);
                 return response.Resource;
             }
 
@@ -46,11 +46,11 @@ namespace NCS.DSS.Goal.PostGoalHttpTrigger.Service
         {
             try
             {
-                _logger.LogInformation("Sending newly created goal with ID: {GoalId} to Service Bus for customer ID: {CustomerId}.", goal.GoalId, goal.CustomerId);
+                _logger.LogTrace("Sending newly created goal with ID: {GoalId} to Service Bus for customer ID: {CustomerId}.", goal.GoalId, goal.CustomerId);
 
                 await _goalServiceBusClient.SendPostMessageAsync(goal, reqUrl);
 
-                _logger.LogInformation("Successfully sent goal with ID: {GoalId} to Service Bus for customer ID: {CustomerId}.", goal.GoalId, goal.CustomerId);
+                _logger.LogTrace("Successfully sent goal with ID: {GoalId} to Service Bus for customer ID: {CustomerId}.", goal.GoalId, goal.CustomerId);
             }
             catch (Exception ex)
             {

@@ -11,17 +11,11 @@
     "CosmosDbEndpoint": {
       "type": "string"
     },
-    "cosmosDbKey": {
-      "type": "string"
-    },
     "environmentName": {
       "type": "string"
     },
     "functionAppNames": {
       "type": "array"
-    },
-    "serviceBusConnectionString": {
-      "type": "string"
     },
     "serviceBusQueueName": {
       "type": "string"
@@ -30,12 +24,6 @@
       "type": "string"
     },
     "sharedAppServicePlanResourceGroup": {
-      "type": "string"
-    },
-    "storageAccountName": {
-      "type": "string"
-    },
-    "storageAccountKey": {
       "type": "string"
     },
     "templateBaseUrl": {
@@ -66,7 +54,6 @@
         "MSDEPLOY_RENAME_LOCKED_FILES": "1",
         "AzureWebJobsStorage": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=SharedStorageAccountConnectionString)', parameters('keyVaultName'))]",
         "APPINSIGHTS_INSTRUMENTATIONKEY": "[parameters('appInsightsInstrumentationKey')]",
-        "GoalConnectionString": "[concat('AccountEndpoint=', parameters('CosmosDbEndpoint'), '/;AccountKey=', parameters('cosmosDbKey'), ';')]",
         "CollectionId": "[parameters('cosmosDbCollectionId')]",
         "DatabaseId": "[parameters('cosmosDbDatabaseId')]",
         "CustomerCollectionId": "customers",
@@ -75,7 +62,7 @@
         "InteractionDatabaseId": "interactions",
         "ActionPlanCollectionId": "actionplans",
         "ActionPlanDatabaseId": "actionplans",
-        "ServiceBusConnectionString": "[parameters('serviceBusConnectionString')]",
+        "ServiceBusConnectionString": "[format('@Microsoft.KeyVault(VaultName={0};SecretName=ServiceBusConnectionString)', parameters('keyVaultName'))]",
         "QueueName": "[parameters('serviceBusQueueName')]",
         "CosmosDbEndpoint": "[parameters('CosmosDbEndpoint')]"
       },

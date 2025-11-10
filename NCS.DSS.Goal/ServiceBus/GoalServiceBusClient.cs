@@ -1,4 +1,4 @@
-﻿using Azure.Messaging.ServiceBus;
+﻿  using Azure.Messaging.ServiceBus;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NCS.DSS.Goal.Models;
@@ -48,11 +48,11 @@ namespace NCS.DSS.Goal.ServiceBus
                 MessageId = goals.CustomerId + " " + DateTime.UtcNow
             };
 
-            _logger.LogInformation("Attempting to send POST message to service bus. Goal ID: {GoalId}", goals.GoalId);
+            _logger.LogTrace("Attempting to send POST message to service bus. Goal ID: {GoalId}", goals.GoalId);
 
             await serviceBusSender.SendMessageAsync(msg);
 
-            _logger.LogInformation("Successfully sent POST message to the service bus. Goal ID: {GoalId}", goals.GoalId);
+            _logger.LogTrace("Successfully sent POST message to the service bus. Goal ID: {GoalId}", goals.GoalId);
         }
 
         public async Task SendPatchMessageAsync(Models.Goal goals, Guid customerId, string reqUrl)
@@ -75,11 +75,11 @@ namespace NCS.DSS.Goal.ServiceBus
                 MessageId = customerId + " " + DateTime.UtcNow
             };
 
-            _logger.LogInformation("Attempting to send PATCH message to service bus. Goal ID: {GoalId}", goals.GoalId);
+            _logger.LogTrace("Attempting to send PATCH message to service bus. Goal ID: {GoalId}", goals.GoalId);
 
             await serviceBusSender.SendMessageAsync(msg);
 
-            _logger.LogInformation("Successfully sent PATCH message to the service bus. Goal ID: {GoalId}", goals.GoalId);
+            _logger.LogTrace("Successfully sent PATCH message to the service bus. Goal ID: {GoalId}", goals.GoalId);
         }
     }
 }
