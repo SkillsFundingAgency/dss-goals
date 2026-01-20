@@ -205,12 +205,12 @@ namespace NCS.DSS.Goal.Tests.ValidationTests
             {
                 DateGoalCaptured = DateTime.Today.AddDays(-4),
                 DateGoalShouldBeCompletedBy = DateTime.Today.AddDays(-3),
-                GoalSummary = "Summary[]",
+                GoalSummary = "Summary <h1> test </h1>",
                 GoalType = GoalType.Learning,
                 LastModifiedBy = "0000000001"
             };
 
-            var result = _validate.ValidateResource(goal, false);
+            var result = _validate.ValidateResource(goal, true);
 
             Assert.That(result, Is.InstanceOf<List<ValidationResult>>());
             Assert.That(result, Is.Not.Null);
