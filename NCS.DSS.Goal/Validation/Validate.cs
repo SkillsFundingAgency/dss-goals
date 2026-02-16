@@ -26,6 +26,18 @@ namespace NCS.DSS.Goal.Validation
             {
                 if (string.IsNullOrWhiteSpace(goalResource.GoalSummary))
                     results.Add(new ValidationResult("Goal Summary is a required field", new[] { "GoalSummary" }));
+                else
+                {
+                    var reg = new System.Text.RegularExpressions.Regex(@"<\s*\/?\s*[a-zA-Z][^>]*>");
+                    if (reg.IsMatch(goalResource.GoalSummary))
+                        results.Add(new ValidationResult("Goal Summary must not contain HTML tags", new[] { "GoalSummary" }));
+                }
+            }
+            else if (!string.IsNullOrWhiteSpace(goalResource.GoalSummary))
+            {
+                var reg = new System.Text.RegularExpressions.Regex(@"<\s*\/?\s*[a-zA-Z][^>]*>");
+                if (reg.IsMatch(goalResource.GoalSummary))
+                    results.Add(new ValidationResult("Goal Summary must not contain HTML tags", new[] { "GoalSummary" }));
             }
 
             if (goalResource.DateGoalCaptured.HasValue &&
