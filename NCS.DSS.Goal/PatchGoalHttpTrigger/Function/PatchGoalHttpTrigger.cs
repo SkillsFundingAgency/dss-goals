@@ -112,7 +112,7 @@ namespace NCS.DSS.Goal.PatchGoalHttpTrigger.Function
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Unable to parse {goalPatchRequest} from request body. Correlation GUID: {CorrelationGuid}. Exception: {ExceptionMessage}", nameof(goalPatchRequest), correlationGuid, ex.Message);
-                return new UnprocessableEntityObjectResult(_dynamicHelper.ExcludeProperty(ex, ["TargetSite"]));
+                return new UnprocessableEntityObjectResult(_dynamicHelper.ExcludeProperty(ex, ["TargetSite", "StackTrace"]));
             }
 
             if (goalPatchRequest == null)
